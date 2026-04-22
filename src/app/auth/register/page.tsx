@@ -30,7 +30,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <div className="inline-flex w-20 h-20 rounded-3xl items-center justify-center text-4xl mb-4 shadow-glow-sakura animate-float"
             style={{background:'linear-gradient(135deg,#ff6b96,#ff3d78)'}}>🌸</div>
-          <h1 className="font-display text-4xl font-bold text-white mb-2">Lễ Ăn Hỏi</h1>
+          <h1 className="font-display text-4xl font-bold text-white mb-2">Quán lý sự kiện</h1>
           <p className="text-white/50 text-sm">Tạo tài khoản để bắt đầu</p>
         </div>
 
