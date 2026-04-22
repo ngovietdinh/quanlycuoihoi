@@ -1,6 +1,6 @@
 {
-  "name": "le-an-hoi",
-  "version": "1.0.0",
+  "name": "le-an-hoi-ui",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.104.0",
+    "@supabase/supabase-js": "^2.45.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "next": "14.2.15",

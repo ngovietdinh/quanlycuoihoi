@@ -1,32 +1,34 @@
-import type { Metadata } from 'next'
-import { Be_Vietnam_Pro, Playfair_Display } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
-
-const beVietnam = Be_Vietnam_Pro({
-  subsets: ['vietnamese', 'latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-body',
-})
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-display',
-})
+import { ToastProvider } from '@/components/ui/Toast'
+import { Sidebar, MobileBottomNav } from '@/components/layout/Sidebar'
 
 export const metadata: Metadata = {
-  title: 'Lễ Ăn Hỏi | Quản Lý Sự Kiện',
-  description: 'Hệ thống quản lý toàn diện cho ngày lễ ăn hỏi',
+  title: { default: 'Lễ Ăn Hỏi — Wedding Planner', template: '%s | Lễ Ăn Hỏi' },
+  description: 'Hệ thống quản lý lễ ăn hỏi toàn diện — lên kế hoạch, theo dõi ngân sách, quản lý đầu mục.',
+  themeColor: '#f43f5e',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" className={`${beVietnam.variable} ${playfair.variable}`}>
-      <body className="font-body antialiased">{children}</body>
+    <html lang="vi" suppressHydrationWarning>
+      <body className="font-body antialiased bg-stone-50 text-stone-900">
+        <ToastProvider>
+          <div className="flex min-h-screen">
+            <Sidebar />
+            <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+              {children}
+            </div>
+          </div>
+          <MobileBottomNav />
+        </ToastProvider>
+      </body>
     </html>
   )
 }

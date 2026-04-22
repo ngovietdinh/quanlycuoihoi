@@ -20,13 +20,13 @@ export interface Task {
   priority: TaskPriority; deadline: string | null
   cost_estimate: number; cost_actual: number; position: number
   created_at: string; updated_at: string
-  assignee?: Pick<Profile, 'id'|'full_name'|'avatar_url'>
+  assignee?: Pick<Profile, 'id' | 'full_name' | 'avatar_url'>
 }
 export interface Expense {
   id: string; project_id: string; task_id: string | null
   created_by: string | null; amount: number; note: string | null
   receipt_url: string | null; spent_at: string; created_at: string
-  task?: Pick<Task,'id'|'title'>; creator?: Pick<Profile,'id'|'full_name'>
+  task?: Pick<Task, 'id' | 'title'>; creator?: Pick<Profile, 'id' | 'full_name'>
 }
 export interface CreateProjectDTO {
   name: string; description?: string; event_date?: string; venue?: string; budget_total: number
@@ -38,7 +38,7 @@ export interface CreateTaskDTO {
 }
 export interface UpdateTaskDTO {
   title?: string; description?: string; status?: TaskStatus; priority?: TaskPriority
-  deadline?: string; cost_estimate?: number; cost_actual?: number; position?: number; assigned_to?: string
+  deadline?: string; cost_estimate?: number; cost_actual?: number; position?: number
 }
 export interface CreateExpenseDTO {
   project_id: string; task_id?: string; amount: number; note?: string; spent_at?: string

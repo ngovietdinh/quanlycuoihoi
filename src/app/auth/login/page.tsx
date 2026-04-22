@@ -28,8 +28,8 @@ export default function LoginPage() {
             style={{background:'rgba(255,255,255,0.1)',backdropFilter:'blur(8px)'}}>
             <span className="text-3xl">🌸</span>
           </div>
-          <h1 className="text-white text-3xl font-display font-bold mb-1">Lễ Ăn Hỏi</h1>
-          <p className="text-white/60 text-sm">Hệ thống quản lý sự kiện trọn vẹn</p>
+          <h1 className="text-white text-3xl font-display font-bold mb-1">Cưới Hỏi</h1>
+          <p className="text-white/60 text-sm">Hệ thống quản lý sự kiện </p>
         </div>
         <div className="bg-white rounded-2xl p-8 shadow-2xl">
           <h2 className="text-xl font-semibold text-[#2C1810] mb-6">Đăng nhập</h2>
