@@ -316,7 +316,7 @@ function KanbanBoard({ tasks, onEdit, onDelete, onMove, onAdd }:
                   <div key={task.id} draggable
                     onDragStart={()=>setDraggingId(task.id)}
                     onDragEnd={()=>{setDraggingId(null);setOverCol(null)}}
-                    className={cn('kanban-card', draggingId===task.id&&'dragging')}>
+                    className={cn('kanban-card group', draggingId===task.id&&'dragging')}>
 
                     {/* Priority + actions */}
                     <div className="flex items-start justify-between gap-2 mb-2.5">
