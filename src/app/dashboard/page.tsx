@@ -70,7 +70,7 @@ function CreateModal({ open, onClose, onCreated }: { open:boolean; onClose:()=>v
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Tạo dự án lễ ăn hỏi mới" subtitle="Điền thông tin để bắt đầu theo dõi" size="lg"
+    <Modal open={open} onClose={onClose} title="Tạo dự án Sự kiện mới" subtitle="Điền thông tin để bắt đầu theo dõi" size="lg"
       footer={<>
         <button onClick={onClose} className="btn btn-ghost btn-sm">Hủy bỏ</button>
         <button onClick={submit} disabled={loading} className="btn btn-primary btn-sm disabled:opacity-60">
@@ -80,7 +80,7 @@ function CreateModal({ open, onClose, onCreated }: { open:boolean; onClose:()=>v
       <form onSubmit={submit} className="space-y-4">
         <div>
           <label className="label">Tên lễ *</label>
-          <input className="input" value={form.name} onChange={e=>sf('name',e.target.value)} placeholder="VD: Lễ Ăn Hỏi Gia Đình Trần - Nguyễn" required/>
+          <input className="input" value={form.name} onChange={e=>sf('name',e.target.value)} placeholder="VD: Sự kiện Gia Đình Trần - Nguyễn" required/>
         </div>
         <div>
           <label className="label">Mô tả</label>
@@ -294,7 +294,7 @@ function DashboardContent() {
           <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
             <div>
               <p className="text-white/60 text-sm font-medium mb-1">🌸 Xin chào!</p>
-              <h2 className="font-display text-3xl font-bold text-white mb-2">Lễ Ăn Hỏi Manager</h2>
+              <h2 className="font-display text-3xl font-bold text-white mb-2">Sự kiện Manager</h2>
               <p className="text-white/60 text-sm">
                 <span className="text-white font-semibold">{projects.length}</span> dự án đang quản lý ·{' '}
                 <span className="text-white font-semibold">{totalTasks - doneTasks}</span> đầu mục chờ xử lý
@@ -362,7 +362,7 @@ function DashboardContent() {
             <div className="card text-center py-20">
               <div className="text-6xl mb-4 animate-float">🌸</div>
               <h3 className="font-display text-2xl font-semibold text-ink-800 mb-2">Chưa có dự án nào</h3>
-              <p className="text-ink-500 text-sm mb-6 max-w-xs mx-auto">Tạo dự án đầu tiên để bắt đầu theo dõi và quản lý lễ ăn hỏi</p>
+              <p className="text-ink-500 text-sm mb-6 max-w-xs mx-auto">Tạo dự án đầu tiên để bắt đầu theo dõi và quản lý Sự kiện</p>
               <button onClick={()=>setShowCreate(true)} className="btn btn-primary btn-lg mx-auto">
                 🌸 Tạo dự án đầu tiên
               </button>

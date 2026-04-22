@@ -1,5 +1,5 @@
 -- ============================================================
--- LỄ ĂN HỎI - Full Schema v3
+-- Sự kiện - Full Schema v3
 -- FIXED: total_spent calculation uses ONLY expenses table
 -- ============================================================
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

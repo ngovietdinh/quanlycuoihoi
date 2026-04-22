@@ -22,7 +22,7 @@ export function Sidebar() {
             🌸
           </div>
           <div>
-            <p className="font-display font-semibold text-stone-900 text-sm leading-tight">Lễ Ăn Hỏi</p>
+            <p className="font-display font-semibold text-stone-900 text-sm leading-tight">Sự kiện</p>
             <p className="text-xs text-stone-400">Wedding Manager</p>
           </div>
         </div>

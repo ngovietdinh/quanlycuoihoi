@@ -27,7 +27,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               🌸
             </div>
             <div>
-              <p className="font-display font-bold text-ink-900 text-base leading-tight">Lễ Ăn Hỏi</p>
+              <p className="font-display font-bold text-ink-900 text-base leading-tight">Sự kiện</p>
               <p className="text-[10px] text-ink-400 font-medium tracking-wider uppercase">Wedding Manager</p>
             </div>
           </div>
