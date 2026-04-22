@@ -1,13 +1,8 @@
 {
-  "name": "le-an-hoi",
-  "version": "1.0.0",
+  "name": "le-an-hoi-v3",
+  "version": "3.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start", "lint": "next lint" },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.45.0",

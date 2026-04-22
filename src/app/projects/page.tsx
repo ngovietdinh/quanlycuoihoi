@@ -1,2 +1,2 @@
 import { redirect } from 'next/navigation'
-export default function Projects() { redirect('/dashboard') }
+export default function P() { redirect('/dashboard') }

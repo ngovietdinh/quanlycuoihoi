@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { sb } from '@/lib/supabase/client'
 import { getProject } from '@/lib/api/projects'
-import { getTasks }   from '@/lib/api/tasks'
+import { getTasks }    from '@/lib/api/tasks'
 import { getExpenses } from '@/lib/api/expenses'
 import type { Project, Task, Expense } from '@/types'
 
@@ -17,26 +17,29 @@ export function useProject(projectId: string) {
     setLoading(true); setError(null)
     const [p, t, e] = await Promise.all([getProject(projectId), getTasks(projectId), getExpenses(projectId)])
     if (p.error) setError(p.error); else setProject(p.data)
-    if (t.data)  setTasks(t.data)
-    if (e.data)  setExpenses(e.data)
+    if (t.data) setTasks(t.data)
+    if (e.data) setExpenses(e.data)
     setLoading(false)
   }, [projectId])
 
   useEffect(() => { refetch() }, [refetch])
 
-  // Realtime
   useEffect(() => {
     const client = sb()
     const ch1 = client.channel(`t:${projectId}`)
-      .on('postgres_changes',{event:'*',schema:'public',table:'tasks',filter:`project_id=eq.${projectId}`},
-        async () => { const r = await getTasks(projectId); if (r.data) setTasks(r.data) })
-      .subscribe()
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `project_id=eq.${projectId}` },
+        async () => { const r = await getTasks(projectId); if (r.data) setTasks(r.data) }).subscribe()
     const ch2 = client.channel(`e:${projectId}`)
-      .on('postgres_changes',{event:'*',schema:'public',table:'expenses',filter:`project_id=eq.${projectId}`},
-        async () => { const r = await getExpenses(projectId); if (r.data) setExpenses(r.data) })
-      .subscribe()
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses', filter: `project_id=eq.${projectId}` },
+        async () => { const r = await getExpenses(projectId); if (r.data) setExpenses(r.data) }).subscribe()
     return () => { client.removeChannel(ch1); client.removeChannel(ch2) }
   }, [projectId])
 
-  return { project, tasks, expenses, loading, error, refetch }
+  // BUDGET CALC: total_spent = sum of expenses (NOT tasks.cost_actual)
+  const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const totalEstimated = tasks.reduce((sum, t) => sum + t.cost_estimate, 0)
+  const remaining = (project?.budget_total ?? 0) - totalSpent
+  const budgetPct = project?.budget_total ? Math.min(100, (totalSpent / project.budget_total) * 100) : 0
+
+  return { project, tasks, expenses, loading, error, refetch, totalSpent, totalEstimated, remaining, budgetPct }
 }
