@@ -197,7 +197,7 @@
   }
   .kanban-card {
     @apply bg-white rounded-xl border border-ink-100 p-3.5 cursor-grab active:cursor-grabbing
-           select-none transition-all duration-200 group;
+           select-none transition-all duration-200;
     box-shadow: 0 1px 3px rgba(44,24,16,0.06), 0 2px 8px rgba(44,24,16,0.04);
   }
   .kanban-card:hover {
