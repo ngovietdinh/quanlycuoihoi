@@ -1,5 +1,6 @@
 -- ============================================================
 -- v4: Tài khoản · Phân quyền · Thiệp cưới online
+-- PHIÊN BẢN: 5 (2026-09-24) — file đúng có khoảng 460 dòng
 -- Chạy SAU schema.sql. Script idempotent — có thể chạy lại nhiều lần.
 -- ============================================================
 
