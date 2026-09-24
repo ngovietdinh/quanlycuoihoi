@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 export function Box({ title, desc, children, right }: { title: string; desc?: string; children: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="card p-4 sm:p-5">
-      <div className="flex items-start justify-between gap-3 mb-4">
+      <div className={cn('flex justify-between gap-3 mb-4', desc ? 'items-start' : 'items-center')}>
         <div>
           <h3 className="font-semibold text-ink-900 text-sm">{title}</h3>
           {desc && <p className="text-xs text-ink-400 mt-0.5">{desc}</p>}
@@ -72,12 +72,28 @@ export function ImageInput({ value, onChange, invitationId, round, aspect = 'asp
     if (r.error) setErr(r.error); else if (r.data) onChange(r.data)
   }
   const isAudio = accept.startsWith('audio')
+  const fileInput = <input ref={ref} type="file" accept={accept} className="hidden" onChange={e => { pick(e.target.files?.[0]); e.target.value = '' }}/>
+  // Ảnh tròn (chân dung): gọn, không chiếm cả cột
+  if (round) return (
+    <div className="flex flex-col items-center gap-1.5 w-24 flex-shrink-0">
+      <div onClick={() => ref.current?.click()}
+        className="relative w-24 h-24 rounded-full overflow-hidden bg-ink-50 border-2 border-dashed border-ink-200 hover:border-sakura-300 cursor-pointer flex items-center justify-center text-ink-400 text-[11px] text-center group">
+        {value ? <img src={value} alt="" className="absolute inset-0 w-full h-full object-cover"/> : <span>{busy ? 'Đang tải…' : '＋ Ảnh'}</span>}
+        {value && <span className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition">{busy ? '…' : 'Đổi ảnh'}</span>}
+      </div>
+      <div className="flex gap-1">
+        <button type="button" onClick={() => { const u = prompt('Dán link ảnh (https://…)', value); if (u !== null) onChange(u.trim()) }} className="text-[10px] text-ink-500 hover:text-sakura-600">🔗 Link</button>
+        {value && <button type="button" onClick={() => onChange('')} className="text-[10px] text-ink-400 hover:text-red-500">✕ Xóa</button>}
+      </div>
+      {err && <p className="text-[10px] text-red-500 text-center">{err}</p>}
+      {fileInput}
+    </div>
+  )
   return (
     <div className="space-y-2">
       {!isAudio && (
         <div onClick={() => ref.current?.click()}
-          className={cn('relative overflow-hidden bg-ink-50 border-2 border-dashed border-ink-200 hover:border-sakura-300 cursor-pointer flex items-center justify-center text-ink-400 text-xs',
-            round ? 'w-24 h-24 rounded-full' : `w-full ${aspect} rounded-xl`)}>
+          className={cn('relative overflow-hidden bg-ink-50 border-2 border-dashed border-ink-200 hover:border-sakura-300 cursor-pointer flex items-center justify-center text-ink-400 text-xs w-full rounded-xl', aspect)}>
           {value ? <img src={value} alt="" className="absolute inset-0 w-full h-full object-cover"/> : <span>{busy ? 'Đang tải…' : '＋ Chọn ảnh'}</span>}
           {busy && value && <span className="absolute inset-0 bg-white/70 flex items-center justify-center">Đang tải…</span>}
         </div>
@@ -88,7 +104,7 @@ export function ImageInput({ value, onChange, invitationId, round, aspect = 'asp
         {value && <button type="button" onClick={() => onChange('')} className="btn btn-ghost btn-sm flex-shrink-0" title="Xóa">✕</button>}
       </div>
       {err && <p className="text-[11px] text-red-500">{err}</p>}
-      <input ref={ref} type="file" accept={accept} className="hidden" onChange={e => { pick(e.target.files?.[0]); e.target.value = '' }}/>
+      {fileInput}
     </div>
   )
 }

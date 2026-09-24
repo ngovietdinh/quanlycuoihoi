@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { sbServer } from '@/lib/supabase/server'
-import { TEMPLATES, googleFontsHref } from '@/lib/invitation/templates'
+import { TEMPLATES, TEMPLATE_CATEGORIES, LAYOUTS, googleFontsHref, patternBg } from '@/lib/invitation/templates'
 
 async function getUser() {
   try { const s = await sbServer(); return (await s.auth.getUser()).data.user } catch { return null }
 }
 
 const FEATURES = [
-  ['💌', 'Thiệp cưới online', '6 mẫu thiệp tinh tế, hiệu ứng mở phong bì, cánh hoa rơi, nhạc nền và đếm ngược đến ngày vui.'],
+  ['💌', 'Thiệp cưới online', '18 mẫu thiệp, 7 bố cục trang bìa, hiệu ứng mở phong bì, cánh hoa rơi, nhạc nền và đếm ngược.'],
   ['🎨', 'Tùy biến giao diện', 'Đổi màu, font chữ tiếng Việt, bố cục trang bìa, bật/tắt và sắp xếp từng phần theo ý thích.'],
   ['👥', 'Khách mời cá nhân hóa', 'Mỗi khách có đường dẫn riêng với lời chào đúng tên, gửi nhanh qua Zalo, Messenger, SMS.'],
   ['✉️', 'Xác nhận tham dự', 'Khách phản hồi trực tuyến, thống kê số người realtime, xuất Excel cho nhà hàng.'],
@@ -75,20 +75,23 @@ export default async function Landing() {
       <section id="templates" className="py-16 sm:py-20 bg-white/60 border-y border-ink-100/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-10">
-            <h2 className="font-display text-4xl font-bold mb-2">Chọn phong cách của bạn</h2>
-            <p className="text-ink-500">Bấm vào từng mẫu để xem thiệp thật — mọi màu sắc, font chữ đều có thể tùy chỉnh.</p>
+            <h2 className="font-display text-4xl font-bold mb-2">{TEMPLATES.length} mẫu thiệp cho mọi phong cách</h2>
+            <p className="text-ink-500">Bấm vào từng mẫu để xem thiệp thật — màu sắc, font chữ, bố cục, hoa văn đều tùy chỉnh được.</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {TEMPLATES.map(t => (
               <a key={t.id} href={`/i/demo?t=${t.id}`} target="_blank" className="group card-hover overflow-hidden">
-                <div className="h-48 relative flex flex-col items-center justify-center text-center" style={{ background: t.theme.background, color: t.theme.primary }}>
+                <div className="h-40 sm:h-44 relative flex flex-col items-center justify-center text-center" style={{ background: t.theme.background, backgroundImage: patternBg(t.theme.pattern, t.theme.primary), color: t.theme.primary }}>
                   <div className="absolute inset-3 border opacity-40 transition-all group-hover:inset-2" style={{ borderColor: t.theme.primary, borderRadius: t.theme.radius }}/>
                   <span className="text-[10px] tracking-[.35em] uppercase" style={{ color: t.theme.text, opacity: .6 }}>Save the date</span>
-                  <span className="text-4xl sm:text-5xl my-1" style={{ fontFamily: `'${t.theme.heading_font}', cursive` }}>Anh &amp; Em</span>
+                  <span className="text-3xl sm:text-4xl my-1" style={{ fontFamily: `'${t.theme.heading_font}', cursive` }}>Anh &amp; Em</span>
                   <span className="text-xs tracking-widest" style={{ color: t.theme.text, opacity: .7 }}>{t.id === 'songhy' ? '囍 · 20.12' : '20 · 12'}</span>
                 </div>
-                <div className="p-4 flex items-center justify-between gap-2">
-                  <div><p className="font-semibold">{t.name}</p><p className="text-xs text-ink-400">{t.tagline}</p></div>
+                <div className="p-3 sm:p-4 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm">{t.name} <span className="text-[10px] font-medium text-ink-400">· {TEMPLATE_CATEGORIES.find(c => c.id === t.category)?.label} · {LAYOUTS.find(l => l.id === t.theme.layout)?.label}</span></p>
+                    <p className="text-xs text-ink-400 line-clamp-1">{t.tagline}</p>
+                  </div>
                   <span className="text-sakura-500 group-hover:translate-x-1 transition">↗</span>
                 </div>
               </a>

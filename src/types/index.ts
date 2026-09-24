@@ -18,9 +18,14 @@ export interface AdminUserRow { id:string; full_name:string|null; email:string|n
 export interface AdminStats { users:number; admins:number; locked:number; projects:number; invitations:number; published:number; views:number; rsvps:number; attending_guests:number; wishes:number; new_users_7d:number }
 
 // ── Thiệp cưới online ─────────────────────────────────────────
-export type TemplateId = 'classic' | 'floral' | 'modern' | 'songhy' | 'garden' | 'midnight'
-export type EffectId   = 'petals' | 'hearts' | 'snow' | 'sparkles' | 'leaves' | 'none'
-export type CoverLayout = 'overlay' | 'arch' | 'split' | 'minimal'
+export type TemplateId =
+  | 'classic' | 'floral' | 'modern' | 'songhy' | 'garden' | 'midnight'
+  | 'lotus' | 'indochine' | 'royal' | 'blackgold' | 'sakura' | 'lavender'
+  | 'ocean' | 'autumn' | 'mint' | 'pure' | 'party' | 'vintage'
+export type TemplateCategory = 'traditional' | 'romantic' | 'modern' | 'luxury' | 'nature'
+export type PatternId  = 'none' | 'dots' | 'grid' | 'damask' | 'waves' | 'paper' | 'hearts'
+export type EffectId   = 'petals' | 'hearts' | 'snow' | 'sparkles' | 'leaves' | 'confetti' | 'bubbles' | 'none'
+export type CoverLayout = 'overlay' | 'arch' | 'split' | 'minimal' | 'frame' | 'circle' | 'polaroid'
 export type SectionId  = 'countdown' | 'couple' | 'story' | 'events' | 'gallery' | 'rsvp' | 'wishes' | 'gift'
 export type Side = 'groom' | 'bride' | 'both'
 
@@ -61,6 +66,7 @@ export interface InvitationTheme {
   music_url: string
   overlay: number
   radius: number
+  pattern: PatternId
 }
 
 export interface Invitation {

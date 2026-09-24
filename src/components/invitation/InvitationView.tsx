@@ -1,7 +1,7 @@
 'use client'
 import { useMemo, useState, useCallback, useRef } from 'react'
 import type { Invitation, GuestGreeting, Wish, SectionId } from '@/types'
-import { normalizeInvitation, templateById, SCRIPT_FONTS, SECTION_LABELS } from '@/lib/invitation/templates'
+import { normalizeInvitation, templateById, SCRIPT_FONTS, SECTION_LABELS, patternBg } from '@/lib/invitation/templates'
 import { FontLoader, FallingEffect, Ornament, Reveal } from './effects'
 import { Cover, Intro, Countdown, Couple, Story, Events, Gallery, Gift, type ViewCtx } from './sections'
 import { Envelope, MusicButton, Rsvp, Wishes, ShareDock } from './interactive'
@@ -60,6 +60,7 @@ export function InvitationView({ invitation, guest = null, guestCode, preview = 
       style={{
         ['--p' as any]: t.primary, ['--a' as any]: t.accent, ['--bg' as any]: t.background, ['--tx' as any]: t.text,
         ['--hf' as any]: `'${t.heading_font}'`, ['--bf' as any]: `'${t.body_font}'`, ['--r' as any]: `${t.radius}px`,
+        backgroundImage: patternBg(t.pattern, t.primary),
       }}
     >
       <FontLoader fonts={[t.heading_font, t.body_font]}/>

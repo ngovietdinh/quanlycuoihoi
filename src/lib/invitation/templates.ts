@@ -1,42 +1,75 @@
 import type {
-  InvitationContent, InvitationTheme, TemplateId, EffectId, CoverLayout, SectionConfig, SectionId, Invitation,
+  InvitationContent, InvitationTheme, TemplateId, TemplateCategory, EffectId, CoverLayout, PatternId, SectionConfig, SectionId, Invitation,
 } from '@/types'
 
 // ── Mẫu thiệp ─────────────────────────────────────────────────────────────────
+export type OrnamentId = 'line' | 'floral' | 'geo' | 'songhy' | 'leaf' | 'star' | 'lotus' | 'deco' | 'wave' | 'heart'
 export interface TemplateDef {
   id: TemplateId
   name: string
   tagline: string
+  category: TemplateCategory
   theme: Omit<InvitationTheme, 'template' | 'music_url' | 'envelope'>
-  ornament: 'line' | 'floral' | 'geo' | 'songhy' | 'leaf' | 'star'
+  ornament: OrnamentId
 }
 
-export const TEMPLATES: TemplateDef[] = [
-  { id:'classic', name:'Cổ điển', tagline:'Ngà & vàng ánh kim, thanh lịch vượt thời gian', ornament:'line',
-    theme:{ layout:'overlay', primary:'#b08d57', accent:'#e9dcc3', background:'#fbf8f1', text:'#3b3024',
-      heading_font:'Great Vibes', body_font:'Cormorant Garamond', effect:'sparkles', overlay:45, radius:4 } },
-  { id:'floral', name:'Hoa hồng', tagline:'Hồng phấn dịu dàng, cánh hoa bay lãng mạn', ornament:'floral',
-    theme:{ layout:'arch', primary:'#c96b83', accent:'#f6d5dd', background:'#fff6f8', text:'#4a2f36',
-      heading_font:'Dancing Script', body_font:'Lora', effect:'petals', overlay:30, radius:24 } },
-  { id:'modern', name:'Tối giản', tagline:'Đen trắng hiện đại, typography làm chủ đạo', ornament:'geo',
-    theme:{ layout:'split', primary:'#111111', accent:'#c9a96e', background:'#ffffff', text:'#1b1b1b',
-      heading_font:'Playfair Display', body_font:'Montserrat', effect:'none', overlay:20, radius:0 } },
-  { id:'songhy', name:'Song Hỷ', tagline:'Đỏ son & vàng kim, đậm bản sắc cưới Việt', ornament:'songhy',
-    theme:{ layout:'overlay', primary:'#b3121f', accent:'#e6b74a', background:'#fff8ee', text:'#3d0d0d',
-      heading_font:'Playfair Display', body_font:'Be Vietnam Pro', effect:'sparkles', overlay:50, radius:12 } },
-  { id:'garden', name:'Khu vườn', tagline:'Xanh lá xô thơm, phong cách tiệc ngoài trời', ornament:'leaf',
-    theme:{ layout:'arch', primary:'#5f7a5b', accent:'#dfe6d3', background:'#f5f7f0', text:'#2c3a2a',
-      heading_font:'Great Vibes', body_font:'Lora', effect:'leaves', overlay:35, radius:28 } },
-  { id:'midnight', name:'Đêm sao', tagline:'Xanh đêm & ánh vàng, sang trọng huyền ảo', ornament:'star',
-    theme:{ layout:'minimal', primary:'#d9b77e', accent:'#233452', background:'#0f1a2b', text:'#f1ece2',
-      heading_font:'Great Vibes', body_font:'Cormorant Garamond', effect:'sparkles', overlay:55, radius:8 } },
+export const TEMPLATE_CATEGORIES: { id: TemplateCategory | 'all'; label: string }[] = [
+  { id:'all', label:'Tất cả' }, { id:'traditional', label:'Truyền thống' }, { id:'romantic', label:'Lãng mạn' },
+  { id:'modern', label:'Hiện đại' }, { id:'luxury', label:'Sang trọng' }, { id:'nature', label:'Thiên nhiên' },
 ]
-export const templateById = (id?: string) => TEMPLATES.find(t => t.id === id) ?? TEMPLATES[0]
+
+const T = (id: TemplateId, name: string, tagline: string, category: TemplateCategory, ornament: OrnamentId,
+  theme: TemplateDef['theme']): TemplateDef => ({ id, name, tagline, category, ornament, theme })
+
+export const TEMPLATES: TemplateDef[] = [
+  // Truyền thống
+  T('songhy', 'Song Hỷ', 'Đỏ son & vàng kim, đậm bản sắc cưới Việt', 'traditional', 'songhy',
+    { layout:'overlay', primary:'#b3121f', accent:'#e6b74a', background:'#fff8ee', text:'#3d0d0d', heading_font:'Playfair Display', body_font:'Be Vietnam Pro', effect:'sparkles', overlay:50, radius:12, pattern:'damask' }),
+  T('lotus', 'Sen hồng', 'Hoa sen thanh khiết, nét duyên Á Đông', 'traditional', 'lotus',
+    { layout:'circle', primary:'#b8466b', accent:'#f7d7dc', background:'#fff7f3', text:'#43222c', heading_font:'Playfair Display', body_font:'Be Vietnam Pro', effect:'petals', overlay:30, radius:16, pattern:'none' }),
+  T('indochine', 'Đông Dương', 'Xanh ngọc & vàng đồng, hoài niệm Indochine', 'traditional', 'deco',
+    { layout:'frame', primary:'#0f5257', accent:'#c9a45c', background:'#f3efe4', text:'#1d2b2c', heading_font:'Playfair Display', body_font:'Lora', effect:'none', overlay:40, radius:2, pattern:'grid' }),
+  T('vintage', 'Hoài cổ', 'Giấy kraft & mực nâu, như lá thư tay xưa', 'traditional', 'line',
+    { layout:'frame', primary:'#8b5e3c', accent:'#e3d3bb', background:'#f4ecdf', text:'#3e2b1c', heading_font:'Charm', body_font:'Lora', effect:'none', overlay:35, radius:4, pattern:'paper' }),
+  // Lãng mạn
+  T('floral', 'Hoa hồng', 'Hồng phấn dịu dàng, cánh hoa bay lãng mạn', 'romantic', 'floral',
+    { layout:'arch', primary:'#c96b83', accent:'#f6d5dd', background:'#fff6f8', text:'#4a2f36', heading_font:'Dancing Script', body_font:'Lora', effect:'petals', overlay:30, radius:24, pattern:'none' }),
+  T('sakura', 'Anh đào', 'Mùa xuân anh đào, ảnh polaroid xinh xắn', 'romantic', 'floral',
+    { layout:'polaroid', primary:'#e0789a', accent:'#fde2ea', background:'#fff8fa', text:'#4b2a36', heading_font:'Dancing Script', body_font:'Quicksand', effect:'petals', overlay:25, radius:18, pattern:'dots' }),
+  T('lavender', 'Oải hương', 'Tím oải hương mơ màng, ngọt ngào', 'romantic', 'heart',
+    { layout:'circle', primary:'#7a5c99', accent:'#e8def3', background:'#faf7fd', text:'#33263f', heading_font:'Great Vibes', body_font:'Lora', effect:'hearts', overlay:30, radius:20, pattern:'hearts' }),
+  T('classic', 'Cổ điển', 'Ngà & vàng ánh kim, thanh lịch vượt thời gian', 'romantic', 'line',
+    { layout:'overlay', primary:'#b08d57', accent:'#e9dcc3', background:'#fbf8f1', text:'#3b3024', heading_font:'Great Vibes', body_font:'Cormorant Garamond', effect:'sparkles', overlay:45, radius:4, pattern:'none' }),
+  // Hiện đại
+  T('modern', 'Tối giản', 'Đen trắng hiện đại, typography làm chủ đạo', 'modern', 'geo',
+    { layout:'split', primary:'#111111', accent:'#c9a96e', background:'#ffffff', text:'#1b1b1b', heading_font:'Playfair Display', body_font:'Montserrat', effect:'none', overlay:20, radius:0, pattern:'none' }),
+  T('pure', 'Thuần khiết', 'Trắng tinh khôi, bạc nhẹ nhàng, tuyết rơi', 'modern', 'line',
+    { layout:'minimal', primary:'#6b7280', accent:'#eef0f3', background:'#ffffff', text:'#1f2937', heading_font:'Cormorant Garamond', body_font:'Montserrat', effect:'snow', overlay:25, radius:6, pattern:'none' }),
+  T('mint', 'Bạc hà', 'Xanh bạc hà tươi mát, trẻ trung năng động', 'modern', 'geo',
+    { layout:'polaroid', primary:'#2f8f7a', accent:'#d3efe6', background:'#f4fbf8', text:'#173b33', heading_font:'Playfair Display', body_font:'Nunito', effect:'confetti', overlay:25, radius:14, pattern:'dots' }),
+  T('party', 'Tiệc vui', 'Rực rỡ pháo giấy, cho cặp đôi cá tính', 'modern', 'heart',
+    { layout:'circle', primary:'#ff5a5f', accent:'#ffd166', background:'#fffaf0', text:'#2d2327', heading_font:'Lobster', body_font:'Nunito', effect:'confetti', overlay:25, radius:22, pattern:'none' }),
+  // Sang trọng
+  T('royal', 'Hoàng gia', 'Đỏ rượu vang & vàng kim, quý phái', 'luxury', 'deco',
+    { layout:'frame', primary:'#7b1e3a', accent:'#d4af37', background:'#fbf6ef', text:'#2e1018', heading_font:'Great Vibes', body_font:'Cormorant Garamond', effect:'sparkles', overlay:45, radius:4, pattern:'damask' }),
+  T('blackgold', 'Đen & Vàng', 'Nền đen ánh vàng, đẳng cấp tiệc tối', 'luxury', 'deco',
+    { layout:'split', primary:'#d4af37', accent:'#2a2a2a', background:'#121212', text:'#f5efe0', heading_font:'Playfair Display', body_font:'Montserrat', effect:'sparkles', overlay:50, radius:2, pattern:'none' }),
+  T('midnight', 'Đêm sao', 'Xanh đêm & ánh vàng, sang trọng huyền ảo', 'luxury', 'star',
+    { layout:'minimal', primary:'#d9b77e', accent:'#233452', background:'#0f1a2b', text:'#f1ece2', heading_font:'Great Vibes', body_font:'Cormorant Garamond', effect:'sparkles', overlay:55, radius:8, pattern:'none' }),
+  // Thiên nhiên
+  T('garden', 'Khu vườn', 'Xanh lá xô thơm, phong cách tiệc ngoài trời', 'nature', 'leaf',
+    { layout:'arch', primary:'#5f7a5b', accent:'#dfe6d3', background:'#f5f7f0', text:'#2c3a2a', heading_font:'Great Vibes', body_font:'Lora', effect:'leaves', overlay:35, radius:28, pattern:'none' }),
+  T('ocean', 'Biển xanh', 'Cưới bên biển, sóng xanh & bong bóng', 'nature', 'wave',
+    { layout:'overlay', primary:'#1f6f8b', accent:'#cde8ef', background:'#f3f9fb', text:'#15303a', heading_font:'Dancing Script', body_font:'Quicksand', effect:'bubbles', overlay:35, radius:20, pattern:'waves' }),
+  T('autumn', 'Thu vàng', 'Lá phong đỏ cam, ấm áp mùa thu', 'nature', 'leaf',
+    { layout:'arch', primary:'#b5542c', accent:'#f2d7b6', background:'#fdf6ec', text:'#3b2417', heading_font:'Great Vibes', body_font:'Lora', effect:'leaves', overlay:35, radius:24, pattern:'paper' }),
+]
+export const templateById = (id?: string) => TEMPLATES.find(t => t.id === id) ?? TEMPLATES.find(t => t.id === 'classic')!
 
 // Font hỗ trợ tiếng Việt trên Google Fonts
-export const HEADING_FONTS = ['Great Vibes','Dancing Script','Playfair Display','Cormorant Garamond','Lora','Be Vietnam Pro','Montserrat','Charm','Pacifico','Lobster']
-export const BODY_FONTS    = ['Cormorant Garamond','Lora','Montserrat','Be Vietnam Pro','Nunito','Playfair Display','Roboto Slab','Quicksand']
-export const SCRIPT_FONTS  = new Set(['Great Vibes','Dancing Script','Charm','Pacifico','Lobster'])
+export const HEADING_FONTS = ['Great Vibes','Dancing Script','Bonheur Royale','Moon Dance','Mea Culpa','Charm','Playfair Display','Cormorant Garamond','Lora','Be Vietnam Pro','Montserrat','Josefin Sans','Pacifico','Lobster']
+export const BODY_FONTS    = ['Cormorant Garamond','Lora','Noto Serif','Montserrat','Be Vietnam Pro','Nunito','Quicksand','Josefin Sans','Playfair Display','Roboto Slab']
+export const SCRIPT_FONTS  = new Set(['Great Vibes','Dancing Script','Bonheur Royale','Moon Dance','Mea Culpa','Charm','Pacifico','Lobster'])
 
 export const googleFontsHref = (fonts: string[]) =>
   'https://fonts.googleapis.com/css2?' +
@@ -50,6 +83,8 @@ export const EFFECTS: { id: EffectId; label: string; icon: string }[] = [
   { id:'sparkles', label:'Lấp lánh',  icon:'✨' },
   { id:'leaves',   label:'Lá rơi',    icon:'🍃' },
   { id:'snow',     label:'Tuyết',     icon:'❄️' },
+  { id:'confetti', label:'Pháo giấy', icon:'🎊' },
+  { id:'bubbles',  label:'Bong bóng', icon:'🫧' },
   { id:'none',     label:'Không',     icon:'⦸'  },
 ]
 
@@ -58,7 +93,31 @@ export const LAYOUTS: { id: CoverLayout; label: string; desc: string }[] = [
   { id:'arch',    label:'Khung vòm',     desc:'Ảnh trong khung vòm cổng cưới' },
   { id:'split',   label:'Chia đôi',      desc:'Ảnh một bên, chữ một bên' },
   { id:'minimal', label:'Tối giản',      desc:'Chỉ chữ và hoa văn, không ảnh' },
+  { id:'frame',   label:'Khung ảnh',     desc:'Ảnh trong khung viền kép trên nền mờ' },
+  { id:'circle',  label:'Vòng tròn',     desc:'Ảnh tròn, chữ chạy vòng quanh' },
+  { id:'polaroid',label:'Polaroid',      desc:'Ảnh polaroid xếp nghiêng tinh nghịch' },
 ]
+
+export const PATTERNS: { id: PatternId; label: string }[] = [
+  { id:'none', label:'Trơn' }, { id:'dots', label:'Chấm bi' }, { id:'grid', label:'Ô lưới' }, { id:'damask', label:'Hoa văn' },
+  { id:'waves', label:'Sóng' }, { id:'paper', label:'Giấy' }, { id:'hearts', label:'Trái tim' },
+]
+
+/** Hoa văn nền dạng SVG (màu theo màu chủ đạo, rất mờ) */
+export function patternBg(id: PatternId | undefined, color: string): string | undefined {
+  const c = encodeURIComponent(color)
+  const svg = (w: number, h: number, body: string) =>
+    `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'%3E${body}%3C/svg%3E")`
+  switch (id) {
+    case 'dots':   return svg(22, 22, `%3Ccircle cx='3' cy='3' r='1.6' fill='${c}' fill-opacity='.14'/%3E`)
+    case 'grid':   return svg(28, 28, `%3Cpath d='M28 0H0v28' fill='none' stroke='${c}' stroke-opacity='.08'/%3E`)
+    case 'damask': return svg(60, 60, `%3Cpath d='M30 8c6 8 14 10 14 22S36 50 30 52C24 50 16 42 16 30S24 16 30 8z' fill='none' stroke='${c}' stroke-opacity='.09'/%3E%3Ccircle cx='30' cy='30' r='3' fill='${c}' fill-opacity='.08'/%3E%3Ccircle cx='0' cy='0' r='3' fill='${c}' fill-opacity='.08'/%3E%3Ccircle cx='60' cy='60' r='3' fill='${c}' fill-opacity='.08'/%3E`)
+    case 'waves':  return svg(80, 20, `%3Cpath d='M0 10c10-8 30-8 40 0s30 8 40 0' fill='none' stroke='${c}' stroke-opacity='.1'/%3E`)
+    case 'paper':  return svg(120, 120, `%3Cpath d='M0 20h120M0 57h120M0 94h120' stroke='${c}' stroke-opacity='.045'/%3E%3Cpath d='M33 0v120M88 0v120' stroke='${c}' stroke-opacity='.03'/%3E`)
+    case 'hearts': return svg(48, 48, `%3Cpath d='M24 34s-9-5.5-11-10.5C11.5 19 14 15 18 15c2.6 0 4.3 1.5 6 3.8 1.7-2.3 3.4-3.8 6-3.8 4 0 6.5 4 5 8.5C33 28.5 24 34 24 34z' fill='${c}' fill-opacity='.06'/%3E`)
+    default: return undefined
+  }
+}
 
 export const SECTION_LABELS: Record<SectionId, { label: string; icon: string; title: string }> = {
   countdown: { label:'Đếm ngược',       icon:'⏳', title:'Đếm ngược đến ngày vui' },

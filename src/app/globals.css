@@ -275,7 +275,7 @@
 .inv-muted { color: color-mix(in srgb, var(--tx) 65%, transparent); }
 .inv-p { color: var(--p); }
 .inv-section { padding: 5rem 1.5rem; position: relative; }
-.inv main > div:nth-child(odd) > .inv-section { background: color-mix(in srgb, var(--a) 28%, var(--bg)); }
+.inv main > div:nth-child(odd) > .inv-section { background: color-mix(in srgb, var(--a) 28%, transparent); }
 .inv-card {
   background: color-mix(in srgb, var(--bg) 88%, white); border-radius: var(--r);
   border: 1px solid color-mix(in srgb, var(--p) 18%, transparent);
@@ -310,6 +310,12 @@
   10%  { opacity: 1; }
   100% { transform: translate3d(var(--drift, 60px), 110vh, 0) rotate(var(--spin, 540deg)); opacity: .2; }
 }
+.inv-rise { position: absolute; bottom: -10%; pointer-events: none; animation: invRise linear infinite; }
+@keyframes invRise {
+  0%   { transform: translate3d(0, 10vh, 0); opacity: 0; }
+  15%  { opacity: .9; }
+  100% { transform: translate3d(var(--drift, 30px), -115vh, 0); opacity: 0; }
+}
 .inv-twinkle { position: absolute; pointer-events: none; animation: invTwinkle 3s ease-in-out infinite; }
 @keyframes invTwinkle { 0%,100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
 
@@ -327,6 +333,8 @@
 
 /* Nhạc nền */
 .inv-spin { animation: spin 4s linear infinite; }
+.inv-spin-slow { animation: spin 40s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .inv-spin-slow, .inv-kenburns, .inv-fall, .inv-rise { animation: none; } }
 .inv-bars span { display: inline-block; width: 2px; margin: 0 1px; background: currentColor; animation: invBar 1s ease-in-out infinite; }
 .inv-bars span:nth-child(2) { animation-delay: .2s } .inv-bars span:nth-child(3) { animation-delay: .4s }
 @keyframes invBar { 0%,100% { height: 4px } 50% { height: 12px } }

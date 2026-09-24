@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState, useCallback } from 'react'
 import type { Invitation, InvitationContent, InvitationTheme, GuestGreeting, Side } from '@/types'
-import { Reveal, Ornament, SectionTitle } from './effects'
+import { Reveal, Ornament, SectionTitle, SafeImg } from './effects'
 import { fmtDay, fmtTime, fmtLong, lunarText, vnParts, googleCalendarUrl, icsDataUrl, mapEmbedUrl, mapLinkUrl } from '@/lib/invitation/datetime'
 import { bankName, vietQrUrl } from '@/lib/invitation/templates'
 
@@ -19,37 +19,47 @@ export interface ViewCtx {
   mainDate: string | null
 }
 
+// Tạo file .ics khi bấm (không render sẵn vào HTML để tránh lệch hydrate: có timestamp & mã ngẫu nhiên)
+function downloadIcs(name: string, href: string) {
+  const a = document.createElement('a'); a.href = href; a.download = name; a.click()
+}
+
 const sideLabel = (s: Side) => (s === 'groom' ? 'Nhà trai' : s === 'bride' ? 'Nhà gái' : '')
 
 // ── Trang bìa ─────────────────────────────────────────────────────────────────
 export function Cover({ ctx }: { ctx: ViewCtx }) {
   const { c, t, script, mainDate, guest, ornament } = ctx
-  const names = (
-    <h1 className={`inv-h ${script ? 'text-6xl sm:text-7xl' : 'is-serif text-5xl sm:text-6xl'}`}>
-      <span className="block">{c.groom.name || 'Chú rể'}</span>
-      <span className={`block ${script ? 'text-4xl' : 'text-3xl'} my-1 opacity-80`}>&amp;</span>
-      <span className="block">{c.bride.name || 'Cô dâu'}</span>
+  const groom = c.groom.name || 'Chú rể', bride = c.bride.name || 'Cô dâu'
+  const names = (size: 'lg' | 'md' = 'lg') => (
+    <h1 className={`inv-h text-balance ${script
+      ? size === 'lg' ? 'text-[3.4rem] sm:text-7xl' : 'text-5xl sm:text-6xl'
+      : size === 'lg' ? 'is-serif text-[2.6rem] sm:text-6xl' : 'is-serif text-4xl sm:text-5xl'}`}>
+      <span className="block">{groom}</span>
+      <span className={`block ${script ? 'text-[0.6em]' : 'text-[0.55em]'} my-1 opacity-80`}>&amp;</span>
+      <span className="block">{bride}</span>
     </h1>
   )
+  // Ngày giờ: 3 cột canh đều, co lại trên điện thoại (trước đây bị tràn mép)
   const dateLine = mainDate && (
-    <div className="mt-6 flex items-center justify-center gap-4 text-sm tracking-[0.25em] uppercase">
-      <span>{vnParts(mainDate).weekday}</span>
-      <span className="text-2xl font-semibold tracking-normal border-x px-4" style={{ borderColor: 'currentColor' }}>{fmtDay(mainDate)}</span>
-      <span>{fmtTime(mainDate)}</span>
+    <div className="mt-6 mx-auto grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-5 max-w-[22rem] text-[11px] sm:text-sm tracking-[0.18em] sm:tracking-[0.25em] uppercase">
+      <span className="text-right">{vnParts(mainDate).weekday}</span>
+      <span className="text-xl sm:text-2xl font-semibold tracking-normal border-x px-3 sm:px-4 whitespace-nowrap" style={{ borderColor: 'currentColor' }}>{fmtDay(mainDate)}</span>
+      <span className="text-left">{fmtTime(mainDate)}</span>
     </div>
   )
   const greet = guest && (
     <p className="mt-6 text-sm italic opacity-90">Trân trọng kính mời <b className="not-italic">{[guest.salutation, guest.name].filter(Boolean).join(' ')}</b></p>
   )
   const cover = c.cover_url
+  const minH = 'min-h-[100svh]'
 
   if (t.layout === 'overlay' && cover) return (
-    <header className="relative min-h-[100svh] flex items-center justify-center text-center overflow-hidden text-white">
-      <img src={cover} alt="" className="absolute inset-0 w-full h-full object-cover inv-kenburns"/>
+    <header className={`relative ${minH} flex items-center justify-center text-center overflow-hidden text-white`}>
+      <SafeImg src={cover} alt="" className="absolute inset-0 w-full h-full object-cover inv-kenburns"/>
       <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(0,0,0,${t.overlay / 200}) 0%, rgba(0,0,0,${t.overlay / 100}) 100%)` }}/>
-      <div className="relative px-6 py-20 animate-fadeUp">
+      <div className="relative px-6 pt-20 pb-28 animate-fadeUp">
         <p className="inv-eyebrow mb-5">{c.headline}</p>
-        {names}
+        {names()}
         {dateLine}
         {greet}
       </div>
@@ -58,25 +68,24 @@ export function Cover({ ctx }: { ctx: ViewCtx }) {
   )
 
   if (t.layout === 'arch' && cover) return (
-    <header className="relative min-h-[100svh] flex flex-col items-center justify-center text-center px-6 py-16">
+    <header className={`relative ${minH} flex flex-col items-center justify-center text-center px-6 pt-14 pb-16`}>
       <p className="inv-eyebrow inv-p mb-6">{c.headline}</p>
-      <div className="relative w-64 sm:w-72 aspect-[3/4] overflow-hidden shadow-2xl" style={{ borderRadius: '999px 999px 12px 12px', border: '6px solid color-mix(in srgb, var(--p) 35%, white)' }}>
-        <img src={cover} alt="" className="w-full h-full object-cover inv-kenburns"/>
+      <div className="relative w-56 sm:w-72 aspect-[3/4] overflow-hidden shadow-2xl" style={{ borderRadius: '999px 999px 12px 12px', border: '6px solid color-mix(in srgb, var(--p) 35%, white)', background: 'var(--a)' }}>
+        <SafeImg src={cover} alt="" className="w-full h-full object-cover inv-kenburns"/>
       </div>
-      <div className="mt-8 inv-p">{names}</div>
+      <div className="mt-8 inv-p">{names('md')}</div>
       <Ornament kind={ornament} className="mt-4"/>
       <div className="inv-p">{dateLine}</div>
       {greet}
-      <ScrollHint dark/>
     </header>
   )
 
   if (t.layout === 'split' && cover) return (
-    <header className="min-h-[100svh] grid md:grid-cols-2">
-      <div className="relative min-h-[55svh] md:min-h-full overflow-hidden"><img src={cover} alt="" className="absolute inset-0 w-full h-full object-cover inv-kenburns"/></div>
+    <header className={`${minH} grid md:grid-cols-2`}>
+      <div className="relative min-h-[55svh] md:min-h-full overflow-hidden" style={{ background: 'var(--a)' }}><SafeImg src={cover} alt="" className="absolute inset-0 w-full h-full object-cover inv-kenburns"/></div>
       <div className="flex flex-col items-center justify-center text-center px-6 py-14">
         <p className="inv-eyebrow inv-p mb-5">{c.headline}</p>
-        <div className="inv-p">{names}</div>
+        <div className="inv-p">{names()}</div>
         <Ornament kind={ornament} className="mt-5"/>
         {dateLine}
         {greet}
@@ -84,26 +93,92 @@ export function Cover({ ctx }: { ctx: ViewCtx }) {
     </header>
   )
 
+  if (t.layout === 'frame' && cover) return (
+    <header className={`relative ${minH} flex items-center justify-center overflow-hidden px-5 py-14`}>
+      <SafeImg src={cover} alt="" className="absolute inset-0 w-full h-full object-cover scale-110 blur-md opacity-50"/>
+      <div className="absolute inset-0" style={{ background: `color-mix(in srgb, var(--bg) ${100 - t.overlay}%, transparent)` }}/>
+      <div className="relative w-full max-w-md text-center p-3 animate-fadeUp" style={{ background: 'var(--bg)', boxShadow: '0 30px 80px -20px rgba(0,0,0,.35)', borderRadius: 'var(--r)' }}>
+        <div className="p-5 sm:p-7" style={{ border: '1px solid var(--p)', outline: '1px solid color-mix(in srgb, var(--p) 40%, transparent)', outlineOffset: '-7px', borderRadius: 'var(--r)' }}>
+          <p className="inv-eyebrow inv-p mb-4">{c.headline}</p>
+          <div className="aspect-[4/5] overflow-hidden mb-6" style={{ borderRadius: 'var(--r)', background: 'var(--a)' }}>
+            <SafeImg src={cover} alt="" className="w-full h-full object-cover inv-kenburns"/>
+          </div>
+          <div className="inv-p">{names('md')}</div>
+          <Ornament kind={ornament} className="mt-4"/>
+          {dateLine}
+          {greet}
+        </div>
+      </div>
+    </header>
+  )
+
+  if (t.layout === 'circle' && cover) {
+    const ring = `${c.headline} • ${groom} & ${bride} • ${mainDate ? fmtDay(mainDate) : 'Wedding'} • `
+    return (
+      <header className={`relative ${minH} flex flex-col items-center justify-center text-center px-6 py-14`}>
+        <div className="relative w-72 h-72 sm:w-80 sm:h-80">
+          <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full inv-spin-slow" aria-hidden>
+            <defs><path id="inv-ring" d="M150,150 m-135,0 a135,135 0 1,1 270,0 a135,135 0 1,1 -270,0"/></defs>
+            <text className="uppercase" style={{ fontSize: 13, letterSpacing: 5, fill: 'var(--p)' }}>
+              <textPath href="#inv-ring" textLength="848">{ring.repeat(2)}</textPath>
+            </text>
+          </svg>
+          <div className="absolute inset-[34px] rounded-full overflow-hidden shadow-2xl" style={{ border: '5px solid var(--bg)', outline: '1.5px solid var(--p)', background: 'var(--a)' }}>
+            <SafeImg src={cover} alt="" className="w-full h-full object-cover inv-kenburns"/>
+          </div>
+        </div>
+        <div className="mt-8 inv-p">{names('md')}</div>
+        <Ornament kind={ornament} className="mt-4"/>
+        <div className="inv-p">{dateLine}</div>
+        {greet}
+      </header>
+    )
+  }
+
+  if (t.layout === 'polaroid' && cover) {
+    const extra = c.gallery.filter(g => g !== cover).slice(0, 2)
+    // Ảnh bìa (có chú thích tên) luôn nằm giữa và nổi trên cùng
+    const photos = extra.length === 2 ? [extra[0], cover, extra[1]] : extra.length === 1 ? [extra[0], cover] : [cover]
+    const slots = photos.length === 3
+      ? ['left-[1%] top-6 -rotate-6', 'left-1/2 -translate-x-1/2 top-0 rotate-2 z-[2]', 'right-[1%] top-8 rotate-6']
+      : photos.length === 2 ? ['left-[6%] top-6 -rotate-6', 'right-[6%] top-0 rotate-3 z-[2]'] : ['left-1/2 -translate-x-1/2 top-0 -rotate-2']
+    return (
+      <header className={`relative ${minH} flex flex-col items-center justify-center text-center px-5 py-14 overflow-hidden`}>
+        <p className="inv-eyebrow inv-p mb-6">{c.headline}</p>
+        <div className="relative w-full max-w-md h-[15.5rem] sm:h-[18rem]">
+          {photos.map((src, i) => (
+            <div key={src + i} className={`absolute ${slots[i]} w-[46%] sm:w-52 bg-white p-2.5 pb-9 shadow-xl transition-transform duration-500 hover:scale-105`} style={{ borderRadius: 4 }}>
+              <div className="aspect-square overflow-hidden" style={{ background: 'var(--a)' }}><SafeImg src={src} alt="" className="w-full h-full object-cover"/></div>
+              {src === cover && <p className="absolute bottom-2 inset-x-0 text-center text-sm truncate px-2" style={{ fontFamily: 'var(--hf)', color: '#555' }}>{groom} ♥ {bride}</p>}
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 inv-p">{names('md')}</div>
+        <div className="inv-p">{dateLine}</div>
+        {greet}
+      </header>
+    )
+  }
+
   // minimal (hoặc chưa có ảnh bìa)
   return (
-    <header className="relative min-h-[100svh] flex flex-col items-center justify-center text-center px-6 py-20">
-      <div className="absolute inset-6 pointer-events-none" style={{ border: '1px solid color-mix(in srgb, var(--p) 40%, transparent)', borderRadius: 'var(--r)' }}/>
-      <div className="absolute inset-9 pointer-events-none" style={{ border: '1px solid color-mix(in srgb, var(--p) 20%, transparent)', borderRadius: 'var(--r)' }}/>
+    <header className={`relative ${minH} flex flex-col items-center justify-center text-center px-8 py-20`}>
+      <div className="absolute inset-4 sm:inset-6 pointer-events-none" style={{ border: '1px solid color-mix(in srgb, var(--p) 40%, transparent)', borderRadius: 'var(--r)' }}/>
+      <div className="absolute inset-6 sm:inset-9 pointer-events-none" style={{ border: '1px solid color-mix(in srgb, var(--p) 20%, transparent)', borderRadius: 'var(--r)' }}/>
       <p className="inv-eyebrow inv-p mb-6">{c.headline}</p>
       <Ornament kind={ornament} className="mb-6"/>
-      <div className="inv-p">{names}</div>
+      <div className="inv-p">{names()}</div>
       <Ornament kind={ornament} className="mt-6"/>
       {dateLine}
-      {mainDate && <p className="mt-3 text-sm italic inv-muted">({lunarText(mainDate)})</p>}
+      {mainDate && <p className="mt-3 text-xs sm:text-sm italic inv-muted">({lunarText(mainDate)})</p>}
       {greet}
-      <ScrollHint dark/>
     </header>
   )
 }
 
-function ScrollHint({ dark }: { dark?: boolean }) {
+function ScrollHint() {
   return (
-    <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 inv-scroll-hint text-xs tracking-widest uppercase ${dark ? 'inv-p' : 'text-white/80'}`}>
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 inv-scroll-hint text-[10px] tracking-widest uppercase text-white/80">
       <div className="flex flex-col items-center gap-1">Cuộn xuống<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div>
     </div>
   )
@@ -187,9 +262,10 @@ export function Couple({ ctx, title }: { ctx: ViewCtx; title: string }) {
   const Card = ({ who, role }: { who: typeof c.groom; role: string }) => (
     <Reveal className="text-center">
       <div className="mx-auto w-44 h-44 sm:w-52 sm:h-52 rounded-full p-1.5 mb-5" style={{ background: 'linear-gradient(135deg, var(--p), var(--a))' }}>
-        {who.photo
-          ? <img src={who.photo} alt={who.name} className="w-full h-full rounded-full object-cover" style={{ border: '4px solid var(--bg)' }}/>
-          : <div className="w-full h-full rounded-full flex items-center justify-center text-5xl" style={{ background: 'var(--bg)' }}>{role === 'Chú rể' ? '🤵' : '👰'}</div>}
+        <div className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center text-5xl" style={{ background: 'var(--bg)', border: '4px solid var(--bg)' }}>
+          {role === 'Chú rể' ? '🤵' : '👰'}
+          <SafeImg src={who.photo} alt={who.name} className="absolute inset-0 w-full h-full object-cover"/>
+        </div>
       </div>
       <p className="inv-eyebrow inv-p">{role}</p>
       <h3 className={`inv-h ${script ? 'text-5xl' : 'is-serif text-3xl'} my-2`}>{who.full_name || who.name}</h3>
@@ -202,9 +278,10 @@ export function Couple({ ctx, title }: { ctx: ViewCtx; title: string }) {
   return (
     <section className="inv-section">
       <SectionTitle title={title} ornament={ornament} script={script} eyebrow="Bride & Groom"/>
-      <div className="max-w-4xl mx-auto grid sm:grid-cols-[1fr_auto_1fr] gap-10 items-center">
+      <div className="max-w-4xl mx-auto grid sm:grid-cols-[1fr_auto_1fr] gap-6 sm:gap-10 items-start">
         <Card who={c.groom} role="Chú rể"/>
-        <div className="text-center"><span className="inv-h text-6xl inv-p inv-heartbeat">&amp;</span></div>
+        {/* canh "&" theo tâm ảnh (ảnh cao 13rem trên máy tính) */}
+        <div className="text-center sm:h-52 flex items-center justify-center"><span className="inv-h text-6xl inv-p inv-heartbeat leading-none">&amp;</span></div>
         <Card who={c.bride} role="Cô dâu"/>
       </div>
     </section>
@@ -224,9 +301,14 @@ export function Story({ ctx, title }: { ctx: ViewCtx; title: string }) {
           <Reveal key={s.id} delay={80} className={`relative pl-14 sm:pl-0 mb-12 sm:grid sm:grid-cols-2 sm:gap-12 ${i % 2 ? 'sm:[direction:rtl]' : ''}`}>
             <span className="absolute left-5 sm:left-1/2 top-2 -translate-x-1/2 w-4 h-4 rounded-full ring-4" style={{ background: 'var(--p)', ['--tw-ring-color' as any]: 'var(--bg)' }}/>
             <div className="sm:[direction:ltr] mb-4 sm:mb-0">
-              {s.image && <img src={s.image} alt={s.title} loading="lazy" className="w-full aspect-[4/3] object-cover shadow-lg" style={{ borderRadius: 'var(--r)' }}/>}
+              {s.image && (
+                <div className="w-full aspect-[4/3] overflow-hidden shadow-lg" style={{ borderRadius: 'var(--r)', background: 'var(--a)' }}>
+                  <SafeImg src={s.image} alt={s.title} loading="lazy" className="w-full h-full object-cover"/>
+                </div>
+              )}
             </div>
-            <div className="sm:[direction:ltr] sm:pt-2">
+            {/* chữ luôn canh về phía đường thời gian */}
+            <div className={`sm:[direction:ltr] sm:pt-2 ${i % 2 ? 'sm:text-right' : ''}`}>
               {s.date && <p className="text-xs uppercase tracking-widest inv-p font-semibold">{fmtDay(s.date)}</p>}
               <h3 className={`inv-h ${script ? 'text-4xl' : 'is-serif text-2xl'} my-1`}>{s.title}</h3>
               <p className="text-sm inv-muted">{s.text}</p>
@@ -265,11 +347,11 @@ export function Events({ ctx, title }: { ctx: ViewCtx; title: string }) {
               {e.venue && <p className="font-semibold">{e.venue}</p>}
               {e.address && <p className="text-sm inv-muted">{e.address}</p>}
               {e.note && <p className="text-sm mt-2 italic">{e.note}</p>}
-              <div className="flex flex-wrap justify-center gap-2 mt-5">
+              <div className="grid grid-cols-2 gap-2 mt-5 max-w-xs mx-auto [&>*]:w-full [&>*]:!px-2">
                 {(e.address || e.map_url) && <a href={mapLinkUrl(where, e.map_url)} target="_blank" rel="noreferrer" className="inv-btn !py-2 !px-4 text-xs">📍 Chỉ đường</a>}
                 {e.address && <button onClick={() => setOpenMap(openMap === e.id ? null : e.id)} className="inv-btn inv-btn-ghost !py-2 !px-4 text-xs">{openMap === e.id ? 'Ẩn bản đồ' : '🗺️ Bản đồ'}</button>}
                 {e.start && <a href={googleCalendarUrl(calTitle, e.start, where, c.invite_text)} target="_blank" rel="noreferrer" className="inv-btn inv-btn-ghost !py-2 !px-4 text-xs">📅 Google Lịch</a>}
-                {e.start && <a href={icsDataUrl(calTitle, e.start, where, c.invite_text)} download={`${inv.slug}-${e.id}.ics`} className="inv-btn inv-btn-ghost !py-2 !px-4 text-xs">🔔 Lưu lịch</a>}
+                {e.start && <button onClick={() => downloadIcs(`${inv.slug}-${e.id}.ics`, icsDataUrl(calTitle, e.start, where, c.invite_text))} className="inv-btn inv-btn-ghost !py-2 !px-4 text-xs">🔔 Lưu lịch</button>}
               </div>
               {openMap === e.id && (
                 <iframe title={`Bản đồ ${e.name}`} src={mapEmbedUrl(where)} className="w-full h-56 mt-5 border-0" style={{ borderRadius: 'var(--r)' }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"/>
@@ -306,11 +388,11 @@ export function Gallery({ ctx, title }: { ctx: ViewCtx; title: string }) {
   return (
     <section className="inv-section">
       <SectionTitle title={title} ornament={ornament} script={script} eyebrow="Gallery"/>
-      <div className="max-w-5xl mx-auto columns-2 md:columns-3 gap-3 [&>*]:mb-3">
+      <div className="max-w-5xl mx-auto columns-2 md:columns-3 gap-3 [&>*]:mb-3 [&>*]:break-inside-avoid">
         {c.gallery.map((src, i) => (
           <Reveal key={src + i} delay={(i % 3) * 80}>
             <button onClick={() => setIdx(i)} className="block w-full overflow-hidden group" style={{ borderRadius: 'var(--r)' }}>
-              <img src={src} alt={`Ảnh cưới ${i + 1}`} loading="lazy" className="w-full h-auto transition-transform duration-700 group-hover:scale-105"/>
+              <SafeImg src={src} alt={`Ảnh cưới ${i + 1}`} loading="lazy" className="w-full h-auto transition-transform duration-700 group-hover:scale-105"/>
             </button>
           </Reveal>
         ))}
@@ -351,7 +433,7 @@ export function Gift({ ctx, title }: { ctx: ViewCtx; title: string }) {
             <div key={g.id} className="inv-card p-6">
               <p className="inv-eyebrow inv-p mb-1">{g.label || sideLabel(g.side)}</p>
               {g.bank && g.account_number && (
-                <img src={vietQrUrl(g.bank, g.account_number, g.account_name, `Mung cuoi ${c.groom.name} ${c.bride.name}`)} alt="Mã QR chuyển khoản"
+                <SafeImg src={vietQrUrl(g.bank, g.account_number, g.account_name, `Mung cuoi ${c.groom.name} ${c.bride.name}`)} alt="Mã QR chuyển khoản"
                   loading="lazy" className="w-52 h-52 mx-auto my-4 bg-white p-2 object-contain" style={{ borderRadius: 'var(--r)' }}/>
               )}
               <p className="font-semibold">{bankName(g.bank)}</p>

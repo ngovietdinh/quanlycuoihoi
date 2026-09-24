@@ -10,7 +10,7 @@ import { getProjects } from '@/lib/api/projects'
 import { TEMPLATES, templateById } from '@/lib/invitation/templates'
 import { fmtDay } from '@/lib/invitation/datetime'
 import { cn } from '@/lib/utils'
-import { TemplateSwatch } from '@/components/invitation/editor/TemplateSwatch'
+import { TemplatePicker } from '@/components/invitation/editor/TemplateSwatch'
 import { FontLoader } from '@/components/invitation/effects'
 import type { InvitationListItem, ProjectSummary, TemplateId } from '@/types'
 
@@ -61,9 +61,7 @@ function CreateModal({ open, onClose }: { open: boolean; onClose: () => void }) 
         </div>
         <div>
           <label className="label">Chọn mẫu thiệp</label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            {TEMPLATES.map(t => <TemplateSwatch key={t.id} id={t.id} selected={form.template === t.id} onClick={() => sf('template', t.id)}/>)}
-          </div>
+          <div className="max-h-[46vh] overflow-y-auto -mr-2 pr-2"><TemplatePicker value={form.template} onChange={id => sf('template', id)}/></div>
           <a href={`/i/demo?t=${form.template}`} target="_blank" rel="noreferrer" className="text-xs text-sakura-600 hover:underline mt-2 inline-block">👁 Xem thiệp mẫu “{templateById(form.template).name}” ↗</a>
         </div>
       </form>
@@ -156,7 +154,7 @@ function InvitationsContent() {
             <div>
               <p className="text-white/60 text-sm mb-1">💌 Thiệp cưới online</p>
               <h2 className="font-display text-3xl font-bold text-white mb-2">Gửi lời mời theo cách của riêng bạn</h2>
-              <p className="text-white/60 text-sm max-w-lg">6 mẫu thiệp, tùy biến màu sắc – font chữ – hiệu ứng, nhạc nền, album ảnh, bản đồ, xác nhận tham dự, sổ lưu bút và hộp mừng cưới QR.</p>
+              <p className="text-white/60 text-sm max-w-lg">18 mẫu thiệp, 7 bố cục, tùy biến màu sắc – font chữ – hiệu ứng, nhạc nền, album ảnh, bản đồ, xác nhận tham dự, sổ lưu bút và hộp mừng cưới QR.</p>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {[['👁', 'Lượt xem', totals.views], ['✉️', 'Phản hồi', totals.rsvps], ['💌', 'Lời chúc', totals.wishes]].map(([i, l, v]) => (

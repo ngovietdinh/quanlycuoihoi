@@ -5,6 +5,7 @@ import { Reveal, SectionTitle } from './effects'
 import type { ViewCtx } from './sections'
 import { submitRsvp, submitWish, getPublicWishes } from '@/lib/api/invitations'
 import { sb } from '@/lib/supabase/client'
+import { fmtDay } from '@/lib/invitation/datetime'
 
 // ── Phong bì mở thiệp ─────────────────────────────────────────────────────────
 export function Envelope({ ctx, onOpen }: { ctx: ViewCtx; onOpen: () => void }) {
@@ -72,7 +73,7 @@ export function MusicButton({ src, play, preview }: { src: string; play: boolean
     <>
       <audio ref={ref} src={src} loop preload="none"/>
       <button onClick={toggle} aria-label={on ? 'Tắt nhạc' : 'Bật nhạc'}
-        className={`fixed bottom-5 left-5 z-[60] w-12 h-12 rounded-full flex items-center justify-center shadow-lg`}
+        className={`fixed bottom-4 left-4 z-[60] w-11 h-11 rounded-full flex items-center justify-center shadow-lg`}
         style={{ background: 'var(--p)', color: 'var(--bg)' }}>
         {on ? <span className="inv-bars flex items-end h-3"><span/><span/><span/></span> : <span className="text-lg">♪</span>}
         {on && <span className="absolute inset-0 rounded-full inv-spin" style={{ border: '2px dashed color-mix(in srgb, var(--bg) 60%, transparent)' }}/>}
@@ -213,7 +214,7 @@ export function Wishes({ ctx, title, initial }: { ctx: ViewCtx; title: string; i
                 {w.name.trim()[0]?.toUpperCase()}
               </div>
               <div className="min-w-0">
-                <p className="font-semibold text-sm">{w.name} <span className="font-normal text-xs inv-muted">· {new Date(w.created_at).toLocaleDateString('vi-VN')}</span></p>
+                <p className="font-semibold text-sm">{w.name} <span className="font-normal text-xs inv-muted">· {fmtDay(w.created_at)}</span></p>
                 <p className="text-sm whitespace-pre-line break-words">{w.message}</p>
               </div>
             </div>
@@ -236,10 +237,17 @@ export function ShareDock({ ctx }: { ctx: ViewCtx }) {
     } catch {}
   }
   const jump = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  // Chỉ hiện sau khi cuộn qua trang bìa để không che nội dung
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    const on = () => setShow(window.scrollY > window.innerHeight * 0.6)
+    on(); window.addEventListener('scroll', on, { passive: true })
+    return () => window.removeEventListener('scroll', on)
+  }, [])
   return (
-    <div className={`fixed bottom-5 right-5 z-[60] flex flex-col gap-2`}>
-      <button onClick={() => jump('rsvp')} aria-label="Xác nhận tham dự" className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-lg" style={{ background: 'var(--bg)', color: 'var(--p)', border: '1.5px solid var(--p)' }}>✉️</button>
-      <button onClick={share} aria-label="Chia sẻ" className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-lg" style={{ background: 'var(--bg)', color: 'var(--p)', border: '1.5px solid var(--p)' }}>
+    <div className={`fixed bottom-4 right-4 z-[60] flex flex-col gap-2 transition-all duration-300 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+      <button onClick={() => jump('rsvp')} aria-label="Xác nhận tham dự" className="w-11 h-11 rounded-full shadow-lg flex items-center justify-center text-base" style={{ background: 'var(--bg)', color: 'var(--p)', border: '1.5px solid var(--p)' }}>✉️</button>
+      <button onClick={share} aria-label="Chia sẻ" className="w-11 h-11 rounded-full shadow-lg flex items-center justify-center text-lg" style={{ background: 'var(--bg)', color: 'var(--p)', border: '1.5px solid var(--p)' }}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
       </button>
     </div>

@@ -32,7 +32,8 @@ export function Reveal({ children, delay = 0, className = '', as: Tag = 'div' }:
   return <Tag ref={ref} className={`inv-reveal ${on ? 'is-in' : ''} ${className}`} style={{ transitionDelay: `${delay}ms` }}>{children}</Tag>
 }
 
-const SHAPES: Record<Exclude<EffectId, 'none' | 'sparkles'>, (c: string) => React.ReactNode> = {
+const CONFETTI = ['#ff5a5f', '#ffd166', '#06d6a0', '#118ab2', '#ef476f', '#f78c6b']
+const SHAPES: Record<Exclude<EffectId, 'none' | 'sparkles' | 'bubbles' | 'confetti'>, (c: string) => React.ReactNode> = {
   petals: c => <svg viewBox="0 0 30 30" width="100%" height="100%"><path d="M15 2C22 8 26 16 15 28 4 16 8 8 15 2Z" fill={c} opacity=".85"/></svg>,
   hearts: c => <svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4 6.4 4c2.3 0 3.8 1.3 5.6 3.3C13.8 5.3 15.3 4 17.6 4c4.1 0 6 4.4 4.4 7.7C19.5 16.4 12 21 12 21Z" fill={c} opacity=".8"/></svg>,
   leaves: c => <svg viewBox="0 0 30 30" width="100%" height="100%"><path d="M4 26C4 12 14 4 27 3c-1 13-9 23-23 23Z" fill={c} opacity=".75"/><path d="M5 25 22 8" stroke="white" strokeOpacity=".5" strokeWidth="1"/></svg>,
@@ -53,7 +54,23 @@ export function FallingEffect({ effect, color, contained = false, count = 18 }: 
   const pos = contained ? 'absolute' : 'fixed'
   return (
     <div aria-hidden className="pointer-events-none inset-0 overflow-hidden z-[5]" style={{ position: pos }}>
-      {effect === 'sparkles'
+      {effect === 'bubbles'
+        ? items.map((it, i) => (
+            <span key={i} className="inv-rise rounded-full" style={{
+              left: `${it.left}%`, width: it.size * 1.2, height: it.size * 1.2, animationDuration: `${it.dur * 1.2}s`, animationDelay: `${it.delay}s`,
+              ['--drift' as any]: `${it.drift / 2}px`,
+              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), color-mix(in srgb, ${color} 25%, transparent) 60%)`,
+              border: `1px solid color-mix(in srgb, ${color} 35%, transparent)`,
+            }}/>
+          ))
+      : effect === 'confetti'
+        ? items.map((it, i) => (
+            <span key={i} className="inv-fall" style={{
+              left: `${it.left}%`, width: it.size * .45, height: it.size * .8, animationDuration: `${it.dur * .8}s`, animationDelay: `${it.delay}s`,
+              ['--drift' as any]: `${it.drift}px`, ['--spin' as any]: `${it.spin * 2}deg`, background: CONFETTI[i % CONFETTI.length], borderRadius: 2,
+            }}/>
+          ))
+      : effect === 'sparkles'
         ? items.map((it, i) => (
             <span key={i} className="inv-twinkle" style={{ left: `${it.left}%`, top: `${it.top}%`, width: it.size * .7, height: it.size * .7, animationDelay: `${it.delay / 4}s`, animationDuration: `${2 + (i % 4)}s` }}>
               <svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z" fill={color} opacity=".75"/></svg>
@@ -98,6 +115,34 @@ export function Ornament({ kind, className = '' }: { kind: string; className?: s
       <span className="h-px w-16" style={{ background: `linear-gradient(-90deg,transparent,${c})` }}/>
     </div>
   )
+  if (kind === 'lotus') return (
+    <svg viewBox="0 0 200 40" className={`mx-auto h-9 ${className}`} fill="none" stroke={c} strokeWidth="1.2">
+      <path d="M10 30h55M135 30h55" opacity=".6"/>
+      <path d="M100 32c-6-6-6-18 0-26 6 8 6 20 0 26z" fill={c} fillOpacity=".25"/>
+      <path d="M100 32c-10-2-18-10-18-20 8 2 16 10 18 20zM100 32c10-2 18-10 18-20-8 2-16 10-18 20z" fill={c} fillOpacity=".15"/>
+      <path d="M100 32c-14 2-26-4-30-12 10-2 22 2 30 12zM100 32c14 2 26-4 30-12-10-2-22 2-30 12z"/>
+    </svg>
+  )
+  if (kind === 'deco') return (
+    <svg viewBox="0 0 200 36" className={`mx-auto h-8 ${className}`} fill="none" stroke={c} strokeWidth="1">
+      <path d="M0 18h70M130 18h70M0 22h60M140 22h60"/>
+      <path d="M100 4l14 14-14 14-14-14z"/><path d="M100 10l8 8-8 8-8-8z" fill={c} fillOpacity=".3"/>
+      <path d="M72 18l8-8M72 18l8 8M128 18l-8-8M128 18l-8 8"/>
+    </svg>
+  )
+  if (kind === 'wave') return (
+    <svg viewBox="0 0 200 24" className={`mx-auto h-6 ${className}`} fill="none" stroke={c} strokeWidth="1.3">
+      <path d="M20 12c10-8 20-8 30 0s20 8 30 0 20-8 30 0 20 8 30 0 20-8 30 0"/>
+      <path d="M40 18c10-6 20-6 30 0s20 6 30 0 20-6 30 0 20 6 30 0" opacity=".45"/>
+    </svg>
+  )
+  if (kind === 'heart') return (
+    <div className={`flex items-center justify-center gap-3 ${className}`} style={{ color: c }}>
+      <span className="h-px w-16" style={{ background: `linear-gradient(90deg,transparent,${c})` }}/>
+      <svg viewBox="0 0 24 24" className="w-5 h-5 inv-heartbeat"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4 6.4 4c2.3 0 3.8 1.3 5.6 3.3C13.8 5.3 15.3 4 17.6 4c4.1 0 6 4.4 4.4 7.7C19.5 16.4 12 21 12 21Z"/></svg>
+      <span className="h-px w-16" style={{ background: `linear-gradient(-90deg,transparent,${c})` }}/>
+    </div>
+  )
   if (kind === 'geo') return (
     <div className={`flex items-center justify-center gap-2 ${className}`}>
       <span className="h-px w-20" style={{ background: c }}/>
@@ -116,8 +161,22 @@ export function SectionTitle({ eyebrow, title, ornament, script }: { eyebrow?: s
   return (
     <Reveal className="text-center mb-10">
       {eyebrow && <p className="inv-eyebrow mb-2 inv-p">{eyebrow}</p>}
-      <h2 className={`inv-h ${script ? 'text-5xl sm:text-6xl' : 'is-serif text-3xl sm:text-4xl'} inv-p`}>{title}</h2>
+      <h2 className={`inv-h text-balance ${script ? 'text-[2.75rem] sm:text-6xl' : 'is-serif text-3xl sm:text-4xl'} inv-p`}>{title}</h2>
       <Ornament kind={ornament} className="mt-4"/>
     </Reveal>
   )
+}
+
+/** Ảnh tự ẩn khi lỗi tải (link hỏng), tránh hiện biểu tượng ảnh vỡ + chữ alt */
+export function SafeImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const ref = useRef<HTMLImageElement>(null)
+  const [broken, setBroken] = useState(false)
+  useEffect(() => {
+    // Lỗi có thể xảy ra trước khi React hydrate → kiểm tra lại trạng thái ảnh
+    const el = ref.current
+    setBroken(!!el && el.complete && el.naturalWidth === 0)
+  }, [props.src])
+  if (broken || !props.src) return null
+  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+  return <img ref={ref} {...props} onError={() => setBroken(true)}/>
 }

@@ -1,11 +1,11 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import type { Invitation, InvitationContent, InvitationTheme, Person, Side, TemplateId, ProjectSummary } from '@/types'
-import { TEMPLATES, HEADING_FONTS, BODY_FONTS, EFFECTS, LAYOUTS, SECTION_LABELS, BANKS, templateById, uid, slugify, googleFontsHref } from '@/lib/invitation/templates'
+import { HEADING_FONTS, BODY_FONTS, EFFECTS, LAYOUTS, PATTERNS, patternBg, SECTION_LABELS, BANKS, templateById, uid, slugify, googleFontsHref } from '@/lib/invitation/templates'
 import { getProjects } from '@/lib/api/projects'
 import { uploadMedia } from '@/lib/api/invitations'
 import { Box, Field, Text, Toggle, ColorInput, ImageInput, ItemTools, move, toLocalInput, fromLocalInput } from './fields'
-import { TemplateSwatch } from './TemplateSwatch'
+import { TemplatePicker } from './TemplateSwatch'
 import { cn } from '@/lib/utils'
 
 export interface PanelProps {
@@ -247,9 +247,7 @@ export function DesignPanel({ inv, setTheme, setContent }: PanelProps) {
   return (
     <div className="space-y-4">
       <Box title="🎨 Mẫu thiệp" desc="Đổi mẫu sẽ áp dụng bộ màu, font và bố cục của mẫu đó">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {TEMPLATES.map(tp => <TemplateSwatch key={tp.id} id={tp.id} selected={t.template === tp.id} onClick={() => applyTemplate(tp.id)}/>)}
-        </div>
+        <TemplatePicker value={t.template} onChange={applyTemplate}/>
       </Box>
 
       <Box title="🌈 Màu sắc">
@@ -290,7 +288,7 @@ export function DesignPanel({ inv, setTheme, setContent }: PanelProps) {
 
       <Box title="🧩 Bố cục & hiệu ứng">
         <Field label="Bố cục trang bìa">
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
             {LAYOUTS.map(l => (
               <button key={l.id} onClick={() => setTheme({ layout: l.id })}
                 className={cn('p-2.5 rounded-xl border text-left', t.layout === l.id ? 'border-sakura-500 bg-sakura-50' : 'border-ink-100 bg-white hover:border-ink-300')}>
@@ -306,6 +304,17 @@ export function DesignPanel({ inv, setTheme, setContent }: PanelProps) {
               <button key={e.id} onClick={() => setTheme({ effect: e.id })}
                 className={cn('px-3 py-1.5 rounded-full border text-xs font-medium', t.effect === e.id ? 'border-sakura-500 bg-sakura-50 text-sakura-700' : 'border-ink-200 bg-white text-ink-600')}>
                 {e.icon} {e.label}
+              </button>
+            ))}
+          </div>
+        </Field>
+        <Field label="Hoa văn nền">
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+            {PATTERNS.map(p => (
+              <button key={p.id} onClick={() => setTheme({ pattern: p.id })} title={p.label}
+                className={cn('rounded-xl border overflow-hidden text-[10px] font-medium', t.pattern === p.id ? 'border-sakura-500 ring-2 ring-sakura-200' : 'border-ink-100 hover:border-ink-300')}>
+                <span className="block h-10" style={{ background: t.background, backgroundImage: patternBg(p.id, t.primary) }}/>
+                <span className="block py-1 bg-white text-ink-600">{p.label}</span>
               </button>
             ))}
           </div>

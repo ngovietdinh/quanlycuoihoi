@@ -5,7 +5,9 @@
 ## Tính năng
 
 ### 💌 Thiệp cưới online (`/i/<đường-dẫn>`)
-- **6 mẫu thiệp**: Cổ điển, Hoa hồng, Tối giản, Song Hỷ, Khu vườn, Đêm sao — xem thử tại `/i/demo?t=floral`
+- **18 mẫu thiệp** trong 5 nhóm (Truyền thống, Lãng mạn, Hiện đại, Sang trọng, Thiên nhiên) — xem thử tại `/i/demo?t=<mã>`, ví dụ `lotus`, `indochine`, `royal`, `sakura`, `ocean`
+- **7 bố cục trang bìa**: toàn màn hình, khung vòm, chia đôi, tối giản, khung ảnh, vòng tròn chữ chạy, polaroid
+- **7 hoa văn nền**, 8 hiệu ứng (cánh hoa, tim, lá, tuyết, lấp lánh, pháo giấy, bong bóng)
 - **Hiệu ứng mở phong bì** có con dấu, **cánh hoa / tim / lá / tuyết / lấp lánh** rơi, ảnh bìa zoom chậm, hiện dần khi cuộn
 - **Nhạc nền** phát sau khi mở thiệp
 - **Đếm ngược**, lịch tháng khoanh ngày cưới, **ngày âm lịch & năm can chi** tự động
