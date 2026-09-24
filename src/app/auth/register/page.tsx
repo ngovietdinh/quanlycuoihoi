@@ -1,14 +1,13 @@
 'use client'
 import { useState, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { sb } from '@/lib/supabase/client'
 
 export default function RegisterPage() {
-  const router = useRouter()
   const [form, setForm] = useState({ name:'', email:'', pw:'', pw2:'' })
   const [loading, setLoading] = useState(false)
   const [err, setErr]         = useState('')
+  const [done, setDone]       = useState(false)
   const sf = (k:string, v:string) => setForm(f=>({...f,[k]:v}))
 
   async function submit(e: FormEvent) {
@@ -16,9 +15,14 @@ export default function RegisterPage() {
     if (form.pw !== form.pw2) { setErr('Mật khẩu không khớp'); return }
     if (form.pw.length < 6)   { setErr('Mật khẩu phải có ít nhất 6 ký tự'); return }
     setLoading(true); setErr('')
-    const { error } = await sb().auth.signUp({ email: form.email, password: form.pw, options: { data: { full_name: form.name } } })
+    const { data, error } = await sb().auth.signUp({ email: form.email, password: form.pw, options: {
+      data: { full_name: form.name },
+      emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+    } })
     if (error) { setErr(error.message); setLoading(false); return }
-    router.push('/dashboard'); router.refresh()
+    // Dự án Supabase bật xác thực email → chưa có phiên đăng nhập
+    if (!data.session) { setDone(true); setLoading(false); return }
+    window.location.href = '/dashboard'
   }
 
   return (
@@ -29,13 +33,18 @@ export default function RegisterPage() {
       <div className="w-full max-w-md relative animate-fadeUp">
         <div className="text-center mb-8">
           <div className="inline-flex w-20 h-20 rounded-3xl items-center justify-center text-4xl mb-4 shadow-glow-sakura animate-float"
-            style={{background:'linear-gradient(135deg,#ff6b96,#ff3d78)'}}>🌸</div>
-          <h1 className="font-display text-4xl font-bold text-white mb-2">Quán lý sự kiện</h1>
+            style={{background:'linear-gradient(135deg,#ff6b96,#ff3d78)'}}>💍</div>
+          <h1 className="font-display text-4xl font-bold text-white mb-2">Hỷ Sự</h1>
           <p className="text-white/50 text-sm">Tạo tài khoản để bắt đầu</p>
         </div>
 
         <div className="rounded-3xl p-8 border border-white/10" style={{background:'rgba(255,253,249,0.96)',backdropFilter:'blur(20px)'}}>
           <h2 className="font-display text-2xl font-semibold text-ink-900 mb-6">Đăng ký tài khoản</h2>
+          {done && (
+            <div className="mb-5 p-4 rounded-xl bg-jade-50 border border-jade-200 text-sm text-jade-700">
+              ✉️ Đăng ký thành công! Vui lòng mở email <b>{form.email}</b> và bấm vào liên kết xác nhận để kích hoạt tài khoản.
+            </div>
+          )}
 
           {err && (
             <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">

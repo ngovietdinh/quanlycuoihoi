@@ -12,6 +12,8 @@ import { updateProject } from '@/lib/api/projects'
 import { vnd, fmtDate, pct, deadlineInfo, daysTo, STATUS_LABELS, PRI_LABELS, EXPENSE_CATEGORIES } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import type { Task, TaskStatus, Expense, Project } from '@/types'
+import { MembersPanel, useProjectRole, ROLE_INFO } from '@/components/project/MembersPanel'
+import { useAuth } from '@/hooks/useAuth'
 
 // ── Tag system ────────────────────────────────────────────────────────────────
 const TASK_TAGS = ['Bắt buộc','Tùy chọn','Đã đặt cọc','Cần thanh toán','Ưu tiên cao','Đang chờ','Đã xong']
@@ -700,13 +702,15 @@ function BudgetTab({ project, tasks, expenses, totalSpent, remaining, budgetPct,
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-type Tab = 'overview'|'kanban'|'budget'
+type Tab = 'overview'|'kanban'|'budget'|'members'
 
 function ProjectContent() {
   const params    = useParams()
   const projectId = params.id as string
   const { success, error: toastErr } = useToast()
   const { project, tasks, expenses, loading, error, refetch, totalSpent, remaining, budgetPct } = useProject(projectId)
+  const { user } = useAuth()
+  const { members, role, canEdit, canManage, reload: reloadMembers } = useProjectRole(projectId, user?.id)
 
   const [tab, setTab]               = useState<Tab>('overview')
   const [showTaskModal, setShowTaskModal]   = useState(false)
@@ -774,7 +778,7 @@ function ProjectContent() {
   )
 
   const days = daysTo(project.event_date)
-  const TABS = [{id:'overview' as Tab,label:'Tổng quan'},{id:'kanban' as Tab,label:'Kanban'},{id:'budget' as Tab,label:'Ngân sách'}]
+  const TABS = [{id:'overview' as Tab,label:'Tổng quan'},{id:'kanban' as Tab,label:'Kanban'},{id:'budget' as Tab,label:'Ngân sách'},{id:'members' as Tab,label:`Thành viên${members.length ? ` (${members.length})` : ''}`}]
 
   return (
     <>
@@ -785,6 +789,8 @@ function ProjectContent() {
           : undefined}
         right={
           <div className="flex items-center gap-2">
+            <span className={cn('badge text-[10px] hidden sm:inline-flex', ROLE_INFO[role].cls)}>{ROLE_INFO[role].label}</span>
+            {canEdit && <>
             <button onClick={()=>setShowEditProject(true)}
               className="btn btn-ghost btn-sm btn-icon" title="Chỉnh sửa dự án">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -795,6 +801,7 @@ function ProjectContent() {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Thêm đầu mục
             </button>
+            </>}
           </div>
         }
       />
@@ -819,6 +826,12 @@ function ProjectContent() {
 
       {/* Content */}
       <div className={cn('p-4 sm:p-6 max-w-7xl mx-auto w-full', tab==='kanban'&&'max-w-none')}>
+        {!canEdit && (
+          <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm text-blue-700">👁 Bạn đang xem dự án với quyền <b>chỉ xem</b>. Liên hệ chủ dự án để được cấp quyền biên tập.</div>
+        )}
+        {tab==='members' && (
+          <MembersPanel projectId={projectId} members={members} canManage={canManage} reload={reloadMembers} currentUserId={user?.id}/>
+        )}
         {tab==='overview' && (
           <OverviewTab project={project} tasks={tasks} totalSpent={totalSpent} remaining={remaining} budgetPct={budgetPct}/>
         )}

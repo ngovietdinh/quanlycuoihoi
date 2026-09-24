@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💍 Hỷ Sự — Quản lý lễ cưới & Thiệp cưới online
 
-## Getting Started
+Ứng dụng Next.js 14 + Supabase để lập kế hoạch đám cưới, quản lý ngân sách và tạo **thiệp cưới online** hiện đại.
 
-First, run the development server:
+## Tính năng
+
+### 💌 Thiệp cưới online (`/i/<đường-dẫn>`)
+- **6 mẫu thiệp**: Cổ điển, Hoa hồng, Tối giản, Song Hỷ, Khu vườn, Đêm sao — xem thử tại `/i/demo?t=floral`
+- **Hiệu ứng mở phong bì** có con dấu, **cánh hoa / tim / lá / tuyết / lấp lánh** rơi, ảnh bìa zoom chậm, hiện dần khi cuộn
+- **Nhạc nền** phát sau khi mở thiệp
+- **Đếm ngược**, lịch tháng khoanh ngày cưới, **ngày âm lịch & năm can chi** tự động
+- Giới thiệu cô dâu chú rể, **chuyện tình yêu** dạng timeline, **album ảnh** có lightbox (vuốt/phím mũi tên)
+- **Sự kiện**: bản đồ Google Maps, chỉ đường, thêm vào Google Calendar / tải file `.ics`, dress code
+- **Xác nhận tham dự (RSVP)** và **sổ lưu bút** cập nhật realtime
+- **Hộp mừng cưới** với mã **VietQR** tự động cho 20 ngân hàng
+- **Khách mời cá nhân hóa**: `/i/<slug>?g=<mã>` hiển thị “Kính gửi Anh Nam”, tự điền form RSVP
+- Chia sẻ qua Web Share / Facebook / Zalo, ảnh xem trước (Open Graph)
+
+### 🎨 Trình thiết kế thiệp (`/invitations/<id>`)
+- Xem trước **trực tiếp** trong khung điện thoại / máy tính, tự động lưu (Ctrl+S để lưu ngay)
+- Tùy chỉnh màu sắc (8 bảng màu có sẵn), font tiếng Việt, bố cục trang bìa, hiệu ứng, bo góc, độ tối ảnh bìa
+- Bật/tắt, **sắp xếp thứ tự** và đổi tiêu đề từng phần của thiệp
+- Tải ảnh / nhạc lên Supabase Storage hoặc dán link
+- **Quản lý khách mời**: thêm từng người hoặc nhập nhanh hàng loạt, sao chép lời mời cá nhân, gửi SMS, đánh dấu đã gửi, xuất Excel
+- **Thống kê phản hồi** realtime (sẽ đến / chưa chắc / không đến, nhà trai / nhà gái), ẩn/xóa lời chúc, xuất Excel
+- Phát hành / bản nháp, đổi đường dẫn, mã QR, nhân bản thiệp
+
+### 👤 Tài khoản & phân quyền
+- Đăng ký, đăng nhập, **quên mật khẩu**, đổi mật khẩu, hồ sơ cá nhân có ảnh đại diện (`/account`)
+- **Vai trò hệ thống**: `user` / `admin` — tài khoản đăng ký đầu tiên tự động là admin
+- **Cộng tác dự án**: mời thành viên theo email với quyền **Biên tập** hoặc **Chỉ xem**
+- Toàn bộ quyền được bảo vệ bằng **Row Level Security** trong Postgres (không chỉ ẩn nút trên giao diện)
+
+### 🛡️ Trang quản trị (`/admin`, chỉ admin)
+- Thống kê toàn hệ thống: người dùng, dự án, thiệp, lượt xem, phản hồi, lời chúc
+- Quản lý người dùng: cấp/gỡ quyền admin, **khóa / mở khóa** tài khoản
+- Quản lý thiệp (gỡ/phát hành, xóa) và dự án của mọi người dùng
+
+### 📋 Quản lý kế hoạch cưới (có sẵn)
+Dự án, Kanban đầu mục, ngân sách & chi tiêu theo danh mục, realtime.
+
+## Cài đặt
 
 ```bash
+npm install
+cp .env.local.example .env.local   # điền NEXT_PUBLIC_SUPABASE_URL và NEXT_PUBLIC_SUPABASE_ANON_KEY
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Cơ sở dữ liệu (Supabase → SQL Editor)
+1. Dự án mới: chạy `supabase/schema.sql`, sau đó `supabase/migrations/002_invitations_roles.sql`
+2. Dự án đang chạy bản cũ: chỉ cần chạy `supabase/migrations/002_invitations_roles.sql` (chạy lại nhiều lần vẫn an toàn)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Migration 002 tạo bucket Storage `invitation-media` và bật realtime cho `rsvps`, `wishes`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Cấp quyền admin cho tài khoản có sẵn** (hệ thống cũ chưa có admin):
+```sql
+UPDATE profiles SET role = 'admin' WHERE email = 'ban@example.com';
+```
 
-## Learn More
+**Xác thực email / quên mật khẩu**: trong Supabase → Authentication → URL Configuration, thêm
+`https://<domain-của-bạn>/auth/callback` vào *Redirect URLs*.
 
-To learn more about Next.js, take a look at the following resources:
+## Cấu trúc chính
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/app/i/[slug]          Trang thiệp công khai (SSR + Open Graph)
+src/app/invitations       Danh sách & trình thiết kế thiệp
+src/app/preview           Khung xem trước (iframe) của trình thiết kế
+src/app/account           Tài khoản cá nhân
+src/app/admin             Trang quản trị
+src/components/invitation InvitationView + các phần của thiệp + trình thiết kế
+src/lib/invitation        Mẫu thiệp, ngân hàng, âm lịch, lịch/bản đồ
+supabase/migrations       Migration phân quyền & thiệp cưới
+```

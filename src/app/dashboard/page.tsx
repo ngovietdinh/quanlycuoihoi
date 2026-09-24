@@ -342,6 +342,16 @@ function DashboardContent() {
           </div>
         )}
 
+        {/* Thiệp cưới online */}
+        <Link href="/invitations" className="card-hover p-4 sm:p-5 flex items-center gap-4 group">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 shadow-glow-sakura" style={{background:'linear-gradient(135deg,#ff6b96,#ff3d78)'}}>💌</div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-ink-900">Thiệp cưới online</p>
+            <p className="text-xs text-ink-500">Thiết kế thiệp, gửi link cá nhân hóa cho khách mời và theo dõi xác nhận tham dự</p>
+          </div>
+          <span className="text-sakura-500 font-semibold text-sm group-hover:translate-x-1 transition">Mở →</span>
+        </Link>
+
         {/* Project grid */}
         <div>
           <div className="flex items-center justify-between mb-4">
