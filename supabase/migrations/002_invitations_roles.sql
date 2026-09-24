@@ -92,6 +92,10 @@ CREATE TABLE IF NOT EXISTS project_members (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   PRIMARY KEY (project_id, user_id)
 );
+-- Bảng có thể đã tồn tại từ script cũ với cấu trúc khác → bổ sung cột còn thiếu
+ALTER TABLE project_members ADD COLUMN IF NOT EXISTS role       TEXT NOT NULL DEFAULT 'viewer';
+ALTER TABLE project_members ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+CREATE UNIQUE INDEX IF NOT EXISTS project_members_project_user_key ON project_members(project_id, user_id);
 CREATE INDEX IF NOT EXISTS project_members_user_idx ON project_members(user_id);
 ALTER TABLE project_members ENABLE ROW LEVEL SECURITY;
 
@@ -144,7 +148,7 @@ CREATE POLICY members_leave  ON project_members FOR DELETE USING (user_id = auth
 
 -- Thêm thành viên theo email (chỉ chủ dự án / admin)
 CREATE OR REPLACE FUNCTION add_project_member(p_project_id UUID, p_email TEXT, p_role member_role DEFAULT 'viewer')
-RETURNS TABLE(user_id UUID, full_name TEXT, email TEXT, role member_role)
+RETURNS TABLE(user_id UUID, full_name TEXT, email TEXT, role TEXT)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 #variable_conflict use_column
 DECLARE target profiles%ROWTYPE;
@@ -157,9 +161,9 @@ BEGIN
   IF EXISTS (SELECT 1 FROM projects WHERE id = p_project_id AND projects.user_id = target.id) THEN
     RAISE EXCEPTION 'Người này là chủ dự án';
   END IF;
-  INSERT INTO project_members(project_id, user_id, role) VALUES (p_project_id, target.id, p_role)
-  ON CONFLICT ON CONSTRAINT project_members_pkey DO UPDATE SET role = EXCLUDED.role;
-  RETURN QUERY SELECT target.id, target.full_name, target.email, p_role;
+  INSERT INTO project_members(project_id, user_id, role) VALUES (p_project_id, target.id, p_role::text)
+  ON CONFLICT (project_id, user_id) DO UPDATE SET role = EXCLUDED.role;
+  RETURN QUERY SELECT target.id, target.full_name, target.email, p_role::text;
 END; $$;
 
 -- Danh sách thành viên kèm tên / email (profiles bị RLS chặn giữa các user)
@@ -193,6 +197,15 @@ CREATE TABLE IF NOT EXISTS invitations (
   created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS project_id   UUID REFERENCES projects(id) ON DELETE SET NULL;
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS title        TEXT NOT NULL DEFAULT '';
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS event_date   TIMESTAMPTZ;
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS content      JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS theme        JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS view_count   INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE invitations ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS invitations_user_idx ON invitations(user_id);
 DROP TRIGGER IF EXISTS t_inv ON invitations;
 CREATE TRIGGER t_inv BEFORE UPDATE ON invitations FOR EACH ROW EXECUTE FUNCTION set_updated_at();
@@ -212,6 +225,16 @@ CREATE TABLE IF NOT EXISTS guests (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (invitation_id, code)
 );
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS salutation    TEXT;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS phone         TEXT;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS side          TEXT NOT NULL DEFAULT 'both';
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS group_name    TEXT;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS invited_count INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS code          TEXT NOT NULL DEFAULT substr(md5(random()::text || clock_timestamp()::text), 1, 8);
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS is_sent       BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS note          TEXT;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW();
+CREATE UNIQUE INDEX IF NOT EXISTS guests_inv_code_key ON guests(invitation_id, code);
 CREATE INDEX IF NOT EXISTS guests_inv_idx ON guests(invitation_id);
 
 CREATE TABLE IF NOT EXISTS rsvps (
@@ -226,6 +249,13 @@ CREATE TABLE IF NOT EXISTS rsvps (
   message       TEXT,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS guest_id    UUID REFERENCES guests(id) ON DELETE SET NULL;
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS phone       TEXT;
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS attending   TEXT NOT NULL DEFAULT 'yes';
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS guest_count INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS side        TEXT;
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS message     TEXT;
+ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS rsvps_inv_idx ON rsvps(invitation_id);
 
 CREATE TABLE IF NOT EXISTS wishes (
@@ -236,6 +266,8 @@ CREATE TABLE IF NOT EXISTS wishes (
   is_hidden     BOOLEAN NOT NULL DEFAULT FALSE,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE wishes ADD COLUMN IF NOT EXISTS is_hidden  BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE wishes ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS wishes_inv_idx ON wishes(invitation_id, created_at DESC);
 
 ALTER TABLE invitations ENABLE ROW LEVEL SECURITY;
@@ -360,14 +392,14 @@ BEGIN
 END; $$;
 
 CREATE OR REPLACE FUNCTION admin_list_users()
-RETURNS TABLE(id UUID, full_name TEXT, email TEXT, phone TEXT, avatar_url TEXT, role app_role, is_active BOOLEAN,
+RETURNS TABLE(id UUID, full_name TEXT, email TEXT, phone TEXT, avatar_url TEXT, role TEXT, is_active BOOLEAN,
               created_at TIMESTAMPTZ, last_seen_at TIMESTAMPTZ, project_count BIGINT, invitation_count BIGINT)
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = public AS $$
 #variable_conflict use_column
 BEGIN
   IF NOT is_admin() THEN RAISE EXCEPTION 'Chỉ quản trị viên'; END IF;
   RETURN QUERY
-  SELECT p.id, p.full_name, p.email, p.phone, p.avatar_url, p.role, p.is_active, p.created_at, p.last_seen_at,
+  SELECT p.id, p.full_name, p.email, p.phone, p.avatar_url, p.role::text, p.is_active, p.created_at, p.last_seen_at,
     (SELECT count(*) FROM projects pr WHERE pr.user_id = p.id),
     (SELECT count(*) FROM invitations i WHERE i.user_id = p.id)
   FROM profiles p ORDER BY p.created_at DESC;
