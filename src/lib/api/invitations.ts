@@ -2,7 +2,13 @@ import { sb } from '@/lib/supabase/client'
 import { normalizeInvitation, defaultContent, defaultTheme, makeSlug } from '@/lib/invitation/templates'
 import type { Invitation, InvitationListItem, Guest, Rsvp, Wish, ApiResult, TemplateId, Side } from '@/types'
 
-const fail = (e: any) => ({ data: null, error: e?.message ?? String(e) })
+const fail = (e: any) => {
+  const msg: string = e?.message ?? String(e)
+  // Chưa chạy migration 002 → hướng dẫn rõ ràng thay vì lỗi kỹ thuật
+  if (/schema cache|does not exist|Could not find the (table|function)/i.test(msg))
+    return { data: null, error: 'Cơ sở dữ liệu chưa được nâng cấp: hãy chạy file supabase/migrations/002_invitations_roles.sql trong Supabase → SQL Editor, rồi tải lại trang.' }
+  return { data: null, error: msg }
+}
 
 // ── Thiệp ─────────────────────────────────────────────────────────────────────
 export async function getMyInvitations(): Promise<ApiResult<InvitationListItem[]>> {

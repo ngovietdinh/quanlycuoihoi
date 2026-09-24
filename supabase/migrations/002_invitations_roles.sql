@@ -12,6 +12,24 @@ DO $$ BEGIN
   CREATE TYPE member_role AS ENUM ('editor','viewer');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- Xóa các hàm cùng tên đã có từ phiên bản / script cũ (có thể khác tên tham số
+-- hoặc kiểu trả về, khiến CREATE OR REPLACE báo lỗi 42P13). Các policy phụ thuộc
+-- bị xóa theo (CASCADE) và được tạo lại đầy đủ ở phía dưới.
+DO $$
+DECLARE r RECORD;
+BEGIN
+  FOR r IN
+    SELECT p.oid::regprocedure AS sig FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public' AND p.proname IN (
+      'is_admin','project_role','can_access_project','can_edit_project','add_project_member','list_project_members',
+      'owns_invitation','invitation_is_public','get_invitation_guest','increment_invitation_view',
+      'submit_rsvp','submit_wish','admin_stats','admin_list_users')
+  LOOP
+    RAISE NOTICE 'Xóa hàm cũ %', r.sig;
+    EXECUTE 'DROP FUNCTION ' || r.sig || ' CASCADE';
+  END LOOP;
+END $$;
+
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS email      TEXT;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS role       app_role NOT NULL DEFAULT 'user';
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_active  BOOLEAN  NOT NULL DEFAULT TRUE;
@@ -376,3 +394,6 @@ EXCEPTION WHEN others THEN NULL; END $$;
 DO $$ BEGIN
   ALTER PUBLICATION supabase_realtime ADD TABLE wishes;
 EXCEPTION WHEN others THEN NULL; END $$;
+
+-- ── 7. Yêu cầu Supabase API (PostgREST) nạp lại schema ────────
+NOTIFY pgrst, 'reload schema';
