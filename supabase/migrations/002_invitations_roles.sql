@@ -4,13 +4,24 @@
 -- ============================================================
 
 -- ── 1. Vai trò người dùng ──────────────────────────────────────
-DO $$ BEGIN
-  CREATE TYPE app_role AS ENUM ('user','admin');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+-- Vai trò lưu dạng TEXT (không dùng enum) để không xung đột với kiểu dữ liệu
+-- cùng tên có thể đã tồn tại từ script cũ.
 
-DO $$ BEGIN
-  CREATE TYPE member_role AS ENUM ('editor','viewer');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+-- Xóa TOÀN BỘ policy cũ trên các bảng do migration này quản lý. Policy trong
+-- Postgres cộng dồn quyền, nên policy cũ còn sót có thể mở rộng quyền truy cập
+-- ngoài ý muốn; bộ policy đầy đủ được tạo lại ở phía dưới.
+DO $$
+DECLARE r RECORD;
+BEGIN
+  FOR r IN
+    SELECT schemaname, tablename, policyname FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename IN ('profiles','projects','tasks','expenses','project_members','invitations','guests','rsvps','wishes')
+  LOOP
+    RAISE NOTICE 'Xóa policy cũ "%" trên %', r.policyname, r.tablename;
+    EXECUTE format('DROP POLICY %I ON %I.%I', r.policyname, r.schemaname, r.tablename);
+  END LOOP;
+END $$;
 
 -- Xóa các hàm cùng tên đã có từ phiên bản / script cũ (có thể khác tên tham số
 -- hoặc kiểu trả về, khiến CREATE OR REPLACE báo lỗi 42P13). Các policy phụ thuộc
@@ -31,7 +42,14 @@ BEGIN
 END $$;
 
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS email      TEXT;
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS role       app_role NOT NULL DEFAULT 'user';
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS role       TEXT NOT NULL DEFAULT 'user';
+-- Bản migration trước dùng enum app_role → chuẩn hóa về TEXT
+ALTER TABLE profiles ALTER COLUMN role DROP DEFAULT;
+ALTER TABLE profiles ALTER COLUMN role TYPE TEXT USING role::text;
+ALTER TABLE profiles ALTER COLUMN role SET DEFAULT 'user';
+UPDATE profiles SET role = 'user' WHERE role IS NULL OR role NOT IN ('user','admin');
+ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_role_check;
+ALTER TABLE profiles ADD CONSTRAINT profiles_role_check CHECK (role IN ('user','admin'));
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_active  BOOLEAN  NOT NULL DEFAULT TRUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
 
@@ -54,7 +72,7 @@ BEGIN
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
     NEW.email,
-    CASE WHEN EXISTS (SELECT 1 FROM profiles WHERE role = 'admin') THEN 'user'::app_role ELSE 'admin'::app_role END
+    CASE WHEN EXISTS (SELECT 1 FROM profiles WHERE role = 'admin') THEN 'user' ELSE 'admin' END
   );
   RETURN NEW;
 END; $$;
@@ -99,6 +117,8 @@ ALTER TABLE project_members ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT 
 ALTER TABLE project_members ALTER COLUMN role DROP DEFAULT;
 ALTER TABLE project_members ALTER COLUMN role TYPE TEXT USING role::text;
 ALTER TABLE project_members ALTER COLUMN role SET DEFAULT 'viewer';
+DELETE FROM project_members a USING project_members b
+  WHERE a.ctid < b.ctid AND a.project_id = b.project_id AND a.user_id = b.user_id;
 CREATE UNIQUE INDEX IF NOT EXISTS project_members_project_user_key ON project_members(project_id, user_id);
 CREATE INDEX IF NOT EXISTS project_members_user_idx ON project_members(user_id);
 ALTER TABLE project_members ENABLE ROW LEVEL SECURITY;
@@ -151,7 +171,7 @@ CREATE POLICY members_manage ON project_members FOR ALL USING (project_role(proj
 CREATE POLICY members_leave  ON project_members FOR DELETE USING (user_id = auth.uid());
 
 -- Thêm thành viên theo email (chỉ chủ dự án / admin)
-CREATE OR REPLACE FUNCTION add_project_member(p_project_id UUID, p_email TEXT, p_role member_role DEFAULT 'viewer')
+CREATE OR REPLACE FUNCTION add_project_member(p_project_id UUID, p_email TEXT, p_role TEXT DEFAULT 'viewer')
 RETURNS TABLE(user_id UUID, full_name TEXT, email TEXT, role TEXT)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 #variable_conflict use_column
@@ -160,6 +180,7 @@ BEGIN
   IF project_role(p_project_id) NOT IN ('owner','admin') THEN
     RAISE EXCEPTION 'Bạn không có quyền quản lý thành viên dự án này';
   END IF;
+  IF p_role NOT IN ('editor','viewer') THEN RAISE EXCEPTION 'Vai trò không hợp lệ: %', p_role; END IF;
   SELECT * INTO target FROM profiles WHERE lower(profiles.email) = lower(trim(p_email));
   IF target.id IS NULL THEN RAISE EXCEPTION 'Không tìm thấy tài khoản với email %', p_email; END IF;
   IF EXISTS (SELECT 1 FROM projects WHERE id = p_project_id AND projects.user_id = target.id) THEN
