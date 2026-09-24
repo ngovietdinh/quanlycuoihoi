@@ -88,13 +88,17 @@ CREATE POLICY profiles_update ON profiles FOR UPDATE USING (auth.uid() = id OR i
 CREATE TABLE IF NOT EXISTS project_members (
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   user_id    UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  role       member_role NOT NULL DEFAULT 'viewer',
+  role       TEXT NOT NULL DEFAULT 'viewer',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   PRIMARY KEY (project_id, user_id)
 );
 -- Bảng có thể đã tồn tại từ script cũ với cấu trúc khác → bổ sung cột còn thiếu
 ALTER TABLE project_members ADD COLUMN IF NOT EXISTS role       TEXT NOT NULL DEFAULT 'viewer';
 ALTER TABLE project_members ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+-- Chuẩn hóa kiểu cột role về TEXT (bản trước dùng enum member_role)
+ALTER TABLE project_members ALTER COLUMN role DROP DEFAULT;
+ALTER TABLE project_members ALTER COLUMN role TYPE TEXT USING role::text;
+ALTER TABLE project_members ALTER COLUMN role SET DEFAULT 'viewer';
 CREATE UNIQUE INDEX IF NOT EXISTS project_members_project_user_key ON project_members(project_id, user_id);
 CREATE INDEX IF NOT EXISTS project_members_user_idx ON project_members(user_id);
 ALTER TABLE project_members ENABLE ROW LEVEL SECURITY;
