@@ -42,11 +42,17 @@ export function Envelope({ ctx, onOpen }: { ctx: ViewCtx; onOpen: () => void }) 
         <div className="inv-env-flap absolute left-0 right-0 top-0 h-1/2 z-10" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%)', background: 'color-mix(in srgb, var(--p) 90%, white)', height: '58%' }}/>
         {/* con dấu */}
         {!open && (
-          <button onClick={doOpen} aria-label="Mở thiệp"
-            className="inv-seal absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold shadow-xl"
-            style={{ background: 'radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--a) 40%, #c9302c), #8b1a1a)', color: '#fbe8c8', border: '3px solid rgba(255,255,255,.25)' }}>
-            {isSongHy ? '囍' : '♥'}
-          </button>
+          // Lớp ngoài chỉ lo căn giữa (translate); lớp trong chạy hiệu ứng đập nhịp (scale).
+          // Gộp chung một phần tử thì animation transform sẽ ghi đè translate → con dấu bị lệch.
+          <div className="absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 z-20">
+            <button onClick={doOpen} aria-label="Mở thiệp"
+              className="inv-seal w-16 h-16 rounded-full flex items-center justify-center shadow-xl leading-none"
+              style={{ background: 'radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--a) 40%, #c9302c), #8b1a1a)', color: '#fbe8c8', border: '3px solid rgba(255,255,255,.25)' }}>
+              {isSongHy
+                ? <span className="text-2xl font-bold" style={{ fontFamily: 'serif' }}>囍</span>
+                : <svg viewBox="0 0 24 24" className="w-7 h-7" aria-hidden><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 4 6.4 4c2.3 0 3.8 1.3 5.6 3.3C13.8 5.3 15.3 4 17.6 4c4.1 0 6 4.4 4.4 7.7C19.5 16.4 12 21 12 21Z"/></svg>}
+            </button>
+          </div>
         )}
       </div>
       {!open && <button onClick={doOpen} className="inv-btn mt-10 animate-pulse-glow">Mở thiệp mời</button>}
