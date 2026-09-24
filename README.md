@@ -1,5 +1,7 @@
 # 💍 Hỷ Sự — Quản lý lễ cưới & Thiệp cưới online
 
+**Tác giả:** Ngô Viết Định · © 2026 Ngô Viết Định. Bảo lưu mọi quyền.
+
 Ứng dụng Next.js 14 + Supabase để lập kế hoạch đám cưới, quản lý ngân sách và tạo **thiệp cưới online** hiện đại.
 
 ## Tính năng

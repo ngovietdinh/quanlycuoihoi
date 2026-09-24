@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, FormEvent } from 'react'
+import { AUTHOR, copyright } from '@/lib/brand'
 import Link from 'next/link'
 import { sb } from '@/lib/supabase/client'
 
@@ -83,6 +84,7 @@ export default function LoginPage() {
               : <>Chưa có tài khoản? <Link href="/auth/register" className="text-sakura-600 font-semibold hover:underline">Đăng ký miễn phí</Link></>}
           </div>
         </div>
+        <p className="text-center text-[11px] text-white/40 mt-6 leading-relaxed">{copyright()}<br/>Tác giả: <span className="whitespace-nowrap">{AUTHOR}</span></p>
       </div>
     </div>
   )

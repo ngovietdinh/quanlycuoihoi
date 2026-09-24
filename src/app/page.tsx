@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { APP_NAME, AUTHOR, copyright } from '@/lib/brand'
 import { sbServer } from '@/lib/supabase/server'
 import { TEMPLATES, TEMPLATE_CATEGORIES, LAYOUTS, googleFontsHref, patternBg } from '@/lib/invitation/templates'
 
@@ -128,7 +129,11 @@ export default async function Landing() {
           </div>
         </div>
       </section>
-      <footer className="border-t border-ink-100/60 py-8 text-center text-xs text-ink-400">© {new Date().getFullYear()} Hỷ Sự · Quản lý lễ cưới & thiệp cưới online 💍</footer>
+      <footer className="border-t border-ink-100/60 py-8 text-center text-xs text-ink-400 space-y-1">
+        <p>{APP_NAME} · Quản lý lễ cưới &amp; thiệp cưới online 💍</p>
+        <p>{copyright()}</p>
+        <p>Thiết kế &amp; phát triển bởi <b className="text-ink-600 whitespace-nowrap">{AUTHOR}</b></p>
+      </footer>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 import { useMemo, useState, useCallback, useRef } from 'react'
+import { APP_NAME, AUTHOR, copyright } from '@/lib/brand'
 import type { Invitation, GuestGreeting, Wish, SectionId } from '@/types'
 import { normalizeInvitation, templateById, SCRIPT_FONTS, SECTION_LABELS, patternBg } from '@/lib/invitation/templates'
 import { FontLoader, FallingEffect, Ornament, Reveal } from './effects'
@@ -82,7 +83,8 @@ export function InvitationView({ invitation, guest = null, guestCode, preview = 
             <p className="max-w-md mx-auto italic inv-muted">{c.closing}</p>
             <p className={`inv-h ${ctx.script ? 'text-5xl' : 'is-serif text-3xl'} inv-p mt-6`}>{c.groom.name} &amp; {c.bride.name}</p>
             {c.hashtag && <p className="mt-3 font-semibold tracking-wider inv-p">{c.hashtag}</p>}
-            <p className="mt-12 text-[11px] inv-muted">Thiệp cưới online được tạo bởi <a href="/" className="underline">Hỷ Sự</a> 💍</p>
+            <p className="mt-12 pr-12 pl-12 text-[11px] inv-muted">Thiệp cưới online được tạo bởi <a href="/" className="underline">{APP_NAME}</a> 💍</p>
+            <p className="mt-1 text-[10px] inv-muted opacity-80 leading-relaxed">{copyright()}<br/>Tác giả: <span className="whitespace-nowrap">{AUTHOR}</span></p>
           </Reveal>
         </footer>
       </main>

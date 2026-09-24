@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { AUTHOR, copyright } from '@/lib/brand'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -77,6 +78,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <span className="text-base">⏻</span>
             Đăng xuất
           </button>
+          <p className="px-3 pt-2 text-[10px] text-ink-400 leading-snug">{copyright()}<br/>Tác giả: <span className="font-semibold text-ink-500">{AUTHOR}</span></p>
         </div>
       </aside>
 
