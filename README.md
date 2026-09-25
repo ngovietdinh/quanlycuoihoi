@@ -40,8 +40,12 @@
 - Quản lý người dùng: cấp/gỡ quyền admin, **khóa / mở khóa** tài khoản
 - Quản lý thiệp (gỡ/phát hành, xóa) và dự án của mọi người dùng
 
-### 📋 Quản lý kế hoạch cưới (có sẵn)
-Dự án, Kanban đầu mục, ngân sách & chi tiêu theo danh mục, realtime.
+### 📋 Quản lý sự kiện cưới (`/projects/<id>`)
+- **Công việc**: Kanban (kéo thả, nút chuyển trạng thái trên điện thoại) hoặc Danh sách; tìm kiếm, lọc theo ưu tiên / nhãn / người phụ trách; thêm nhanh; giao việc cho thành viên; 24 việc chuẩn bị cưới mẫu; xuất Excel
+- **Ngân sách**: chi tiêu theo danh mục, sửa/xóa khoản chi, dự báo "đã chi + còn phải trả nhà cung cấp", xuất Excel
+- **Nhà cung cấp**: nhà hàng, studio, trang điểm… kèm liên hệ, gọi/Zalo, giá hợp đồng, hạn thanh toán, đánh giá; ghi thanh toán tự cộng vào Ngân sách
+- **Lịch trình ngày cưới**: kịch bản theo giờ, mẫu lễ cưới truyền thống, đánh dấu đang diễn ra, in ra giấy
+- **Thành viên**: mời theo email với quyền Biên tập / Chỉ xem; cập nhật realtime giữa các thành viên
 
 ## Cài đặt
 
@@ -52,8 +56,10 @@ npm run dev
 ```
 
 ### Cơ sở dữ liệu (Supabase → SQL Editor)
-1. Dự án mới: chạy `supabase/schema.sql`, sau đó `supabase/migrations/002_invitations_roles.sql`
-2. Dự án đang chạy bản cũ: chỉ cần chạy `supabase/migrations/002_invitations_roles.sql` (chạy lại nhiều lần vẫn an toàn)
+Chạy lần lượt trong SQL Editor (mỗi file chạy lại nhiều lần vẫn an toàn):
+1. `supabase/schema.sql` — chỉ với dự án Supabase mới
+2. `supabase/migrations/002_invitations_roles.sql` — tài khoản, phân quyền, thiệp cưới
+3. `supabase/migrations/003_vendors_schedule.sql` — nhà cung cấp, lịch trình ngày cưới
 
 Migration 002 tạo bucket Storage `invitation-media` và bật realtime cho `rsvps`, `wishes`.
 

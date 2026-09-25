@@ -34,9 +34,10 @@ export async function createProject(dto: { name: string; description?: string; e
   } catch (e: any) { return { data: null, error: e.message } }
 }
 
-export async function updateProject(id: string, dto: Partial<{ name: string; description: string; event_date: string; venue: string; budget_total: number; tags: string[] }>): Promise<ApiResult<Project>> {
+export async function updateProject(id: string, dto: Partial<{ name: string; description: string; event_date: string | null; venue: string; budget_total: number; tags: string[] }>): Promise<ApiResult<Project>> {
   try {
-    const { data, error } = await sb().from('projects').update(dto).eq('id', id).select().single()
+    const clean = 'event_date' in dto ? { ...dto, event_date: dto.event_date || null } : dto
+    const { data, error } = await sb().from('projects').update(clean).eq('id', id).select().single()
     if (error) throw error
     return { data, error: null }
   } catch (e: any) { return { data: null, error: e.message } }

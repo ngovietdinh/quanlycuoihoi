@@ -10,13 +10,15 @@ export async function getExpenses(projectId: string): Promise<ApiResult<Expense[
   } catch (e: any) { return { data: null, error: e.message } }
 }
 
-export async function createExpense(dto: { project_id: string; amount: number; note?: string; category?: string; task_id?: string; spent_at?: string }): Promise<ApiResult<Expense>> {
+export async function createExpense(dto: { project_id: string; amount: number; note?: string; category?: string; task_id?: string | null; vendor_id?: string | null; spent_at?: string }): Promise<ApiResult<Expense>> {
   try {
     const { data: { user } } = await sb().auth.getUser()
+    const { vendor_id, ...rest } = dto
     const { data, error } = await sb().from('expenses').insert({
-      ...dto,
+      ...rest,
       created_by: user?.id ?? null,
       task_id: dto.task_id || null,
+      ...(vendor_id ? { vendor_id } : {}),  // chỉ gửi khi có (cột thêm ở migration 003)
       category: dto.category || 'Khác',
       spent_at: dto.spent_at ?? new Date().toISOString().slice(0, 10),
     }).select().single()

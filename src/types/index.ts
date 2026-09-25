@@ -5,7 +5,7 @@ export interface Profile { id:string; full_name:string|null; avatar_url:string|n
 export interface Project { id:string; user_id:string; name:string; description:string|null; event_date:string|null; venue:string|null; budget_total:number; cover_url:string|null; tags:string[]; created_at:string; updated_at:string }
 export interface ProjectSummary extends Project { total_tasks:number; completed_tasks:number; total_estimated:number; total_spent:number }
 export interface Task { id:string; project_id:string; assigned_to:string|null; title:string; description:string|null; status:TaskStatus; priority:TaskPriority; tags:string[]; deadline:string|null; cost_estimate:number; cost_actual:number; position:number; created_at:string; updated_at:string }
-export interface Expense { id:string; project_id:string; task_id:string|null; created_by:string|null; amount:number; note:string|null; category:string; spent_at:string; created_at:string }
+export interface Expense { id:string; project_id:string; task_id:string|null; vendor_id?:string|null; created_by:string|null; amount:number; note:string|null; category:string; spent_at:string; created_at:string }
 export interface ApiResult<T> { data:T|null; error:string|null }
 
 // ── Tài khoản & phân quyền ─────────────────────────────────────
@@ -79,3 +79,8 @@ export interface Guest { id:string; invitation_id:string; name:string; salutatio
 export interface Rsvp { id:string; invitation_id:string; guest_id:string|null; name:string; phone:string|null; attending:'yes'|'no'|'maybe'; guest_count:number; side:Side|null; message:string|null; created_at:string }
 export interface Wish { id:string; invitation_id:string; name:string; message:string; is_hidden:boolean; created_at:string }
 export interface GuestGreeting { name:string; salutation:string|null; invited_count:number; side:Side }
+
+// ── Nhà cung cấp & lịch trình ngày cưới ───────────────────────
+export type VendorStatus = 'considering' | 'booked' | 'cancelled'
+export interface Vendor { id:string; project_id:string; name:string; category:string; contact_name:string|null; phone:string|null; email:string|null; website:string|null; status:VendorStatus; total_cost:number; due_date:string|null; rating:number|null; notes:string|null; created_at:string; updated_at:string }
+export interface ScheduleItem { id:string; project_id:string; day:string|null; start_time:string|null; end_time:string|null; title:string; location:string|null; owner:string|null; notes:string|null; done:boolean; position:number; created_at:string }
