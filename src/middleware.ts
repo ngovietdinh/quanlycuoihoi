@@ -1,4 +1,5 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { supabaseUrl, supabaseKey } from '@/lib/supabase/env'
 type CookieList = { name: string; value: string; options?: CookieOptions }[]
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -9,7 +10,7 @@ export async function middleware(req: NextRequest) {
   // Thiệp công khai được xem nhiều nhất → bỏ qua bước xác thực
   if (req.nextUrl.pathname.startsWith('/i/')) return NextResponse.next()
   let res = NextResponse.next({ request: { headers: req.headers } })
-  const client = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  const client = createServerClient(supabaseUrl(), supabaseKey(),
     { cookies: { getAll:()=>req.cookies.getAll(), setAll(l: CookieList){l.forEach(({name,value})=>req.cookies.set(name,value));res=NextResponse.next({request:req});l.forEach(({name,value,options})=>res.cookies.set(name,value,options))} } })
   const { data: { user } } = await client.auth.getUser()
   const { pathname } = req.nextUrl

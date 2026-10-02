@@ -1,9 +1,10 @@
 import { createBrowserClient } from '@supabase/ssr'
+import { supabaseUrl, supabaseKey } from '@/lib/supabase/env'
 let _c: ReturnType<typeof createBrowserClient>|null = null
 export const sb = () => {
   if (!_c) _c = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    supabaseUrl(),
+    supabaseKey()
   )
   return _c
 }

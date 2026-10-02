@@ -13,6 +13,7 @@ export function viAuthError(msg?: string | null): string {
   if (m.includes('unable to validate email') || m.includes('invalid email')) return 'Địa chỉ email không hợp lệ'
   if (m.includes('provider is not enabled') || m.includes('unsupported provider')) return 'Phương thức đăng nhập này chưa được bật trong Supabase'
   if (m.includes('signups not allowed') || m.includes('signup is disabled')) return 'Hệ thống đang tạm khóa đăng ký tài khoản mới'
+  if (m.includes('invalid path')) return 'Cấu hình Supabase trên máy chủ chưa đúng (NEXT_PUBLIC_SUPABASE_URL phải có dạng https://xxx.supabase.co). Kiểm tra biến môi trường trên Vercel rồi Redeploy.'
   if (m.includes('failed to fetch') || m.includes('network')) return 'Không kết nối được máy chủ. Kiểm tra mạng hoặc cấu hình Supabase.'
   return msg
 }
