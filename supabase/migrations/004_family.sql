@@ -40,7 +40,8 @@ DO $$ DECLARE r RECORD; BEGIN
   LOOP EXECUTE format('DROP POLICY %I ON public.%I', r.policyname, r.tablename); END LOOP;
 END $$;
 -- Dữ liệu gia đình là riêng tư: kể cả quản trị viên hệ thống cũng không xem được
-CREATE POLICY households_select ON households FOR SELECT USING (can_access_household(id));
+-- owner_id = auth.uid() đặt trước: INSERT … RETURNING cần thấy ngay dòng vừa tạo (hàm STABLE chưa thấy dòng mới)
+CREATE POLICY households_select ON households FOR SELECT USING (owner_id = auth.uid() OR can_access_household(id));
 CREATE POLICY households_insert ON households FOR INSERT WITH CHECK (owner_id = auth.uid());
 CREATE POLICY households_update ON households FOR UPDATE USING (owner_id = auth.uid());
 CREATE POLICY households_delete ON households FOR DELETE USING (owner_id = auth.uid());
