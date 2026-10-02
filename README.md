@@ -82,6 +82,14 @@ UPDATE profiles SET role = 'admin' WHERE email = 'ban@example.com';
 **Xác thực email / quên mật khẩu**: trong Supabase → Authentication → URL Configuration, thêm
 `https://<domain-của-bạn>/auth/callback` vào *Redirect URLs*.
 
+### Triển khai lên Cloudflare Workers (tùy chọn, thay cho Vercel)
+Dự án đã cấu hình sẵn `@opennextjs/cloudflare` (`wrangler.jsonc`, `open-next.config.ts`).
+- Cloudflare Dashboard → **Workers & Pages → Create → Import a repository** → chọn repo này
+- **Build command**: `npx opennextjs-cloudflare build` · **Deploy command**: `npx opennextjs-cloudflare deploy`
+- **Build variables**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (bắt buộc đặt lúc *build*)
+- Supabase → Authentication → URL Configuration: thêm `https://<tên>.<tài-khoản>.workers.dev/auth/callback`
+- Chạy thử trên máy: `npm run cf:preview` · Deploy từ máy: `npx wrangler login` rồi `npm run cf:deploy`
+
 ## Cấu trúc chính
 
 ```
