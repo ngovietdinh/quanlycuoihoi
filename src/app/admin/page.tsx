@@ -61,7 +61,7 @@ function AdminContent() {
     <>
       <TopBar title="Quản trị hệ thống" subtitle="Quản lý người dùng, phân quyền và nội dung"
         right={<button onClick={load} className="btn btn-secondary btn-sm">↻ Làm mới</button>}/>
-      <div className="sticky top-[61px] z-20 border-b border-ink-100 px-4 sm:px-6 flex overflow-x-auto no-scrollbar" style={{ background: 'rgba(255,253,249,0.95)' }}>
+      <div className="sticky top-[61px] z-20 border-b border-ink-100 px-4 sm:px-6 flex overflow-x-auto no-scrollbar" style={{ background: 'rgba(255,255,255,0.95)' }}>
         {TABS.map(([id, l, n]) => (
           <button key={id} onClick={() => setTab(id)} className={cn(tab === id ? 'tab-active' : 'tab', 'whitespace-nowrap')}>{l}{n !== null && <span className="ml-1.5 text-[11px] bg-ink-100 rounded-full px-1.5">{n}</span>}</button>
         ))}

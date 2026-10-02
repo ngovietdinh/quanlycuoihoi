@@ -1,10 +1,13 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useHousehold } from '@/components/family/HouseholdProvider'
 import { useRows, useCrud, useConfirm, FormModal, Stat, Panel, Empty, Tabs, RowActions, today, daysUntil, type FieldDef } from '@/components/family/ui'
 import { T } from '@/lib/api/family'
 import { useToast } from '@/components/ui/Toast'
+import { ModuleHero, heroBtn, heroBtnGhost } from '@/components/family/theme'
+import { Produce } from '@/components/family/produce'
+import { celebrate, fromEvent } from '@/components/motion/confetti'
 import { FETAL, PRENATAL_MILESTONES, PREGNANCY_COST_TEMPLATE, BABY_ITEMS, VISIT_TYPES, gestation, dueFromLmp, maternityBenefit } from '@/lib/family/data'
 import { vnd, cn, fmtDate, downloadCsv } from '@/lib/utils'
 import type { Pregnancy, PregVisit, PregCost, BabyItem } from '@/types'
@@ -20,6 +23,7 @@ export default function PregnancyPage() {
   const [form, setForm] = useState<null | { kind: 'preg' | 'visit' | 'cost' | 'item'; row?: any }>(null)
   const [tab, setTab] = useState<Tab>('milestones')
   const [ask, confirmDialog] = useConfirm()
+  const [peek, setPeek] = useState<number | null>(null)
 
   const preg = pg.rows.find(p => p.id === sel) ?? pg.rows.find(p => p.status === 'active') ?? pg.rows[0]
   const filter = preg ? { pregnancy_id: preg.id } : { pregnancy_id: '00000000-0000-0000-0000-000000000000' }
@@ -106,7 +110,7 @@ export default function PregnancyPage() {
 
   const g = gestation(preg.due_date)
   const wk = Math.min(40, Math.max(4, g.weeks))
-  const fetal = FETAL[wk]
+  const shownWeek = peek ?? wk
   const left = daysUntil(preg.due_date)
   const done = preg.status !== 'active'
   const visits = vs.rows
@@ -122,36 +126,28 @@ export default function PregnancyPage() {
           {canEdit && <button onClick={() => setForm({ kind: 'preg' })} className="px-3 py-1.5 rounded-full text-xs font-medium border border-dashed border-ink-300 text-ink-500">+ Thai kỳ mới</button>}</div>
       )}
 
-      {/* Đầu trang */}
-      <div className="hero p-5 sm:p-7 text-white">
-        <div className="relative grid lg:grid-cols-[1fr_auto] gap-6 items-center">
-          <div>
-            <p className="text-white/60 text-sm">{preg.mother_name ? `Mẹ ${preg.mother_name}` : 'Hành trình mang thai'}{preg.baby_name && ` · bé ${preg.baby_name}`}</p>
-            {done ? <h1 className="font-display text-3xl sm:text-4xl font-bold mt-1">{preg.status === 'born' ? '👶 Bé đã chào đời!' : 'Thai kỳ đã kết thúc'}</h1>
-              : <h1 className="font-display text-3xl sm:text-4xl font-bold mt-1">Tuần {g.weeks} <span className="text-white/60 text-2xl">+ {g.days} ngày</span></h1>}
-            {!done && <p className="text-white/70 text-sm mt-1">Tam cá nguyệt thứ {g.trimester} · {left > 0 ? `còn ${left} ngày đến ngày dự sinh ${fmtDate(preg.due_date)}` : left === 0 ? 'hôm nay là ngày dự sinh!' : `đã quá ngày dự sinh ${-left} ngày`}</p>}
-            {!done && (
-              <div className="mt-4 max-w-xl">
-                <div className="relative h-2.5 rounded-full bg-white/15 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-sakura-400 to-gold-400" style={{ width: `${Math.min(100, (g.totalDays / 280) * 100)}%` }}/></div>
-                <div className="flex justify-between text-[11px] text-white/45 mt-1"><span>Tuần 0</span><span>13</span><span>27</span><span>40</span></div>
-              </div>
-            )}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {canEdit && <button onClick={() => setForm({ kind: 'preg', row: preg })} className="btn btn-sm text-white border border-white/25 bg-white/10 hover:bg-white/20">✎ Sửa thông tin</button>}
-              {canEdit && !done && <button onClick={() => ask('Đánh dấu đã sinh?', 'Thai kỳ chuyển sang "Đã sinh". Bạn có thể tạo hồ sơ cho bé ở mục Con cái.', () => pC.update(preg.id, { status: 'born' }))} className="btn btn-sm text-white border border-white/25 bg-white/10 hover:bg-white/20">👶 Bé đã chào đời</button>}
-              {preg.status === 'born' && <Link href="/family/children" className="btn btn-gold btn-sm">🧒 Tạo hồ sơ cho bé</Link>}
+      {/* Đầu trang: tuần thai + bé to bằng gì (có hình) + thanh chọn tuần */}
+      <ModuleHero mod="pregnancy" artMobile
+        eyebrow={<>{preg.mother_name ? `Mẹ ${preg.mother_name}` : 'Hành trình mang thai'}{preg.baby_name && ` · bé ${preg.baby_name}`}</>}
+        title={done ? (preg.status === 'born' ? '👶 Bé đã chào đời!' : 'Thai kỳ đã kết thúc') : <>Tuần {g.weeks} <span className="text-white/60 text-2xl font-bold">+ {g.days} ngày</span></>}
+        sub={!done && <>
+          <p>Tam cá nguyệt thứ {g.trimester} · {left > 0 ? `còn ${left} ngày đến ngày dự sinh ${fmtDate(preg.due_date)}` : left === 0 ? 'hôm nay là ngày dự sinh!' : `đã quá ngày dự sinh ${-left} ngày`}</p>
+          <div className="mt-4 max-w-md">
+            <div className="relative h-3 rounded-full bg-white/15 overflow-hidden">
+              <div className="progress-bar !shadow-none" style={{ width: `${Math.min(100, (g.totalDays / 280) * 100)}%`, background: 'linear-gradient(90deg,#fbcfe8,#f0abfc,#fde68a)' }}/>
+              {[13, 27].map(w => <span key={w} className="absolute top-0 bottom-0 w-0.5 bg-white/40" style={{ left: `${(w / 40) * 100}%` }}/>)}
             </div>
+            <div className="grid grid-cols-3 text-[11px] text-white/60 mt-1.5"><span>Tam cá nguyệt 1</span><span className="text-center">Tam cá nguyệt 2</span><span className="text-right">Tam cá nguyệt 3</span></div>
           </div>
-          {!done && fetal && (
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 text-center min-w-[200px]">
-              <p className="text-[11px]st text-white/55">Bé bây giờ to bằng</p>
-              <p className="font-display text-2xl font-bold mt-1 first-letter:uppercase">{fetal[2]}</p>
-              <p className="text-xs text-white/60 mt-1">{fetal[0] >= 1 ? `~${fetal[0]} cm` : `~${fetal[0] * 10} mm`}{fetal[1] ? ` · ~${fetal[1] >= 1000 ? `${(fetal[1] / 1000).toFixed(1)} kg` : `${fetal[1]} g`}` : ''}</p>
-              <p className="text-[11px] text-white/40 mt-2">Số đo ước tính trung bình</p>
-            </div>
-          )}
-        </div>
-      </div>
+        </>}
+        actions={<>
+          {canEdit && <button onClick={() => setForm({ kind: 'preg', row: preg })} className={heroBtnGhost}>✎ Sửa thông tin</button>}
+          {canEdit && !done && <button onClick={() => ask('Đánh dấu đã sinh?', 'Thai kỳ chuyển sang "Đã sinh". Bạn có thể tạo hồ sơ cho bé ở mục Con cái.', async () => { await pC.update(preg.id, { status: 'born' }); celebrate() })} className={heroBtn}>👶 Bé đã chào đời</button>}
+          {preg.status === 'born' && <Link href="/family/children" className={heroBtn}>🧒 Tạo hồ sơ cho bé</Link>}
+        </>}
+        art={!done && <FetalSize week={shownWeek} current={shownWeek === wk}/>}>
+        {!done && <WeekStrip current={wk} value={shownWeek} onChange={setPeek}/>}
+      </ModuleHero>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
         <Stat icon="🩺" label="Số lần khám" value={visits.length} sub={visits[0] ? `Gần nhất ${fmtDate(visits[0].date)}` : 'Chưa ghi lần khám'}/>
@@ -239,7 +235,7 @@ export default function PregnancyPage() {
               <p className="px-5 py-2 bg-ink-50/70 text-xs font-semibold text-ink-600 flex justify-between"><span>{grp}</span><span>{it.rows.filter(i => i.grp === grp && i.bought).length}/{it.rows.filter(i => i.grp === grp).length}</span></p>
               {it.rows.filter(i => i.grp === grp).map(i => (
                 <div key={i.id} className={cn('px-5 py-2.5 flex items-center gap-3 group border-b border-ink-50', i.bought && 'opacity-60')}>
-                  <input type="checkbox" disabled={!canEdit} checked={i.bought} onChange={() => iC.update(i.id, { bought: !i.bought }, true)} className="w-4 h-4 accent-jade-500 flex-shrink-0" aria-label="Đã mua"/>
+                  <input type="checkbox" disabled={!canEdit} checked={i.bought} onChange={e => { const o = fromEvent(e); iC.update(i.id, { bought: !i.bought }, true); if (!i.bought && it.rows.filter(x => !x.bought).length === 1) celebrate(o) }} className="w-4 h-4 accent-jade-500 flex-shrink-0" aria-label="Đã mua"/>
                   <span className={cn('flex-1 text-sm text-ink-800', i.bought && 'line-through')}>{i.name}{!i.essential && <span className="ml-1.5 text-[11px] text-ink-400 border border-ink-200 rounded-full px-1.5">tùy chọn</span>}</span>
                   <span className="text-xs text-ink-400 tabular">{i.qty > 1 && `${i.qty} × `}{Number(i.price) ? vnd(i.price) : ''}</span>
                   {canEdit && <RowActions onEdit={() => setForm({ kind: 'item', row: i })} onDelete={() => ask('Xóa món đồ?', i.name, () => iC.remove(i.id))}/>}
@@ -282,5 +278,51 @@ function MaternityCalc() {
         <p className="text-xs text-ink-400">Điều kiện thường gặp: đóng BHXH đủ 6 tháng trong 12 tháng trước khi sinh. Kiểm tra mức tham chiếu hiện hành và hỏi bộ phận nhân sự / cơ quan BHXH để có số chính xác.</p>
       </div>
     </Panel>
+  )
+}
+
+/** "Bé to bằng…": hình quả/hạt lớn dần theo tuần, có quầng sáng phía sau */
+function FetalSize({ week, current }: { week: number; current: boolean }) {
+  const f = FETAL[week]
+  if (!f) return null
+  const px = Math.round(120 + (week / 40) * 90)
+  return (
+    <div className="text-center">
+      <div className="relative mx-auto flex items-center justify-center" style={{ width: 220, height: 220 }}>
+        <span aria-hidden className="absolute inset-4 rounded-full bg-white/15 blur-md animate-pulse-glow"/>
+        <span aria-hidden className="absolute inset-8 rounded-full border border-white/25"/>
+        <div key={week} className="pop-in relative"><div className="float-art"><Produce name={f[2]} size={px}/></div></div>
+      </div>
+      <p className="text-xs text-white/70 -mt-2">{current ? 'Bé bây giờ to bằng' : `Tuần ${week}, bé to bằng`}</p>
+      <p className="text-2xl font-extrabold tracking-tight first-letter:uppercase">{f[2]}</p>
+      <p className="text-xs text-white/70">{f[0] >= 1 ? `~${f[0]} cm` : `~${Math.round(f[0] * 10)} mm`}{f[1] ? ` · ~${f[1] >= 1000 ? `${(f[1] / 1000).toFixed(1)} kg` : `${f[1]} g`}` : ''}</p>
+    </div>
+  )
+}
+
+/** Dải tuần 4–40 để xem trước bé to bằng gì ở mỗi tuần */
+function WeekStrip({ current, value, onChange }: { current: number; value: number; onChange: (w: number | null) => void }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => { ref.current?.querySelector(`[data-w="${value}"]`)?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }) }, [value])
+  return (
+    <div className="rounded-2xl bg-black/20 border border-white/10 backdrop-blur-md p-2">
+      <div className="flex items-center justify-between px-2 pb-1.5 text-[11px] text-white/60">
+        <span>Kéo để xem bé lớn lên qua từng tuần</span>
+        {value !== current && <button onClick={() => onChange(null)} className="font-semibold text-white hover:underline">↺ Về tuần hiện tại</button>}
+      </div>
+      <div ref={ref} className="flex gap-1.5 overflow-x-auto no-scrollbar snap-x">
+        {Object.entries(FETAL).map(([w, f]) => {
+          const n = Number(w), on = n === value
+          return (
+            <button key={w} data-w={w} onClick={() => onChange(n === current ? null : n)} title={`Tuần ${w}: ${f[2]}`}
+              className={cn('snap-center flex-shrink-0 w-14 rounded-xl py-1.5 flex flex-col items-center transition-all duration-300',
+                on ? 'bg-white text-ink-900 shadow-lg scale-105' : n === current ? 'bg-white/20 text-white' : n < current ? 'text-white/80 hover:bg-white/10' : 'text-white/45 hover:bg-white/10')}>
+              <Produce name={f[2]} size={34}/>
+              <span className="text-[11px] font-bold">T{w}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }

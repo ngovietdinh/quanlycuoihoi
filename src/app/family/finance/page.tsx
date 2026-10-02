@@ -3,6 +3,8 @@ import { useMemo, useState } from 'react'
 import { useHousehold } from '@/components/family/HouseholdProvider'
 import { useRows, useCrud, useConfirm, FormModal, Stat, Panel, Empty, Tabs, RowActions, today, thisMonth, monthLabel, shiftMonth, daysUntil, type FieldDef } from '@/components/family/ui'
 import { GroupedBars, RankBars, BudgetBar } from '@/components/family/charts'
+import { ModuleHero, HeroStat, heroBtn, heroBtnGhost } from '@/components/family/theme'
+import { MoneyRing } from '@/components/family/art'
 import { T } from '@/lib/api/family'
 import { EXPENSE_CATS, INCOME_CATS, WALLET_TYPES, catIcon, SERIES, billDue } from '@/lib/family/data'
 import { vnd, cn, fmtDate, downloadCsv } from '@/lib/utils'
@@ -135,25 +137,27 @@ export default function FinancePage() {
     <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-4">
       {migErr && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">⚠️ {migErr}</div>}
 
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="flex items-center gap-1 card px-1.5 py-1">
-          <button onClick={() => setMonth(m => shiftMonth(m, -1))} className="btn btn-ghost btn-xs btn-icon" aria-label="Tháng trước">‹</button>
-          <input type="month" value={month} onChange={e => e.target.value && setMonth(e.target.value)} className="text-sm font-semibold text-ink-900 bg-transparent px-1 focus:outline-none"/>
-          <button onClick={() => setMonth(m => shiftMonth(m, 1))} className="btn btn-ghost btn-xs btn-icon" aria-label="Tháng sau">›</button>
-          {month !== thisMonth() && <button onClick={() => setMonth(thisMonth())} className="btn btn-ghost btn-xs">Tháng này</button>}
+      <ModuleHero mod="finance" eyebrow="Sổ thu chi gia đình"
+        title={<span className="inline-flex items-center gap-1">
+          <button onClick={() => setMonth(m => shiftMonth(m, -1))} className="w-9 h-9 rounded-xl hover:bg-white/15 text-2xl leading-none" aria-label="Tháng trước">‹</button>
+          <span key={month} className="pop-in inline-block">{monthLabel(month)}</span>
+          <button onClick={() => setMonth(m => shiftMonth(m, 1))} className="w-9 h-9 rounded-xl hover:bg-white/15 text-2xl leading-none" aria-label="Tháng sau">›</button>
+        </span>}
+        sub={<p>{inMonth.length} giao dịch · {wallets.length} ví đang dùng{budgetTotal ? ` · hạn mức chi ${vnd(budgetTotal)}` : ''}</p>}
+        actions={<>
+          {canEdit && <button onClick={() => openTxn()} className={heroBtn}>💸 Ghi chi</button>}
+          {canEdit && <button onClick={() => openTxn(undefined, { kind: 'income', category: 'Lương' })} className={heroBtnGhost}>💰 Ghi thu</button>}
+          <label className={cn(heroBtnGhost, 'cursor-pointer')}>📅<input type="month" value={month} onChange={e => e.target.value && setMonth(e.target.value)} className="bg-transparent text-white text-sm focus:outline-none [color-scheme:dark] w-[8.5rem]"/></label>
+          {month !== thisMonth() && <button onClick={() => setMonth(thisMonth())} className={heroBtnGhost}>↺ Tháng này</button>}
+        </>}
+        art={<MoneyRing income={income} expense={expense}/>}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 stagger">
+          <HeroStat label="Thu" value={vnd(income)} tone="good"/>
+          <HeroStat label="Chi" value={vnd(expense)} sub={budgetTotal ? `Hạn mức các mục ${vnd(budgetTotal)}` : undefined}/>
+          <HeroStat label="Còn lại" value={vnd(income - expense)} tone={income - expense >= 0 ? 'good' : 'bad'} sub={income ? `Để dành ${Math.round(((income - expense) / income) * 100)}% thu nhập` : undefined}/>
+          <HeroStat label="Tổng tiền các ví" value={vnd(totalBalance)} sub={`${wallets.length} ví`}/>
         </div>
-        <div className="ml-auto flex gap-2">
-          {canEdit && <button onClick={() => openTxn(undefined, { kind: 'income', category: 'Lương' })} className="btn btn-secondary btn-sm">💰 Ghi thu</button>}
-          {canEdit && <button onClick={() => openTxn()} className="btn btn-primary btn-sm">💸 Ghi chi</button>}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
-        <Stat icon="💰" label={`Thu ${monthLabel(month).toLowerCase()}`} value={vnd(income)} tone="good"/>
-        <Stat icon="💸" label="Chi" value={vnd(expense)} tone="brand" sub={budgetTotal ? `Hạn mức ${vnd(budgetTotal)}` : undefined}/>
-        <Stat icon={income - expense >= 0 ? '📈' : '📉'} label="Còn lại" value={vnd(income - expense)} tone={income - expense >= 0 ? 'good' : 'bad'} sub={income ? `Tiết kiệm ${Math.round(((income - expense) / income) * 100)}% thu nhập` : undefined}/>
-        <Stat icon="👛" label="Tổng tiền các ví" value={vnd(totalBalance)} sub={`${wallets.length} ví đang dùng`}/>
-      </div>
+      </ModuleHero>
 
       {(billsDue.length > 0 || overBudget.length > 0) && month === thisMonth() && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

@@ -1,11 +1,12 @@
 'use client'
-import { createContext, useCallback, useContext, useEffect, useState, FormEvent } from 'react'
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, FormEvent } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { listHouseholds, listHouseholdMembers, createHousehold } from '@/lib/api/family'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import type { Household, HouseholdMember } from '@/types'
+import { MODULES, MODULE_ORDER, moduleOf, grad } from './theme'
 
 interface Ctx {
   household: Household; households: Household[]; members: HouseholdMember[]
@@ -16,13 +17,7 @@ const C = createContext<Ctx | null>(null)
 export const useHousehold = () => { const c = useContext(C); if (!c) throw new Error('Thiếu HouseholdProvider'); return c }
 const KEY = 'hysu:household'
 
-export const FAMILY_NAV = [
-  { href: '/family',           icon: '🏡', label: 'Tổng quan' },
-  { href: '/family/finance',   icon: '💰', label: 'Thu chi' },
-  { href: '/family/pregnancy', icon: '🤰', label: 'Thai sản' },
-  { href: '/family/children',  icon: '🧒', label: 'Con cái' },
-  { href: '/family/savings',   icon: '🐷', label: 'Tiết kiệm & tài sản' },
-]
+export const FAMILY_NAV = MODULE_ORDER.map(k => ({ href: MODULES[k].href, icon: MODULES[k].emoji, label: MODULES[k].label }))
 export const RELATIONS = ['Chồng', 'Vợ', 'Bố', 'Mẹ', 'Ông', 'Bà', 'Anh', 'Chị', 'Em', 'Con', 'Khác']
 
 export function HouseholdProvider({ children }: { children: React.ReactNode }) {
@@ -65,40 +60,56 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <C.Provider value={value}>
-      <div className="sticky top-0 z-30 border-b border-ink-100/60 print:hidden" style={{ background: 'rgba(255,253,249,0.94)', backdropFilter: 'blur(20px)' }}>
-        <div className="px-4 sm:px-6 h-[58px] flex items-center gap-3">
-          <span className="text-2xl">🏡</span>
+      <div className="sticky top-0 z-30 border-b border-ink-100 print:hidden" style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(20px) saturate(1.5)', WebkitBackdropFilter: 'blur(20px) saturate(1.5)' }}>
+        <div className="px-4 sm:px-6 pt-3 pb-2 flex items-center gap-3">
+          <span className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl text-white shadow-lg transition-[background] duration-500" style={{ background: grad(moduleOf(path)), boxShadow: `0 10px 22px -10px ${MODULES[moduleOf(path)].from}` }}>{MODULES[moduleOf(path)].emoji}</span>
           <div className="min-w-0 flex-1">
             {households.length > 1 ? (
-              <select value={household.id} onChange={e => select(e.target.value)} className="font-display text-lg font-semibold text-ink-900 bg-transparent focus:outline-none max-w-full truncate">
+              <select value={household.id} onChange={e => select(e.target.value)} className="text-base sm:text-lg font-bold tracking-tight text-ink-900 bg-transparent focus:outline-none max-w-full truncate -ml-1">
                 {households.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
               </select>
-            ) : <p className="font-display text-lg font-semibold text-ink-900 truncate">{household.name}</p>}
+            ) : <p className="text-base sm:text-lg font-bold tracking-tight text-ink-900 truncate">{household.name}</p>}
             <p className="text-xs text-ink-400 -mt-0.5">{members.length} thành viên · {role === 'owner' ? 'Chủ gia đình' : role === 'editor' ? 'Biên tập' : 'Chỉ xem'}</p>
           </div>
-          <div className="hidden sm:flex -space-x-1.5">
+          <div className="hidden sm:flex -space-x-2">
             {members.slice(0, 5).map(m => (
-              <span key={m.user_id} title={`${m.full_name ?? m.email}${m.relation ? ` (${m.relation})` : ''}`} className="w-8 h-8 rounded-full ring-2 ring-white flex items-center justify-center text-white text-xs font-bold overflow-hidden" style={{ background: 'linear-gradient(135deg,#ff6b96,#f59e0b)' }}>
+              <span key={m.user_id} title={`${m.full_name ?? m.email}${m.relation ? ` (${m.relation})` : ''}`} className="w-8 h-8 rounded-full ring-2 ring-white flex items-center justify-center text-white text-xs font-bold overflow-hidden transition-transform hover:-translate-y-0.5 hover:z-10" style={{ background: 'linear-gradient(135deg,#ff6b96,#f59e0b)' }}>
                 {m.avatar_url ? <img src={m.avatar_url} alt="" className="w-full h-full object-cover"/> : (m.full_name || m.email || '?')[0]?.toUpperCase()}
               </span>
             ))}
           </div>
         </div>
-        <nav className="px-2 sm:px-5 flex gap-1 overflow-x-auto no-scrollbar -mb-px">
-          {FAMILY_NAV.map(n => {
-            const active = n.href === '/family' ? path === '/family' : path.startsWith(n.href)
-            return (
-              <Link key={n.href} href={n.href} className={cn('flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-sm border-b-2 transition',
-                active ? 'border-sakura-500 text-sakura-700 font-semibold' : 'border-transparent text-ink-500 hover:text-ink-900')}>
-                <span>{n.icon}</span>{n.label}
-              </Link>
-            )
-          })}
-        </nav>
+        <FamilyNav path={path}/>
       </div>
       {role === 'viewer' && <div className="mx-4 sm:mx-6 mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm text-blue-700">👁 Bạn đang xem với quyền <b>chỉ xem</b>.</div>}
       {children}
     </C.Provider>
+  )
+}
+
+/** Thanh phân hệ: viên nền gradient màu phân hệ trượt theo mục đang chọn */
+function FamilyNav({ path }: { path: string }) {
+  const wrap = useRef<HTMLDivElement>(null)
+  const cur = moduleOf(path)
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(null)
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = wrap.current?.querySelector<HTMLElement>(`[data-k="${cur}"]`)
+      if (el) { setPill({ left: el.offsetLeft, width: el.offsetWidth }); el.scrollIntoView({ block: 'nearest', inline: 'center' }) }
+    }
+    measure(); window.addEventListener('resize', measure); return () => window.removeEventListener('resize', measure)
+  }, [cur])
+  return (
+    <nav ref={wrap} className="relative px-3 sm:px-5 pb-2.5 flex gap-1 overflow-x-auto no-scrollbar">
+      {pill && <span aria-hidden className="absolute top-0 h-9 rounded-xl transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)]" style={{ left: pill.left, width: pill.width, background: grad(cur), boxShadow: `0 8px 18px -8px ${MODULES[cur].from}` }}/>}
+      {MODULE_ORDER.map(k => (
+        <Link key={k} data-k={k} href={MODULES[k].href} aria-current={k === cur ? 'page' : undefined}
+          className={cn('relative flex-shrink-0 flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-sm font-semibold transition-colors duration-300',
+            k === cur ? 'text-white' : 'text-ink-500 hover:text-ink-900 hover:bg-ink-50')}>
+          <span>{MODULES[k].emoji}</span>{MODULES[k].label}
+        </Link>
+      ))}
+    </nav>
   )
 }
 

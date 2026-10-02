@@ -1,5 +1,6 @@
 'use client'
 import { Logo } from '@/components/brand/Logo'
+import { Icon } from '@/components/ui/Icon'
 import { PageTransition, RouteProgress } from '@/components/motion'
 import Link from 'next/link'
 import { AUTHOR, copyright } from '@/lib/brand'
@@ -9,12 +10,12 @@ import { useAuth } from '@/hooks/useAuth'
 import { useProfile, clearProfileCache } from '@/hooks/useProfile'
 
 const BASE_NAV = [
-  { href:'/dashboard',   emoji:'⊞',  label:'Tổng quan' },
-  { href:'/invitations', emoji:'💌', label:'Thiệp cưới' },
-  { href:'/family',      emoji:'🏡', label:'Gia đình' },
-  { href:'/account',     emoji:'👤', label:'Tài khoản' },
+  { href:'/dashboard',   icon:'grid',   label:'Tổng quan',  hint:'Lễ cưới & dự án' },
+  { href:'/invitations', icon:'invite', label:'Thiệp cưới', hint:'Thiết kế & gửi thiệp' },
+  { href:'/family',      icon:'family', label:'Gia đình',   hint:'Thu chi, con cái, tích lũy' },
+  { href:'/account',     icon:'user',   label:'Tài khoản',  hint:'Hồ sơ & bảo mật' },
 ]
-const ADMIN_NAV = { href:'/admin', emoji:'🛡️', label:'Quản trị' }
+const ADMIN_NAV = { href:'/admin', icon:'shield', label:'Quản trị', hint:'Người dùng & hệ thống' }
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const { user, signOut: baseSignOut } = useAuth()
@@ -27,74 +28,74 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) => path === href || path.startsWith(href + '/') || (href === '/dashboard' && path.startsWith('/projects/'))
 
   return (
-    <div className="flex min-h-screen bg-ink-50/30">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-60 min-h-screen sticky top-0 border-r border-ink-100/60"
-        style={{background:'linear-gradient(180deg, #fffdf9 0%, #fff8f0 100%)'}}>
-        {/* Brand */}
-        <div className="px-5 py-6 border-b border-ink-100/50">
-          <Logo size={40}/>
+    <div className="flex min-h-screen">
+      {/* Desktop Sidebar — nền tối, mục đang chọn phát sáng */}
+      <aside className="hidden lg:flex flex-col w-64 h-screen sticky top-0 text-white overflow-hidden"
+        style={{background:'linear-gradient(180deg,#17121f 0%,#1f1730 55%,#2a1533 100%)'}}>
+        <div aria-hidden className="absolute -top-24 -left-20 w-72 h-72 rounded-full blur-3xl opacity-30" style={{background:'#ff3d78'}}/>
+        <div aria-hidden className="absolute bottom-10 -right-24 w-72 h-72 rounded-full blur-3xl opacity-20" style={{background:'#8b5cf6'}}/>
+        <div className="relative px-5 pt-6 pb-5">
+          <Link href="/dashboard"><Logo size={40} tone="light"/></Link>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
-          <p className="text-[11px] font-bold text-ink-400 px-3 mb-3">Menu chính</p>
+        <nav className="relative flex-1 px-3 py-2 space-y-1 overflow-y-auto no-scrollbar">
+          <p className="text-[11px] font-semibold text-white/35 px-3 mb-2">Không gian của bạn</p>
           {NAV.map(n => {
             const active = isActive(n.href)
             return (
-              <Link key={n.href} href={n.href} className={active ? 'nav-link-active' : 'nav-link'}>
-                <span className="text-base w-5 text-center leading-none">{n.emoji}</span>
-                {n.label}
-                {active && <span className="ml-auto w-2 h-2 rounded-full bg-sakura-400 animate-pulse-glow"/>}
+              <Link key={n.href} href={n.href} aria-current={active ? 'page' : undefined}
+                className={cn('side-link group', active && 'is-active')}>
+                <span className="side-ic"><Icon name={n.icon} size={18}/></span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold leading-tight">{n.label}</span>
+                  <span className="block text-[11px] text-white/40 truncate">{n.hint}</span>
+                </span>
               </Link>
             )
           })}
         </nav>
 
-        {/* User */}
-        <div className="px-3 py-4 border-t border-ink-100/50 space-y-1">
-          <Link href="/account" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-ink-50 transition-colors group">
+        <div className="relative p-3 space-y-1">
+          <Link href="/account" className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/[.06] hover:bg-white/10 border border-white/10 transition-colors">
             {profile?.avatar_url
-              ? <img src={profile.avatar_url} alt="" className="w-8 h-8 rounded-xl object-cover flex-shrink-0"/>
-              : <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+              ? <img src={profile.avatar_url} alt="" className="w-9 h-9 rounded-xl object-cover flex-shrink-0"/>
+              : <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
                   style={{background:'linear-gradient(135deg, #ff6b96, #f59e0b)'}}>
                   {initial}
                 </div>}
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-ink-800 truncate">{displayName}</p>
-              <p className="text-[11px] text-ink-400 flex items-center gap-1">
-                {isAdmin ? <><span className="text-sakura-600 font-bold">Quản trị viên</span></> : 'Thành viên'}
-              </p>
+              <p className="text-xs font-semibold truncate">{displayName}</p>
+              <p className="text-[11px] text-white/45">{isAdmin ? <span className="text-sakura-300 font-semibold">Quản trị viên</span> : 'Thành viên'}</p>
             </div>
           </Link>
           <button onClick={signOut}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-ink-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200">
-            <span className="text-base">⏻</span>
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-white/55 hover:text-white hover:bg-white/[.06] transition-colors">
+            <Icon name="logout" size={17}/>
             Đăng xuất
           </button>
-          <p className="px-3 pt-2 text-[11px] text-ink-400 leading-snug">{copyright()}<br/>Tác giả: <span className="font-semibold text-ink-500">{AUTHOR}</span></p>
+          <p className="px-3 pt-1 text-[11px] text-white/30 leading-snug">{copyright()}<br/>Tác giả: <span className="font-semibold text-white/50">{AUTHOR}</span></p>
         </div>
       </aside>
 
       {/* Main area */}
       <RouteProgress/>
-      <PageTransition className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+      <PageTransition className="flex-1 flex flex-col min-w-0 pb-28 lg:pb-0">
         {children}
       </PageTransition>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 safe-bottom border-t border-ink-100"
-        style={{background:'rgba(255,253,249,0.92)',backdropFilter:'blur(20px)'}}>
-        <div className="flex items-center justify-around px-2 pt-2 pb-1">
+      {/* Mobile: thanh tab nổi, mục đang chọn có viên nền gradient */}
+      <nav className="lg:hidden fixed bottom-3 inset-x-3 z-40 safe-bottom rounded-[22px] border border-white/70 shadow-modal"
+        style={{background:'rgba(255,255,255,0.86)',backdropFilter:'blur(20px) saturate(1.6)',WebkitBackdropFilter:'blur(20px) saturate(1.6)'}}>
+        <div className="flex items-center justify-around px-1.5 py-1.5">
           {NAV.map(n => {
             const active = isActive(n.href)
             return (
-              <Link key={n.href} href={n.href}
-                className={cn('flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all duration-200',
-                  active ? 'text-sakura-600' : 'text-ink-400')}>
-                <span className={cn('text-2xl transition-transform duration-200', active && 'scale-110')}>{n.emoji}</span>
-                <span className="text-[11px] font-semibold">{n.label}</span>
-                {active && <span className="w-1.5 h-1.5 rounded-full bg-sakura-400"/>}
+              <Link key={n.href} href={n.href} aria-current={active ? 'page' : undefined}
+                className={cn('relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-colors duration-300 min-w-[64px]',
+                  active ? 'text-white' : 'text-ink-400')}>
+                {active && <span aria-hidden className="absolute inset-0 rounded-2xl tab-pill" style={{background:'linear-gradient(135deg,#ff3d78,#f97316)'}}/>}
+                <span className="relative"><Icon name={n.icon} size={21}/></span>
+                <span className="relative text-[11px] font-semibold">{n.label}</span>
               </Link>
             )
           })}
@@ -107,7 +108,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 export function TopBar({ title, subtitle, right }: { title:string; subtitle?:string; right?:React.ReactNode }) {
   return (
     <header className="sticky top-0 z-30 px-4 sm:px-6 py-4 border-b border-ink-100/60 flex items-center justify-between gap-4"
-      style={{background:'rgba(255,253,249,0.92)',backdropFilter:'blur(20px)'}}>
+      style={{background:'rgba(255,255,255,0.92)',backdropFilter:'blur(20px)'}}>
       <div className="min-w-0">
         <h1 className="font-display text-xl sm:text-2xl font-semibold text-ink-900 truncate leading-snug">{title}</h1>
         {subtitle && <p className="text-xs text-ink-500 mt-0.5 truncate">{subtitle}</p>}

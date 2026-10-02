@@ -46,7 +46,7 @@ export function ProjectHero({ project, tasks, totalSpent, role, onEdit, members 
           {days !== null && (
             <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-center min-w-[92px]">
               <p className="tracking-tight text-3xl font-bold tabular leading-none">{days < 0 ? '✓' : days}</p>
-              <p className="text-[11px]st text-white/55 mt-1">{days < 0 ? 'Đã diễn ra' : days === 0 ? 'Hôm nay!' : 'ngày nữa'}</p>
+              <p className="text-[11px] text-white/55 mt-1">{days < 0 ? 'Đã diễn ra' : days === 0 ? 'Hôm nay!' : 'ngày nữa'}</p>
             </div>
           )}
           <div className="rounded-2xl border border-white/15 bg-white/10 px-3 py-2 flex items-center gap-2.5">
@@ -58,7 +58,7 @@ export function ProjectHero({ project, tasks, totalSpent, role, onEdit, members 
           </div>
           {budget > 0 && (
             <div className="hidden sm:block rounded-2xl border border-white/15 bg-white/10 px-4 py-3 min-w-[150px]">
-              <p className="text-[11px]st text-white/55">Ngân sách</p>
+              <p className="text-[11px] text-white/55">Ngân sách</p>
               <p className="font-bold tabular text-sm mt-0.5">{vnd(totalSpent)}</p>
               <div className="h-1.5 rounded-full bg-white/15 mt-1.5 overflow-hidden"><div className={cn('h-full rounded-full', used > 100 ? 'bg-red-400' : 'bg-gold-400')} style={{ width: `${Math.min(100, used)}%` }}/></div>
               <p className={cn('text-[11px] mt-1', used > 100 ? 'text-red-300 font-semibold' : 'text-white/55')}>{Math.round(used)}% / {vnd(budget)}</p>

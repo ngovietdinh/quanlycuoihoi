@@ -6,6 +6,9 @@ import { useRows, useCrud, useConfirm, FormModal, Stat, Panel, Empty, Tabs, RowA
 import { GrowthChart, RankBars } from '@/components/family/charts'
 import { T } from '@/lib/api/family'
 import { useToast } from '@/components/ui/Toast'
+import { ModuleHero, HeroStat, heroBtnGhost, grad } from '@/components/family/theme'
+import { KidArt } from '@/components/family/art'
+import { celebrate } from '@/components/motion/confetti'
 import { VACCINE_SCHEDULE, WHO, WHO_CV, MILESTONE_IDEAS, addMonths, ageText, ageMonths, growthStatus, catIcon } from '@/lib/family/data'
 import { vnd, cn, fmtDate } from '@/lib/utils'
 import type { Child, Vaccination, GrowthRecord, ChildEvent, Txn } from '@/types'
@@ -74,13 +77,14 @@ export default function ChildrenPage() {
       if (r.error || !r.data) { error('Không tạo được hồ sơ', r.error ?? ''); return false }
       const cid = r.data[0].id
       if (seed) await T.vaccines.create(household.id, VACCINE_SCHEDULE.map(s => ({ child_id: cid, vaccine: s.vaccine, dose: s.dose, program: s.program, due_date: addMonths(row.dob, s.m) })))
-      success(`Đã tạo hồ sơ cho ${row.name} 👶`, seed ? `Kèm ${VACCINE_SCHEDULE.length} mũi tiêm tham khảo` : undefined)
+      celebrate(); success(`Đã tạo hồ sơ cho ${row.name} 👶`, seed ? `Kèm ${VACCINE_SCHEDULE.length} mũi tiêm tham khảo` : undefined)
       setSel(cid); await kids.reload(); return true
     }
     if (k === 'vaccine') {
       const { cost, ...row } = v
       const ok = id ? await vC.update(id, row) : await vC.create({ ...row, child_id: child!.id })
       if (ok && cost > 0) await T.txns.create(household.id, { kind: 'expense', amount: cost, category: 'Sức khỏe & thuốc', child_id: child!.id, date: row.done_date || today(), note: `Tiêm ${row.vaccine}${row.dose ? ` (${row.dose})` : ''}` })
+      if (ok && row.done_date && !vx.rows.find(x => x.id === id)?.done_date) celebrate()
       return ok
     }
     if (k === 'growth') return id ? gC.update(id, v) : gC.create({ ...v, child_id: child!.id })
@@ -121,33 +125,27 @@ export default function ChildrenPage() {
     <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-4">
       <div className="flex flex-wrap gap-2">
         {kids.rows.map(c => (
-          <button key={c.id} onClick={() => setSel(c.id)} className={cn('flex items-center gap-2 pl-1.5 pr-3.5 py-1.5 rounded-full border text-sm', c.id === child.id ? 'bg-ink-900 text-white border-ink-900' : 'bg-white border-ink-200 text-ink-700')}>
+          <button key={c.id} onClick={() => setSel(c.id)} className={cn('flex items-center gap-2 pl-1.5 pr-3.5 py-1.5 rounded-full border text-sm font-semibold transition-all duration-300', c.id === child.id ? 'text-white border-transparent shadow-lg' : 'bg-white border-ink-200 text-ink-700 hover:-translate-y-0.5')} style={c.id === child.id ? { background: grad('children') } : undefined}>
             <span className="w-7 h-7 rounded-full flex items-center justify-center text-base bg-white/20">{c.gender === 'male' ? '👦' : '👧'}</span>{c.nickname || c.name}
           </button>
         ))}
         {canEdit && <button onClick={() => setForm({ kind: 'child' })} className="px-3.5 py-1.5 rounded-full text-sm border border-dashed border-ink-300 text-ink-500 hover:border-sakura-400">+ Thêm con</button>}
       </div>
 
-      <div className="hero p-5 sm:p-7 text-white">
-        <div className="relative flex flex-wrap items-center gap-5">
-          <div className="w-20 h-20 rounded-3xl bg-white/15 border border-white/20 flex items-center justify-center text-4xl overflow-hidden">
-            {child.avatar_url ? <img src={child.avatar_url} alt="" className="w-full h-full object-cover"/> : child.gender === 'male' ? '👦' : '👧'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="font-display text-3xl font-bold">{child.name}{child.nickname && <span className="text-white/60 text-xl"> ({child.nickname})</span>}</h1>
-            <p className="text-white/70 text-sm">{ageText(child.dob)} · sinh {fmtDate(child.dob)}{child.blood_type && ` · nhóm máu ${child.blood_type}`}</p>
-            {child.allergies && <p className="text-sm mt-1"><span className="bg-red-500/80 rounded-full px-2 py-0.5 text-xs font-semibold">⚠ Dị ứng: {child.allergies}</span></p>}
-          </div>
-          {canEdit && <button onClick={() => setForm({ kind: 'child', row: child })} className="btn btn-sm text-white border border-white/25 bg-white/10 hover:bg-white/20">✎ Sửa hồ sơ</button>}
+      <ModuleHero mod="children" eyebrow={<>{ageText(child.dob)} · sinh {fmtDate(child.dob)}{child.blood_type && ` · nhóm máu ${child.blood_type}`}</>}
+        title={<>{child.name}{child.nickname && <span className="text-white/65 text-2xl font-bold"> ({child.nickname})</span>}</>}
+        sub={child.allergies && <p className="mt-1"><span className="bg-rose-500/90 rounded-full px-2.5 py-1 text-xs font-semibold">⚠ Dị ứng: {child.allergies}</span></p>}
+        actions={canEdit && <button onClick={() => setForm({ kind: 'child', row: child })} className={heroBtnGhost}>✎ Sửa hồ sơ</button>}
+        art={child.avatar_url
+          ? <img src={child.avatar_url} alt="" className="float-art w-44 h-44 rounded-[36px] object-cover ring-4 ring-white/30"/>
+          : <KidArt months={ageMonths(child.dob)} gender={child.gender}/>}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 stagger">
+          <HeroStat label="Tiêm chủng" value={`${vacs.filter(v => v.done_date).length}/${vacs.length}`} tone={overdue.length ? 'bad' : undefined} sub={overdue.length ? `⛔ ${overdue.length} mũi quá hạn` : upcoming[0] ? `Tiếp theo: ${fmtDate(upcoming[0].due_date)}` : 'Không có mũi sắp tới'}/>
+          <HeroStat label="Cân nặng" value={latest?.weight_kg ? `${latest.weight_kg} kg` : '—'} sub={wStat ? wStat.label : 'Chưa có số đo'}/>
+          <HeroStat label="Chiều cao" value={latest?.height_cm ? `${latest.height_cm} cm` : '—'} sub={hStat ? hStat.label : latest ? `Đo ngày ${fmtDate(latest.date)}` : 'Chưa có số đo'}/>
+          <HeroStat label={`Chi cho con năm ${new Date().getFullYear()}`} value={vnd(spentYear)} sub={`Tổng ${vnd(spentAll)}`}/>
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
-        <Stat icon="💉" label="Tiêm chủng" value={`${vacs.filter(v => v.done_date).length}/${vacs.length}`} tone={overdue.length ? 'bad' : 'ink'} sub={overdue.length ? `⛔ ${overdue.length} mũi quá hạn` : upcoming[0] ? `Tiếp theo: ${fmtDate(upcoming[0].due_date)}` : 'Không có mũi sắp tới'}/>
-        <Stat icon="⚖️" label="Cân nặng" value={latest?.weight_kg ? `${latest.weight_kg} kg` : '—'} sub={wStat ? <span className={TONE[wStat.tone]}>{wStat.label}</span> : 'Chưa có số đo'}/>
-        <Stat icon="📏" label="Chiều cao" value={latest?.height_cm ? `${latest.height_cm} cm` : '—'} sub={hStat ? <span className={TONE[hStat.tone]}>{hStat.label}</span> : latest ? `Đo ngày ${fmtDate(latest.date)}` : 'Chưa có số đo'}/>
-        <Stat icon="💰" label={`Chi cho con năm ${new Date().getFullYear()}`} value={vnd(spentYear)} sub={`Tổng từ trước tới nay ${vnd(spentAll)}`}/>
-      </div>
+      </ModuleHero>
 
       <Tabs value={tab} onChange={setTab} items={[['vaccines', '💉 Tiêm chủng', overdue.length || undefined], ['growth', '📈 Tăng trưởng', gr.rows.length], ['costs', '💰 Chi phí'], ['diary', '📔 Nhật ký', ev.rows.length]]}/>
 
@@ -159,13 +157,13 @@ export default function ChildrenPage() {
                 const d = daysUntil(v.due_date)
                 const st = v.done_date ? ['✓ Đã tiêm', 'bg-jade-50 text-jade-700 border-jade-200'] : d < 0 ? [`⛔ Quá ${-d} ngày`, 'bg-red-50 text-red-700 border-red-200'] : d <= 14 ? [`🔔 Còn ${d} ngày`, 'bg-gold-50 text-gold-700 border-gold-200'] : [fmtDate(v.due_date), 'bg-ink-50 text-ink-500 border-ink-200']
                 return (
-                  <div key={v.id} className={cn('px-5 py-2.5 flex items-center gap-3 group', v.done_date && 'opacity-70')}>
+                  <div key={v.id} className={cn('px-3 sm:px-5 py-2.5 flex items-center gap-2.5 sm:gap-3 group transition-colors hover:bg-sky-50/40', v.done_date && 'opacity-70')}>
                     <input type="checkbox" disabled={!canEdit} checked={!!v.done_date} onChange={() => v.done_date ? vC.update(v.id, { done_date: null }, true) : setForm({ kind: 'vaccine', row: { ...v, done_date: today() } })} className="w-4 h-4 accent-jade-500 flex-shrink-0" aria-label="Đã tiêm"/>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-ink-900">{v.vaccine} {v.dose && <span className="text-ink-400 font-normal">· {v.dose}</span>}</p>
+                      <p className="text-sm font-medium text-ink-900">{v.vaccine} {v.dose && <span className="text-ink-400 font-normal">· {v.dose}</span>} <span className={cn('sm:hidden ml-1 align-middle text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap', st[1])}>{st[0]}</span></p>
                       <p className="text-xs text-ink-400">{v.program === 'epi' ? '🏛 TCMR miễn phí' : '💉 Dịch vụ'} · dự kiến {fmtDate(v.due_date)}{v.done_date && ` · đã tiêm ${fmtDate(v.done_date)}`}{v.place && ` · ${v.place}`}</p>
                     </div>
-                    <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', st[1])}>{st[0]}</span>
+                    <span className={cn('hidden sm:inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', st[1])}>{st[0]}</span>
                     {canEdit && <RowActions onEdit={() => setForm({ kind: 'vaccine', row: v })} onDelete={() => ask('Xóa mũi tiêm?', v.vaccine, () => vC.remove(v.id))}/>}
                   </div>
                 )

@@ -50,7 +50,7 @@ export function ScheduleTab({ items, eventDate, canEdit, projectName, onSave, on
         </div>
       ) : days.map(day => (
         <section key={day || 'none'} className="card overflow-hidden print:shadow-none print:border-ink-300">
-          <header className="px-5 py-3.5 border-b border-ink-100 flex items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg,#fffdf9,#fff5ec)' }}>
+          <header className="px-5 py-3.5 border-b border-ink-100 flex items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg,#ffffff,#fff5ec)' }}>
             <div>
               <p className="font-semibold text-ink-900 first-letter:uppercase">{day ? fmtDateFull(day) : 'Chưa xác định ngày'}</p>
               {day && <p className="text-xs text-ink-400">Âm lịch {lunarOf(day)} · {projectName}</p>}

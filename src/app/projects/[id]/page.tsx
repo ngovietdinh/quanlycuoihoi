@@ -149,7 +149,7 @@ function ProjectContent() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 px-4 sm:px-6 h-[61px] border-b border-ink-100/60 flex items-center gap-2 print:hidden" style={{ background: 'rgba(255,253,249,0.94)', backdropFilter: 'blur(20px)' }}>
+      <header className="sticky top-0 z-30 px-4 sm:px-6 h-[61px] border-b border-ink-100/60 flex items-center gap-2 print:hidden" style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)' }}>
         <Link href="/dashboard" className="btn btn-ghost btn-sm btn-icon" title="Về tổng quan">←</Link>
         <p className="font-display text-lg font-semibold text-ink-900 truncate flex-1">{project.name}</p>
         {canEdit && <>
@@ -178,7 +178,7 @@ function ProjectContent() {
       <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-4">
         <div className="print:hidden"><ProjectHero project={project} tasks={tasks} totalSpent={P.totalSpent} role={role} members={members} onEdit={canEdit ? () => setEditProject(true) : undefined}/></div>
 
-        <nav className="sticky top-[61px] z-20 -mx-4 sm:mx-0 px-4 sm:px-1 py-1.5 flex gap-1 overflow-x-auto no-scrollbar print:hidden" style={{ background: 'rgba(253,248,240,0.94)', backdropFilter: 'blur(16px)' }}>
+        <nav className="sticky top-[61px] z-20 -mx-4 sm:mx-0 px-4 sm:px-1 py-1.5 flex gap-1 overflow-x-auto no-scrollbar print:hidden" style={{ background: 'rgba(246,245,249,0.94)', backdropFilter: 'blur(16px)' }}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={cn('flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition',

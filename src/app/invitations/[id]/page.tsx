@@ -116,7 +116,7 @@ function Editor() {
   return (
     <>
       <header className="sticky top-0 z-30 px-4 sm:px-6 py-3 border-b border-ink-100/60 flex items-center gap-3"
-        style={{ background: 'rgba(255,253,249,0.94)', backdropFilter: 'blur(20px)' }}>
+        style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)' }}>
         <Link href="/invitations" className="btn btn-ghost btn-sm btn-icon" title="Quay lại">←</Link>
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-lg sm:text-xl font-semibold text-ink-900 truncate leading-snug">{draft.title || 'Thiệp cưới'}</h1>

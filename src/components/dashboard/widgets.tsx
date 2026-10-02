@@ -52,7 +52,7 @@ export function Greeting({ name, next, onCreateProject }: { name: string; next: 
             {parts.map(([v, l]) => (
               <div key={l} className="w-16 sm:w-20 rounded-2xl border border-white/15 bg-white/10 backdrop-blur py-3 text-center">
                 <p className="tracking-tight text-2xl sm:text-3xl font-bold tabular">{now ? String(v).padStart(2, '0') : '--'}</p>
-                <p className="text-[11px]st text-white/50">{l}</p>
+                <p className="text-[11px] text-white/50">{l}</p>
               </div>
             ))}
           </div>

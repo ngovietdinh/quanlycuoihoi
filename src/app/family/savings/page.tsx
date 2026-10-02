@@ -5,6 +5,9 @@ import { useRows, useCrud, useConfirm, FormModal, Stat, Panel, Empty, Tabs, RowA
 import { T } from '@/lib/api/family'
 import { GOAL_IDEAS, ASSET_TYPES, DOC_TYPES, GIFT_EVENTS, loanSchedule } from '@/lib/family/data'
 import { vnd, cn, fmtDate, downloadCsv } from '@/lib/utils'
+import { ModuleHero, HeroStat, heroBtn } from '@/components/family/theme'
+import { PiggyArt } from '@/components/family/art'
+import { celebrate } from '@/components/motion/confetti'
 import type { SavingsGoal, GoalContribution, Loan, LoanPayment, Debt, Gift, Asset, FamilyDoc } from '@/types'
 
 type Tab = 'goals' | 'loans' | 'debts' | 'gifts' | 'assets' | 'docs'
@@ -120,7 +123,11 @@ export default function SavingsPage() {
     if (kind === 'contrib') {
       const amount = (v.direction === 'out' ? -1 : 1) * Number(v.amount)
       const data = { goal_id: preset.goal_id, amount, date: v.date, note: v.note }
-      return id ? C.contrib.update(id, data) : C.contrib.create(data)
+      const g = goals.rows.find(x => x.id === preset.goal_id)
+      const before = g ? saved(g) : 0
+      const ok = id ? await C.contrib.update(id, data) : await C.contrib.create(data)
+      if (ok && g && !id && before < Number(g.target) && before + amount >= Number(g.target)) celebrate()
+      return ok
     }
     if (kind === 'pay') {
       const { add_txn, ...data } = v
@@ -140,16 +147,22 @@ export default function SavingsPage() {
 
   const tabs: [Tab, string, number?][] = [['goals', '🎯 Mục tiêu', goals.rows.length], ['loans', '🏦 Khoản vay', loans.rows.filter(l => !l.closed).length], ['debts', '🤝 Cho vay / mượn', debts.rows.filter(d => !d.settled).length], ['gifts', '🧧 Sổ hiếu hỉ', gifts.rows.length], ['assets', '🏠 Tài sản', assets.rows.length], ['docs', '📄 Giấy tờ', expiring.length || undefined]]
   const err = goals.error || loans.error
+  const goalTarget = goals.rows.reduce((a, g) => a + Number(g.target), 0)
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-4">
       {err && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">⚠️ {err}</div>}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
-        <Stat icon="🏠" label="Tài sản" value={vnd(totalAssets + totalSaved)} sub={`Tài sản ${vnd(totalAssets)} · quỹ ${vnd(totalSaved)}`}/>
-        <Stat icon="🏦" label="Dư nợ vay" value={vnd(loanDebt + owe)} tone={loanDebt + owe ? 'bad' : 'ink'} sub={`Ngân hàng ${vnd(loanDebt)} · mượn người ${vnd(owe)}`}/>
-        <Stat icon="📈" label="Giá trị ròng" value={vnd(totalAssets + totalSaved + lent - loanDebt - owe)} tone="good" sub="Tài sản + quỹ + cho vay − nợ"/>
-        <Stat icon="📄" label="Giấy tờ sắp hết hạn" value={expiring.length} tone={expiring.length ? 'warn' : 'ink'} sub={expiring[0] ? `${expiring[0].name}: ${fmtDate(expiring[0].expiry_date)}` : 'Trong 60 ngày tới'}/>
-      </div>
+      <ModuleHero mod="savings" eyebrow="Tích lũy & tài sản của gia đình" title={vnd(totalAssets + totalSaved + lent - loanDebt - owe)}
+        sub={<p>Giá trị ròng = tài sản + quỹ + cho vay − nợ{goalTarget ? ` · quỹ mục tiêu đã đạt ${Math.round((totalSaved / goalTarget) * 100)}%` : ''}</p>}
+        actions={canEdit && <><button onClick={() => { setTab('goals'); open('goal') }} className={heroBtn}>🎯 Thêm mục tiêu</button></>}
+        art={<PiggyArt pct={goalTarget ? totalSaved / goalTarget : 0}/>}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 stagger">
+          <HeroStat label="Tài sản & quỹ" value={vnd(totalAssets + totalSaved)} sub={`Tài sản ${vnd(totalAssets)} · quỹ ${vnd(totalSaved)}`}/>
+          <HeroStat label="Dư nợ vay" value={vnd(loanDebt + owe)} tone={loanDebt + owe ? 'bad' : undefined} sub={`Ngân hàng ${vnd(loanDebt)} · mượn ${vnd(owe)}`}/>
+          <HeroStat label="Cho người khác vay" value={vnd(lent)} sub="Chưa thu về"/>
+          <HeroStat label="Giấy tờ sắp hết hạn" value={expiring.length} tone={expiring.length ? 'bad' : undefined} sub={expiring[0] ? `${expiring[0].name}: ${fmtDate(expiring[0].expiry_date)}` : 'Trong 60 ngày tới'}/>
+        </div>
+      </ModuleHero>
       <Tabs value={tab} onChange={setTab} items={tabs}/>
 
       {tab === 'goals' && (
@@ -166,14 +179,15 @@ export default function SavingsPage() {
                 const perMonth = m && s < t ? Math.ceil((t - s) / Math.max(1, m)) : 0
                 const hist = contribs.rows.filter(c => c.goal_id === g.id)
                 return (
-                  <div key={g.id} className={cn('card p-4 group', g.done && 'opacity-70')}>
+                  <div key={g.id} className={cn('card-hover !cursor-default p-4 group relative overflow-hidden', g.done && 'opacity-70')}>
+                    {s >= t && <span aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: 'linear-gradient(90deg,#10b981,#f59e0b,#ff3d78)' }}/>}
                     <div className="flex items-start gap-3">
-                      <span className="w-11 h-11 rounded-2xl bg-gold-50 flex items-center justify-center text-2xl flex-shrink-0">{g.icon || '🎯'}</span>
+                      <GoalRing p={p}>{g.icon || '🎯'}</GoalRing>
                       <div className="min-w-0 flex-1"><p className="font-semibold text-ink-900 truncate">{g.name}{g.done && ' ✓'}</p><p className="text-xs text-ink-400">{g.deadline ? `Hạn ${fmtDate(g.deadline)}${m !== null ? ` · còn ${m} tháng` : ''}` : 'Không đặt hạn'}</p></div>
                       {canEdit && <RowActions onEdit={() => open('goal', g)} onDelete={() => ask('Xóa mục tiêu?', `${g.name} cùng lịch sử góp tiền`, () => C.goal.remove(g.id))}/>}
                     </div>
                     <div className="mt-3 flex items-end justify-between"><p className="tracking-tight text-xl font-bold text-ink-900 tabular">{vnd(s)}</p><p className="text-xs text-ink-400 tabular">/ {vnd(t)}</p></div>
-                    <div className="h-2 rounded-full bg-ink-100 mt-1.5 overflow-hidden"><div className="h-full rounded-full bg-jade-500 transition-all" style={{ width: `${p}%` }}/></div>
+                    <div className="progress-track h-2.5 mt-1.5"><div className="progress-bar" style={{ width: `${p}%`, background: s >= t ? 'linear-gradient(90deg,#10b981,#34d399)' : 'linear-gradient(90deg,#f59e0b,#f43f5e)' }}/></div>
                     <p className="text-xs mt-1 text-ink-500">{s >= t ? '🎉 Đã đạt mục tiêu!' : `${Math.round(p)}% · còn ${vnd(t - s)}`}{perMonth ? ` · cần góp ~${vnd(perMonth)}/tháng` : ''}</p>
                     {hist.length > 0 && <p className="text-xs text-ink-400 mt-1">Lần gần nhất: {fmtDate(hist[0].date)} {Number(hist[0].amount) > 0 ? '+' : ''}{vnd(hist[0].amount)}</p>}
                     {canEdit && !g.done && <button onClick={() => open('contrib', undefined, { goal_id: g.id })} className="btn btn-secondary btn-xs w-full mt-3">+ Góp / rút tiền</button>}
@@ -319,5 +333,19 @@ export default function SavingsPage() {
         onClose={() => setForm(null)} onSubmit={save} size="lg"/>}
       {confirmDialog}
     </div>
+  )
+}
+
+/** Vòng tiến độ quanh biểu tượng mục tiêu */
+function GoalRing({ p, children }: { p: number; children: React.ReactNode }) {
+  const r = 22, c = 2 * Math.PI * r
+  return (
+    <span className="relative w-14 h-14 flex-shrink-0 flex items-center justify-center text-2xl">
+      <svg viewBox="0 0 56 56" className="absolute inset-0 -rotate-90" aria-hidden>
+        <circle cx="28" cy="28" r={r} fill="#fffbeb" stroke="#fde68a" strokeWidth="5"/>
+        <circle cx="28" cy="28" r={r} fill="none" stroke={p >= 100 ? '#10b981' : '#f59e0b'} strokeWidth="5" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - p / 100)} className="ring-draw" style={{ ['--c' as string]: c, transition: 'stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)' }}/>
+      </svg>
+      <span className="relative">{children}</span>
+    </span>
   )
 }

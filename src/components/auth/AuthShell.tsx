@@ -18,13 +18,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   const [i, setI] = useState(0)
   useEffect(() => { const t = setInterval(() => setI(x => (x + 1) % SHOWCASE.length), 3200); return () => clearInterval(t) }, [])
   return (
-    <div className="min-h-screen grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] bg-[#fdf8f0]">
+    <div className="min-h-screen grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] bg-[#f6f5f9]">
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link rel="stylesheet" href={googleFontsHref(TEMPLATES.filter(t => (SHOWCASE as readonly string[]).includes(t.id)).map(t => t.theme.heading_font))}/>
 
       {/* Bên trái: giới thiệu (ẩn trên điện thoại) */}
       <aside className="hidden lg:flex relative overflow-hidden flex-col justify-between p-10 xl:p-14 text-white"
-        style={{ background: 'linear-gradient(145deg,#1a0d08 0%,#2c1810 35%,#4a2520 70%,#78350f 100%)' }}>
+        style={{ background: 'linear-gradient(145deg,#110e17 0%,#1c1825 35%,#3b1d4a 70%,#9d174d 100%)' }}>
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-20 blur-3xl" style={{ background: '#ff3d78' }}/>
         <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-15 blur-3xl" style={{ background: '#f59e0b' }}/>
         <Link href="/" className="relative flex items-center gap-3 w-fit">

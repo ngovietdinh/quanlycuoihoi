@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useHousehold, RELATIONS } from '@/components/family/HouseholdProvider'
 import { useRows, useConfirm, Stat, Panel, thisMonth, monthLabel, daysUntil } from '@/components/family/ui'
 import { useToast } from '@/components/ui/Toast'
+import { ModuleHero, HeroStat, MODULES, grad, type ModuleKey } from '@/components/family/theme'
+import { HomeArt } from '@/components/family/art'
 import { T, addHouseholdMember, updateHouseholdMember, removeHouseholdMember, updateHousehold, deleteHousehold, createHousehold } from '@/lib/api/family'
 import { billDue, gestation, ageText, loanSchedule } from '@/lib/family/data'
 import { vnd, cn, fmtDate } from '@/lib/utils'
@@ -65,20 +67,24 @@ export default function FamilyOverview() {
   }
   const saved = goals.rows.reduce((s, g) => s + contribs.rows.filter(c => c.goal_id === g.id).reduce((a, c) => a + Number(c.amount), 0), 0)
   const MOD = [
-    { href: '/family/finance', icon: '💰', title: 'Thu chi', line: `Tháng này: thu ${vnd(income)} · chi ${vnd(expense)}` },
-    { href: '/family/pregnancy', icon: '🤰', title: 'Thai sản', line: preg ? `Tuần ${gestation(preg.due_date).weeks} · dự sinh ${fmtDate(preg.due_date)}` : 'Theo dõi thai kỳ, chi phí sinh, đồ sơ sinh' },
-    { href: '/family/children', icon: '🧒', title: 'Con cái', line: kids.rows.length ? kids.rows.map(k => `${k.nickname || k.name} ${ageText(k.dob)}`).join(' · ') : 'Tiêm chủng, tăng trưởng, chi phí nuôi con' },
-    { href: '/family/savings', icon: '🐷', title: 'Tiết kiệm & tài sản', line: goals.rows.length ? `${goals.rows.length} mục tiêu · đã để dành ${vnd(saved)}` : 'Mục tiêu, khoản vay, hiếu hỉ, giấy tờ' },
+    { mod: 'finance' as ModuleKey, href: '/family/finance', icon: '💰', title: 'Thu chi', line: `Tháng này: thu ${vnd(income)} · chi ${vnd(expense)}` },
+    { mod: 'pregnancy' as ModuleKey, href: '/family/pregnancy', icon: '🤰', title: 'Thai sản', line: preg ? `Tuần ${gestation(preg.due_date).weeks} · dự sinh ${fmtDate(preg.due_date)}` : 'Theo dõi thai kỳ, chi phí sinh, đồ sơ sinh' },
+    { mod: 'children' as ModuleKey, href: '/family/children', icon: '🧒', title: 'Con cái', line: kids.rows.length ? kids.rows.map(k => `${k.nickname || k.name} ${ageText(k.dob)}`).join(' · ') : 'Tiêm chủng, tăng trưởng, chi phí nuôi con' },
+    { mod: 'savings' as ModuleKey, href: '/family/savings', icon: '🐷', title: 'Tiết kiệm & tài sản', line: goals.rows.length ? `${goals.rows.length} mục tiêu · đã để dành ${vnd(saved)}` : 'Mục tiêu, khoản vay, hiếu hỉ, giấy tờ' },
   ]
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-5">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
-        <Stat icon="💰" label={`Thu ${monthLabel(m).toLowerCase()}`} value={vnd(income)} tone="good"/>
-        <Stat icon="💸" label="Chi" value={vnd(expense)} tone="brand"/>
-        <Stat icon="📈" label="Còn lại" value={vnd(income - expense)} tone={income - expense >= 0 ? 'good' : 'bad'} sub={income ? `Tiết kiệm ${Math.round(((income - expense) / income) * 100)}%` : undefined}/>
-        <Stat icon="🔔" label="Việc cần chú ý" value={alerts.length} tone={alerts.some(a => a.tone === 'bad') ? 'bad' : alerts.length ? 'warn' : 'ink'} sub={alerts.length ? 'Xem danh sách bên dưới' : 'Mọi thứ đều ổn 🎉'}/>
-      </div>
+      <ModuleHero mod="overview" eyebrow={greeting()} title={household.name}
+        sub={<p>{members.length} thành viên cùng ghi chép · {alerts.length ? `${alerts.length} việc cần chú ý` : 'mọi thứ đang ổn 🎉'}</p>}
+        art={<HomeArt members={members.length}/>}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 stagger">
+          <HeroStat label={`Thu ${monthLabel(m).toLowerCase()}`} value={vnd(income)} tone="good"/>
+          <HeroStat label="Chi tháng này" value={vnd(expense)}/>
+          <HeroStat label="Còn lại" value={vnd(income - expense)} tone={income - expense >= 0 ? 'good' : 'bad'} sub={income ? `Để dành ${Math.round(((income - expense) / income) * 100)}% thu nhập` : undefined}/>
+          <HeroStat label="Việc cần chú ý" value={alerts.length} tone={alerts.some(a => a.tone === 'bad') ? 'bad' : undefined} sub={alerts.length ? 'Xem danh sách bên dưới' : 'Không có gì gấp'}/>
+        </div>
+      </ModuleHero>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-4 items-start">
         <div className="space-y-4">
@@ -94,11 +100,13 @@ export default function FamilyOverview() {
               </ul>
             )}
           </Panel>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 stagger">
             {MOD.map(x => (
-              <Link key={x.href} href={x.href} className="card-hover p-4 flex gap-3">
-                <span className="w-11 h-11 rounded-2xl bg-sakura-50 flex items-center justify-center text-2xl flex-shrink-0">{x.icon}</span>
-                <span className="min-w-0"><span className="block font-semibold text-ink-900">{x.title}</span><span className="block text-xs text-ink-500 line-clamp-2">{x.line}</span></span>
+              <Link key={x.href} href={x.href} className="group relative overflow-hidden card-hover p-4 flex gap-3 items-center">
+                <span aria-hidden className="absolute -right-10 -top-10 w-32 h-32 rounded-full opacity-[.12] transition-transform duration-500 group-hover:scale-150" style={{ background: grad(x.mod) }}/>
+                <span className="relative w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110" style={{ background: grad(x.mod), boxShadow: `0 10px 20px -10px ${MODULES[x.mod].from}` }}>{x.icon}</span>
+                <span className="relative min-w-0 flex-1"><span className="block font-bold text-ink-900">{x.title}</span><span className="block text-xs text-ink-500 line-clamp-2">{x.line}</span></span>
+                <span className="relative text-ink-300 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ink-700">→</span>
               </Link>
             ))}
           </div>
@@ -157,4 +165,9 @@ export default function FamilyOverview() {
       {confirmDialog}
     </div>
   )
+}
+
+function greeting() {
+  const h = new Date().getHours()
+  return h < 11 ? 'Chào buổi sáng ☀️' : h < 14 ? 'Chào buổi trưa 🌤' : h < 18 ? 'Chào buổi chiều 🌇' : 'Chào buổi tối 🌙'
 }

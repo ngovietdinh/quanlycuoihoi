@@ -32,10 +32,10 @@ export default async function Landing() {
   const user = await getUser()
   const cta = user ? { href: '/dashboard', label: 'Vào bảng điều khiển' } : { href: '/auth/register', label: 'Bắt đầu miễn phí' }
   return (
-    <div className="min-h-screen bg-[#fdf8f0] text-ink-900">
+    <div className="min-h-screen bg-[#f6f5f9] text-ink-900">
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link rel="stylesheet" href={googleFontsHref(TEMPLATES.map(t => t.theme.heading_font))}/>
-      <nav className="sticky top-0 z-40 border-b border-ink-100/60" style={{ background: 'rgba(253,248,240,.88)', backdropFilter: 'blur(16px)' }}>
+      <nav className="sticky top-0 z-40 border-b border-ink-100/60" style={{ background: 'rgba(246,245,249,.88)', backdropFilter: 'blur(16px)' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <Logo size={36} sub={false}/>
