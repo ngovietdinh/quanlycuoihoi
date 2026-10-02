@@ -61,7 +61,7 @@ export default function FamilyOverview() {
     const r = await addHouseholdMember(household.id, inv.email.trim(), inv.role, inv.relation)
     setBusy(false)
     if (r.error) return error('Không mời được', r.error)
-    success('Đã thêm thành viên 🎉', 'Người được mời cần có tài khoản Hỷ Sự với email này'); setInv(i => ({ ...i, email: '' })); reloadMembers()
+    success('Đã thêm thành viên 🎉', 'Người được mời cần có tài khoản FamilyPlan với email này'); setInv(i => ({ ...i, email: '' })); reloadMembers()
   }
   const saved = goals.rows.reduce((s, g) => s + contribs.rows.filter(c => c.goal_id === g.id).reduce((a, c) => a + Number(c.amount), 0), 0)
   const MOD = [
@@ -73,7 +73,7 @@ export default function FamilyOverview() {
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-5">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
         <Stat icon="💰" label={`Thu ${monthLabel(m).toLowerCase()}`} value={vnd(income)} tone="good"/>
         <Stat icon="💸" label="Chi" value={vnd(expense)} tone="brand"/>
         <Stat icon="📈" label="Còn lại" value={vnd(income - expense)} tone={income - expense >= 0 ? 'good' : 'bad'} sub={income ? `Tiết kiệm ${Math.round(((income - expense) / income) * 100)}%` : undefined}/>
@@ -130,7 +130,7 @@ export default function FamilyOverview() {
             </ul>
             {isOwner && (
               <form onSubmit={invite} className="px-5 py-4 border-t border-ink-100 space-y-2 bg-ink-50/40">
-                <p className="text-xs font-semibold text-ink-600">Mời vợ/chồng, bố mẹ… (cần có tài khoản Hỷ Sự)</p>
+                <p className="text-xs font-semibold text-ink-600">Mời vợ/chồng, bố mẹ… (cần có tài khoản FamilyPlan)</p>
                 <input className="input !py-2 text-sm" type="email" required placeholder="email@example.com" value={inv.email} onChange={e => setInv(i => ({ ...i, email: e.target.value }))}/>
                 <div className="flex gap-2">
                   <select className="input !py-2 text-sm" value={inv.relation} onChange={e => setInv(i => ({ ...i, relation: e.target.value }))}>{RELATIONS.map(r => <option key={r}>{r}</option>)}</select>

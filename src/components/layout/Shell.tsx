@@ -1,4 +1,6 @@
 'use client'
+import { Logo } from '@/components/brand/Logo'
+import { PageTransition, RouteProgress } from '@/components/motion'
 import Link from 'next/link'
 import { AUTHOR, copyright } from '@/lib/brand'
 import { usePathname } from 'next/navigation'
@@ -31,21 +33,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
         style={{background:'linear-gradient(180deg, #fffdf9 0%, #fff8f0 100%)'}}>
         {/* Brand */}
         <div className="px-5 py-6 border-b border-ink-100/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-glow-sakura"
-              style={{background:'linear-gradient(135deg, #ff6b96, #ff3d78)'}}>
-              💍
-            </div>
-            <div>
-              <p className="font-display font-bold text-ink-900 text-base leading-tight">Hỷ Sự</p>
-              <p className="text-[11px] text-ink-400 font-mediumr">Wedding Manager</p>
-            </div>
-          </div>
+          <Logo size={40}/>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5">
-          <p className="text-[11px] font-bold text-ink-400st px-3 mb-3">Menu chính</p>
+          <p className="text-[11px] font-bold text-ink-400 px-3 mb-3">Menu chính</p>
           {NAV.map(n => {
             const active = isActive(n.href)
             return (
@@ -84,9 +77,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main area */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+      <RouteProgress/>
+      <PageTransition className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
         {children}
-      </div>
+      </PageTransition>
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 safe-bottom border-t border-ink-100"

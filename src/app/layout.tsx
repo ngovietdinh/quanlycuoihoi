@@ -8,8 +8,8 @@ const sans = Be_Vietnam_Pro({ subsets: ['vietnamese', 'latin'], weight: ['300', 
 const serif = Lora({ subsets: ['vietnamese', 'latin'], weight: ['400', '500', '600', '700'], style: ['normal', 'italic'], variable: '--font-display', display: 'swap' })
 const mono = JetBrains_Mono({ subsets: ['vietnamese', 'latin'], weight: ['400', '500'], variable: '--font-mono', display: 'swap' })
 export const metadata: Metadata = {
-  title: { default:'Hỷ Sự — Quản lý lễ cưới & thiệp cưới online', template:'%s | Hỷ Sự' },
-  description:'Lập kế hoạch lễ cưới, quản lý ngân sách và tạo thiệp cưới online đẹp, hiện đại.',
+  title: { default:'FamilyPlan — Thiệp cưới online, quản lý lễ cưới & tài chính gia đình', template:'%s | FamilyPlan' },
+  description:'Từ ngày cưới tới cả tổ ấm: thiệp cưới online, kế hoạch lễ cưới, thu chi gia đình, thai sản, con cái và tiết kiệm.', applicationName: 'FamilyPlan',
   authors: [{ name: AUTHOR }], creator: AUTHOR, publisher: AUTHOR,
 }
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#fdf8f0' }

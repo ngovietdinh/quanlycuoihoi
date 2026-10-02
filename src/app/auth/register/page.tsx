@@ -50,7 +50,7 @@ export default function RegisterPage() {
         <h1 className="font-display text-3xl font-bold text-ink-900 mb-2">Kiểm tra hộp thư của bạn</h1>
         <p className="text-sm text-ink-500 mb-6">Chúng tôi đã gửi liên kết xác nhận tới <b className="text-ink-800">{sentTo}</b>. Bấm vào liên kết trong email để kích hoạt tài khoản.</p>
         <ol className="text-left text-sm text-ink-600 space-y-2 bg-white border border-ink-100 rounded-2xl p-4 mb-6">
-          <li>1. Mở email từ <b>Supabase / Hỷ Sự</b> (có thể nằm trong mục Spam, Quảng cáo).</li>
+          <li>1. Mở email từ <b>Supabase / FamilyPlan</b> (có thể nằm trong mục Spam, Quảng cáo).</li>
           <li>2. Bấm <b>Confirm your mail</b> / <b>Xác nhận</b>.</li>
           <li>3. Bạn sẽ được chuyển thẳng vào trang tổng quan.</li>
         </ol>

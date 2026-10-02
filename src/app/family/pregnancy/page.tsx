@@ -153,7 +153,7 @@ export default function PregnancyPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
         <Stat icon="🩺" label="Số lần khám" value={visits.length} sub={visits[0] ? `Gần nhất ${fmtDate(visits[0].date)}` : 'Chưa ghi lần khám'}/>
         <Stat icon="⚖️" label="Cân nặng mẹ" value={weights.length ? `${weights[weights.length - 1].mom_weight} kg` : '—'} sub={weights.length > 1 ? `Tăng ${(Number(weights[weights.length - 1].mom_weight) - Number(weights[0].mom_weight)).toFixed(1)} kg từ ${fmtDate(weights[0].date)}` : 'Ghi khi đi khám'}/>
         <Stat icon="💰" label="Chi phí thai sản" value={vnd(actTotal || visitSpend)} sub={`Dự toán ${vnd(estTotal)}`} tone={actTotal > estTotal && estTotal > 0 ? 'bad' : 'ink'}/>

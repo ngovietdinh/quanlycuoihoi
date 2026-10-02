@@ -1,4 +1,4 @@
-# 💍 Hỷ Sự — Quản lý lễ cưới & Thiệp cưới online
+# FamilyPlan — Thiệp cưới online, quản lý lễ cưới & gia đình
 
 **Tác giả:** Ngô Viết Định · © 2026 Ngô Viết Định. Bảo lưu mọi quyền.
 

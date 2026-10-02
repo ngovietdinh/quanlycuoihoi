@@ -144,7 +144,7 @@ export default function SavingsPage() {
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-4">
       {err && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">⚠️ {err}</div>}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
         <Stat icon="🏠" label="Tài sản" value={vnd(totalAssets + totalSaved)} sub={`Tài sản ${vnd(totalAssets)} · quỹ ${vnd(totalSaved)}`}/>
         <Stat icon="🏦" label="Dư nợ vay" value={vnd(loanDebt + owe)} tone={loanDebt + owe ? 'bad' : 'ink'} sub={`Ngân hàng ${vnd(loanDebt)} · mượn người ${vnd(owe)}`}/>
         <Stat icon="📈" label="Giá trị ròng" value={vnd(totalAssets + totalSaved + lent - loanDebt - owe)} tone="good" sub="Tài sản + quỹ + cho vay − nợ"/>

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { CountUp } from '@/components/motion'
 import { solarToLunar, canChiYear } from '@/lib/invitation/datetime'
 import { vnd, pct, cn, fmtDate } from '@/lib/utils'
 import type { ProjectSummary } from '@/types'
@@ -72,7 +73,7 @@ export function QuickActions({ onCreateProject, firstProjectId }: { onCreateProj
     { icon: '👁', label: 'Thiệp mẫu', desc: 'Xem thử', href: '/i/demo?t=royal', color: 'from-blue-50 to-white' },
   ]
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 stagger">
       {items.map(it => {
         const inner = (
           <>
@@ -95,7 +96,7 @@ function Ring({ value, color }: { value: number; color: string }) {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" className="-rotate-90 flex-shrink-0">
       <circle cx="28" cy="28" r={r} fill="none" stroke="#f0ede6" strokeWidth="6"/>
-      <circle cx="28" cy="28" r={r} fill="none" stroke={color} strokeWidth="6" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - Math.min(100, value) / 100)} style={{ transition: 'stroke-dashoffset .8s ease' }}/>
+      <circle cx="28" cy="28" r={r} fill="none" stroke={color} strokeWidth="6" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - Math.min(100, value) / 100)} className="ring-draw" style={{ transition: 'stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)', ['--c' as string]: c }}/>
     </svg>
   )
 }
@@ -116,14 +117,14 @@ export function Kpis({ projects, data }: { projects: ProjectSummary[]; data: Das
     { label: 'Khách sẽ đến', value: inv?.attending ?? 0, sub: `${inv?.rsvps ?? 0} phản hồi · ${inv?.views ?? 0} lượt xem thiệp`, ring: null, icon: '💌', tone: 'ink' },
   ] as const
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
       {tiles.map(t => (
         <div key={t.label} className={`stat-card ${t.tone} flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 !p-4 sm:!p-5`}>
           {t.ring ? <div className="relative"><Ring value={t.ring[0] as number} color={t.ring[1] as string}/><span className="absolute inset-0 flex items-center justify-center text-lg">{t.icon}</span></div>
             : <span className="w-14 h-14 rounded-2xl bg-ink-50 flex items-center justify-center text-2xl flex-shrink-0">{t.icon}</span>}
           <div className="min-w-0 w-full">
             <p className="text-xs text-ink-400 font-medium truncate">{t.label}</p>
-            <p className="tracking-tight text-2xl sm:text-3xl font-bold text-ink-900 tabular leading-tight">{t.value}</p>
+            <p className="tracking-tight text-2xl sm:text-3xl font-bold text-ink-900 tabular leading-tight"><CountUp value={t.value}/></p>
             <p className={cn('text-xs truncate', 'warn' in t && t.warn ? 'text-red-500 font-semibold' : 'text-ink-400')}>{t.sub}</p>
           </div>
         </div>

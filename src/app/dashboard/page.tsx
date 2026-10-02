@@ -390,7 +390,7 @@ function DashboardContent() {
           ) : shown.length === 0 ? (
             <div className="card text-center py-10 text-sm text-ink-500">Không có dự án phù hợp bộ lọc. <button onClick={() => { setQ(''); setFilter('all') }} className="text-sakura-600 font-semibold hover:underline">Xóa bộ lọc</button></div>
           ) : (
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 stagger">
               {shown.map(p => <ProjectCard key={p.id} project={p} onDelete={load} shared={p.user_id !== user?.id}/>)}
             </div>
           )}

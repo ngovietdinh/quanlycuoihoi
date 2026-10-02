@@ -148,7 +148,7 @@ export default function FinancePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
         <Stat icon="💰" label={`Thu ${monthLabel(month).toLowerCase()}`} value={vnd(income)} tone="good"/>
         <Stat icon="💸" label="Chi" value={vnd(expense)} tone="brand" sub={budgetTotal ? `Hạn mức ${vnd(budgetTotal)}` : undefined}/>
         <Stat icon={income - expense >= 0 ? '📈' : '📉'} label="Còn lại" value={vnd(income - expense)} tone={income - expense >= 0 ? 'good' : 'bad'} sub={income ? `Tiết kiệm ${Math.round(((income - expense) / income) * 100)}% thu nhập` : undefined}/>

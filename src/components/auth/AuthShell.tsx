@@ -1,14 +1,15 @@
 'use client'
+import { Logo } from '@/components/brand/Logo'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { TEMPLATES, patternBg, googleFontsHref } from '@/lib/invitation/templates'
 import { AUTHOR, copyright } from '@/lib/brand'
 
 const HIGHLIGHTS = [
-  ['💌', '18 mẫu thiệp online', 'Phong bì, nhạc nền, hiệu ứng, âm lịch'],
-  ['👥', 'Khách mời cá nhân hóa', 'Link riêng hiện đúng tên từng khách'],
-  ['📊', 'Xác nhận tham dự realtime', 'Thống kê, xuất Excel cho nhà hàng'],
-  ['📋', 'Kế hoạch & ngân sách', '24 việc chuẩn bị cưới có sẵn'],
+  ['💌', 'Thiệp cưới online', '18 mẫu, phong bì, nhạc nền, khách mời đúng tên'],
+  ['📋', 'Kế hoạch lễ cưới', 'Công việc, ngân sách, nhà cung cấp, lịch trình'],
+  ['💰', 'Thu chi gia đình', 'Nhiều ví, ngân sách tháng, khoản định kỳ'],
+  ['👶', 'Thai sản & con cái', 'Theo dõi thai kỳ, lịch tiêm, biểu đồ tăng trưởng'],
 ]
 const SHOWCASE = ['songhy', 'floral', 'royal', 'lotus', 'midnight', 'sakura'] as const
 
@@ -27,15 +28,14 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-20 blur-3xl" style={{ background: '#ff3d78' }}/>
         <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-15 blur-3xl" style={{ background: '#f59e0b' }}/>
         <Link href="/" className="relative flex items-center gap-3 w-fit">
-          <span className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-glow-sakura" style={{ background: 'linear-gradient(135deg,#ff6b96,#ff3d78)' }}>💍</span>
-          <span><span className="block font-display text-2xl font-bold leading-tight">Hỷ Sự</span><span className="text-xs text-white/50r">Wedding planner</span></span>
+          <Logo size={44} tone="light"/>
         </Link>
 
         <div className="relative grid grid-cols-[1fr_auto] gap-8 items-center my-10">
           <div>
-            <h2 className="font-display text-4xl 2xl:text-5xl font-bold leading-tight mb-4">Ngày trọng đại,<br/><span className="text-gradient-sakura whitespace-nowrap">trọn vẹn từng chi tiết</span></h2>
-            <p className="text-white/60 mb-8 max-w-md">Một nơi duy nhất để lên kế hoạch, quản lý ngân sách và gửi thiệp cưới online tới mọi khách mời.</p>
-            <ul className="space-y-3.5">
+            <h2 className="font-display text-4xl 2xl:text-5xl font-bold leading-tight mb-4">Từ ngày cưới<br/><span className="text-gradient-sakura whitespace-nowrap">tới cả tổ ấm</span></h2>
+            <p className="text-white/60 mb-8 max-w-md">Gửi thiệp cưới, lo trọn đám cưới, rồi cùng nhau quản lý chi tiêu, thai sản và việc nuôi con — trong một ứng dụng.</p>
+            <ul className="space-y-3.5 stagger">
               {HIGHLIGHTS.map(([ic, t, d]) => (
                 <li key={t} className="flex items-start gap-3">
                   <span className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center flex-shrink-0">{ic}</span>
@@ -73,8 +73,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       <main className="flex flex-col min-h-screen">
         <div className="lg:hidden px-5 pt-6 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{ background: 'linear-gradient(135deg,#ff6b96,#ff3d78)' }}>💍</span>
-            <span className="font-display text-xl font-bold text-ink-900">Hỷ Sự</span>
+            <Logo size={36} sub={false}/>
           </Link>
           <Link href="/i/demo" target="_blank" className="text-xs text-sakura-600 font-semibold">Xem thiệp mẫu ↗</Link>
         </div>

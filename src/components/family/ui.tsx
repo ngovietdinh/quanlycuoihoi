@@ -1,5 +1,6 @@
 'use client'
-import { useCallback, useEffect, useRef, useState, FormEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, FormEvent } from 'react'
+import { CountUp } from '@/components/motion'
 import { Modal, ConfirmModal } from '@/components/ui/Modal'
 import { useToast } from '@/components/ui/Toast'
 import { sb } from '@/lib/supabase/client'
@@ -146,9 +147,9 @@ export function FormModal({ open, title, subtitle, fields, initial, onClose, onS
 export function Stat({ icon, label, value, sub, tone = 'ink' }: { icon: string; label: string; value: React.ReactNode; sub?: React.ReactNode; tone?: 'ink' | 'good' | 'bad' | 'warn' | 'brand' }) {
   const c = { ink: 'text-ink-900', good: 'text-jade-600', bad: 'text-red-600', warn: 'text-gold-700', brand: 'text-sakura-600' }[tone]
   return (
-    <div className="card p-4 min-w-0">
+    <div className="card p-4 min-w-0 transition-shadow duration-300 hover:shadow-card-hover">
       <p className="text-xs text-ink-500 font-semibold flex items-center gap-1.5 leading-snug"><span className="text-base">{icon}</span>{label}</p>
-      <p className={cn('text-lg sm:text-2xl tracking-tight font-bold tabular mt-1 truncate', c)}>{value}</p>
+      <p className={cn('text-lg sm:text-2xl tracking-tight font-bold tabular mt-1 truncate', c)}><CountUp value={value}/></p>
       {sub && <p className="text-xs text-ink-400 truncate">{sub}</p>}
     </div>
   )
@@ -178,11 +179,23 @@ export function Empty({ icon, title, text, action }: { icon: string; title: stri
 }
 
 export function Tabs<K extends string>({ value, onChange, items }: { value: K; onChange: (k: K) => void; items: [K, string, (number | string)?][] }) {
+  // Nền trắng của tab đang chọn trượt sang tab mới thay vì nhảy cóc
+  const wrap = useRef<HTMLDivElement>(null)
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(null)
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = wrap.current?.querySelector<HTMLElement>(`[data-k="${value}"]`)
+      if (el) setPill({ left: el.offsetLeft, width: el.offsetWidth })
+    }
+    measure(); window.addEventListener('resize', measure); return () => window.removeEventListener('resize', measure)
+  }, [value, items.length])
   return (
-    <div className="flex gap-1 overflow-x-auto no-scrollbar">
+    <div ref={wrap} role="tablist" className="relative flex gap-1 overflow-x-auto no-scrollbar">
+      {pill && <span aria-hidden className="absolute top-0 bottom-0 rounded-xl bg-white shadow-card transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)]" style={{ left: pill.left, width: pill.width }}/>}
       {items.map(([k, l, n]) => (
-        <button key={k} onClick={() => onChange(k)} className={cn('flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-medium transition',
-          value === k ? 'bg-white shadow-card text-sakura-700 font-semibold' : 'text-ink-500 hover:text-ink-900 hover:bg-white/60')}>
+        <button key={k} data-k={k} role="tab" aria-selected={value === k} onClick={() => { onChange(k); wrap.current?.querySelector(`[data-k="${k}"]`)?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }) }}
+          className={cn('relative flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors duration-300',
+            value === k ? 'text-sakura-700 font-semibold' : 'text-ink-500 hover:text-ink-900', !pill && value === k && 'bg-white shadow-card')}>
           {l}{n !== undefined && n !== 0 && <span className="ml-1.5 text-[11px] font-bold bg-ink-100 text-ink-600 rounded-full px-1.5">{n}</span>}
         </button>
       ))}

@@ -142,7 +142,7 @@ export default function ChildrenPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger">
         <Stat icon="💉" label="Tiêm chủng" value={`${vacs.filter(v => v.done_date).length}/${vacs.length}`} tone={overdue.length ? 'bad' : 'ink'} sub={overdue.length ? `⛔ ${overdue.length} mũi quá hạn` : upcoming[0] ? `Tiếp theo: ${fmtDate(upcoming[0].due_date)}` : 'Không có mũi sắp tới'}/>
         <Stat icon="⚖️" label="Cân nặng" value={latest?.weight_kg ? `${latest.weight_kg} kg` : '—'} sub={wStat ? <span className={TONE[wStat.tone]}>{wStat.label}</span> : 'Chưa có số đo'}/>
         <Stat icon="📏" label="Chiều cao" value={latest?.height_cm ? `${latest.height_cm} cm` : '—'} sub={hStat ? <span className={TONE[hStat.tone]}>{hStat.label}</span> : latest ? `Đo ngày ${fmtDate(latest.date)}` : 'Chưa có số đo'}/>

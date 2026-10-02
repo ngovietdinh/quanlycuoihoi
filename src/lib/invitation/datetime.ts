@@ -106,7 +106,7 @@ export function icsDataUrl(title: string, startIso: string, location: string, de
   const s = new Date(startIso), e = new Date(s.getTime() + hours * 3600e3)
   const esc = (t: string) => t.replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
   const body = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//HySu//Wedding//VI','BEGIN:VEVENT',
-    `UID:${icsStamp(s)}-${Math.random().toString(36).slice(2)}@hysu`, `DTSTAMP:${icsStamp(new Date())}`,
+    `UID:${icsStamp(s)}-${Math.random().toString(36).slice(2)}@familyplan`, `DTSTAMP:${icsStamp(new Date())}`,
     `DTSTART:${icsStamp(s)}`, `DTEND:${icsStamp(e)}`, `SUMMARY:${esc(title)}`, `LOCATION:${esc(location)}`, `DESCRIPTION:${esc(details)}`,
     'BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:Nhắc lịch đám cưới','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].join('\r\n')
