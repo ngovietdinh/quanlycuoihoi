@@ -162,7 +162,7 @@ export default function FinancePage() {
               <p className="text-sm font-semibold text-gold-800 mb-2">🔔 {billsDue.length} khoản sắp / đã đến hạn</p>
               {billsDue.map(({ b, due, left }) => (
                 <div key={b.id} className="flex items-center justify-between gap-2 text-sm py-1">
-                  <span className="truncate text-ink-800">{b.name} · <b className="tabular">{vnd(b.amount)}</b> <span className={cn('text-xs', left! < 0 ? 'text-red-600 font-semibold' : 'text-gold-700')}>{left! < 0 ? `quá hạn ${-left!} ngày` : left === 0 ? 'hôm nay' : `còn ${left} ngày`} ({fmtDate(due!)})</span></span>
+                  <span className="min-w-0 text-ink-800">{b.name} · <b className="tabular">{vnd(b.amount)}</b> <span className={cn('text-xs', left! < 0 ? 'text-red-600 font-semibold' : 'text-gold-700')}>{left! < 0 ? `quá hạn ${-left!} ngày` : left === 0 ? 'hôm nay' : `còn ${left} ngày`} ({fmtDate(due!)})</span></span>
                   {canEdit && <button onClick={() => openTxn(undefined, { kind: b.kind, amount: b.amount, category: b.category, wallet_id: b.wallet_id ?? '', child_id: b.child_id ?? '', note: b.name, bill_id: b.id })} className="btn btn-gold btn-xs flex-shrink-0">Đã trả</button>}
                 </div>
               ))}
@@ -196,13 +196,13 @@ export default function FinancePage() {
               const net = items.reduce((s, t) => s + (t.kind === 'income' ? Number(t.amount) : t.kind === 'expense' ? -Number(t.amount) : 0), 0)
               return (
                 <div key={d}>
-                  <div className="px-5 py-1.5 bg-ink-50/70 flex justify-between text-[11px] font-semibold text-ink-500"><span className="capitalize">{new Date(d + 'T12:00:00').toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit' })}</span><span className={net >= 0 ? 'text-jade-600' : 'text-ink-600'}>{net >= 0 ? '+' : ''}{vnd(net)}</span></div>
+                  <div className="px-5 py-1.5 bg-ink-50/70 flex justify-between text-xs font-semibold text-ink-500"><span className="capitalize">{new Date(d + 'T12:00:00').toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit' })}</span><span className={net >= 0 ? 'text-jade-600' : 'text-ink-600'}>{net >= 0 ? '+' : ''}{vnd(net)}</span></div>
                   {items.map(t => (
-                    <div key={t.id} className="px-5 py-2.5 flex items-center gap-3 hover:bg-ink-50/40 group border-b border-ink-50 last:border-0">
-                      <span className="w-9 h-9 rounded-xl bg-ink-50 flex items-center justify-center text-lg flex-shrink-0">{t.kind === 'transfer' ? '⇄' : catIcon(t.category)}</span>
+                    <div key={t.id} className="px-3 sm:px-5 py-2.5 flex items-center gap-2 sm:gap-3 hover:bg-ink-50/40 group border-b border-ink-50 last:border-0">
+                      <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-ink-50 flex items-center justify-center text-lg flex-shrink-0">{t.kind === 'transfer' ? '⇄' : catIcon(t.category)}</span>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-ink-900 truncate">{t.note || t.category}</p>
-                        <p className="text-[11px] text-ink-400 truncate">{[t.kind !== 'transfer' && t.note ? t.category : null, t.kind === 'transfer' ? `${walletName(t.wallet_id)} → ${walletName(t.to_wallet_id)}` : walletName(t.wallet_id), memberName(t.member_id), t.child_id && `🧒 ${childName(t.child_id)}`, t.bill_id && '🔁 định kỳ'].filter(Boolean).join(' · ')}</p>
+                        <p className="text-xs text-ink-400 truncate">{[t.kind !== 'transfer' && t.note ? t.category : null, t.kind === 'transfer' ? `${walletName(t.wallet_id)} → ${walletName(t.to_wallet_id)}` : walletName(t.wallet_id), memberName(t.member_id), t.child_id && `🧒 ${childName(t.child_id)}`, t.bill_id && '🔁 định kỳ'].filter(Boolean).join(' · ')}</p>
                       </div>
                       <span className={cn('text-sm font-bold tabular flex-shrink-0', KIND[t.kind][1])}>{KIND[t.kind][2]}{vnd(t.amount)}</span>
                       {canEdit && <RowActions onEdit={() => openTxn(t)} onDelete={() => ask('Xóa giao dịch?', `${t.note || t.category} — ${vnd(t.amount)}`, () => txC.remove(t.id))}/>}
@@ -226,7 +226,7 @@ export default function FinancePage() {
                       {canEdit && <RowActions onEdit={() => setForm({ kind: 'budget', row: b })} onDelete={() => ask('Bỏ hạn mức?', b.category, () => gC.remove(b.id))}/>}</span>
                   </div>
                   <BudgetBar spent={s} limit={Number(b.amount)}/>
-                  <p className="text-[11px] text-ink-400 mt-0.5">{s < Number(b.amount) ? `Còn ${vnd(Number(b.amount) - s)} được chi` : `Đã vượt ${vnd(s - Number(b.amount))}`}</p>
+                  <p className="text-xs text-ink-400 mt-0.5">{s < Number(b.amount) ? `Còn ${vnd(Number(b.amount) - s)} được chi` : `Đã vượt ${vnd(s - Number(b.amount))}`}</p>
                 </div>
               ) })}
             </div>
@@ -249,10 +249,10 @@ export default function FinancePage() {
                     <span className="w-9 h-9 rounded-xl bg-ink-50 flex items-center justify-center text-lg flex-shrink-0">{catIcon(b.category)}</span>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-ink-900 truncate">{b.name}</p>
-                      <p className="text-[11px] text-ink-400">{{ monthly: 'Hằng tháng', quarterly: 'Hằng quý', yearly: 'Hằng năm' }[b.frequency]} · ngày {b.day_of_month}{b.child_id && ` · 🧒 ${childName(b.child_id)}`}</p>
+                      <p className="text-xs text-ink-400">{{ monthly: 'Hằng tháng', quarterly: 'Hằng quý', yearly: 'Hằng năm' }[b.frequency]} · ngày {b.day_of_month}{b.child_id && ` · 🧒 ${childName(b.child_id)}`}</p>
                     </div>
                     <span className={cn('text-sm font-bold tabular', b.kind === 'income' ? 'text-jade-600' : 'text-ink-900')}>{b.kind === 'income' ? '+' : ''}{vnd(b.amount)}</span>
-                    <span className={cn('hidden sm:inline text-[10px] font-semibold px-2 py-0.5 rounded-full border', status[1])}>{status[0]}</span>
+                    <span className={cn('hidden sm:inline text-[11px] font-semibold px-2 py-0.5 rounded-full border', status[1])}>{status[0]}</span>
                     {canEdit && due && !paid && b.active && <button onClick={() => openTxn(undefined, { kind: b.kind, amount: b.amount, category: b.category, wallet_id: b.wallet_id ?? '', child_id: b.child_id ?? '', note: b.name, bill_id: b.id, date: today().startsWith(month) ? today() : due })} className="btn btn-gold btn-xs">Ghi</button>}
                     {canEdit && <RowActions onEdit={() => setForm({ kind: 'bill', row: b })} onDelete={() => ask('Xóa khoản định kỳ?', b.name, () => bC.remove(b.id))}/>}
                   </div>
@@ -277,11 +277,11 @@ export default function FinancePage() {
                   <div key={w.id} className={cn('card p-4 group relative overflow-hidden', w.archived && 'opacity-50')}>
                     <span className="absolute inset-y-0 left-0 w-1" style={{ background: SERIES[i % SERIES.length] }}/>
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0"><p className="font-semibold text-ink-900 truncate">{WALLET_TYPES[w.type].icon} {w.name}</p><p className="text-[11px] text-ink-400">{WALLET_TYPES[w.type].label}{w.owner_user && ` · ${memberName(w.owner_user)}`}{w.archived && ' · đã ẩn'}</p></div>
+                      <div className="min-w-0"><p className="font-semibold text-ink-900 truncate">{WALLET_TYPES[w.type].icon} {w.name}</p><p className="text-xs text-ink-400">{WALLET_TYPES[w.type].label}{w.owner_user && ` · ${memberName(w.owner_user)}`}{w.archived && ' · đã ẩn'}</p></div>
                       {canEdit && <RowActions onEdit={() => setForm({ kind: 'wallet', row: w })} onDelete={() => ask('Xóa ví?', `${w.name} — các giao dịch vẫn được giữ lại nhưng không còn gắn với ví này.`, () => wC.remove(w.id))}/>}
                     </div>
-                    <p className={cn('font-display text-2xl font-bold tabular mt-3', bal < 0 ? 'text-red-600' : 'text-ink-900')}>{vnd(bal)}</p>
-                    <p className="text-[11px] text-ink-400">{w.type === 'credit' ? 'Dư nợ thẻ (số âm = đang nợ)' : 'Số dư hiện tại'} · {m.length} giao dịch trong tháng</p>
+                    <p className={cn('tracking-tight text-2xl font-bold tabular mt-3', bal < 0 ? 'text-red-600' : 'text-ink-900')}>{vnd(bal)}</p>
+                    <p className="text-xs text-ink-400">{w.type === 'credit' ? 'Dư nợ thẻ (số âm = đang nợ)' : 'Số dư hiện tại'} · {m.length} giao dịch trong tháng</p>
                   </div>
                 )
               })}
@@ -323,7 +323,7 @@ export default function FinancePage() {
 
       {form && formCfg && <FormModal open key={form.kind + (form.row?.id ?? 'new')} title={formCfg.title} fields={formCfg.fields} initial={formCfg.initial} onClose={() => setForm(null)} onSubmit={save} size={form.kind === 'txn' ? 'lg' : 'md'}/>}
       {confirmDialog}
-      <p className="text-center text-[11px] text-ink-300 pt-2">{household.name}</p>
+      <p className="text-center text-xs text-ink-300 pt-2">{household.name}</p>
     </div>
   )
 }

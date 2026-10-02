@@ -72,12 +72,12 @@ export function TasksTab({ tasks, members, canEdit, currentUserId, projectName, 
         onClick={() => canEdit && onEdit(t)}
         className={cn('kanban-card group', t.status === 'done' && 'opacity-75')}>
         <div className="flex items-start justify-between gap-2 mb-2">
-          <span className={`badge ${PRI_CLS[t.priority]} text-[10px]`}>{PRI_LABELS[t.priority]}</span>
+          <span className={`badge ${PRI_CLS[t.priority]} text-[11px]`}>{PRI_LABELS[t.priority]}</span>
           {canEdit && (
             <div className="flex gap-0.5 sm:opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
               {/* Chuyển trạng thái bằng nút — dùng được trên điện thoại (kéo thả không hỗ trợ cảm ứng) */}
               <button onClick={() => onMove(t.id, NEXT[t.status])} title={`Chuyển sang “${STATUS_LABELS[NEXT[t.status]]}”`}
-                className="px-1.5 py-1 rounded-lg hover:bg-ink-100 text-ink-400 hover:text-jade-600 text-[11px] font-semibold">
+                className="px-1.5 py-1 rounded-lg hover:bg-ink-100 text-ink-400 hover:text-jade-600 text-xs font-semibold">
                 {t.status === 'done' ? '↺' : t.status === 'todo' ? '▶' : '✓'}
               </button>
               <button onClick={() => onDelete(t.id)} title="Xóa" className="p-1 rounded-lg hover:bg-red-50 text-ink-400 hover:text-red-500">
@@ -96,10 +96,10 @@ export function TasksTab({ tasks, members, canEdit, currentUserId, projectName, 
         )}
         <div className="flex items-center justify-between gap-2 pt-2 border-t border-ink-50 mt-1">
           {t.deadline
-            ? <span className={cn('text-[11px] font-medium', t.status === 'done' ? 'text-ink-400' : dl.overdue ? 'text-red-600' : dl.urgent ? 'text-gold-600' : 'text-ink-400')}>📅 {t.status === 'done' ? fmtDate(t.deadline) : dl.label}</span>
-            : <span className="text-[11px] text-ink-300">Không hạn</span>}
+            ? <span className={cn('text-xs font-medium', t.status === 'done' ? 'text-ink-400' : dl.overdue ? 'text-red-600' : dl.urgent ? 'text-gold-600' : 'text-ink-400')}>📅 {t.status === 'done' ? fmtDate(t.deadline) : dl.label}</span>
+            : <span className="text-xs text-ink-300">Không hạn</span>}
           <span className="flex items-center gap-1.5">
-            {Number(t.cost_estimate) > 0 && <span className="text-[11px] font-bold text-gold-600 tabular">{vnd(t.cost_estimate)}</span>}
+            {Number(t.cost_estimate) > 0 && <span className="text-xs font-bold text-gold-600 tabular">{vnd(t.cost_estimate)}</span>}
             {m && <Initial name={m.full_name || m.email} url={m.avatar_url}/>}
           </span>
         </div>
@@ -147,7 +147,7 @@ export function TasksTab({ tasks, members, canEdit, currentUserId, projectName, 
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm min-w-[720px]">
-            <thead><tr className="bg-ink-50/70 border-b border-ink-100 text-left text-[11px] text-ink-500 uppercase tracking-wide">
+            <thead><tr className="bg-ink-50/70 border-b border-ink-100 text-left text-xs text-ink-500">
               {['', 'Đầu mục', 'Trạng thái', 'Ưu tiên', 'Hạn chót', 'Phụ trách', 'Dự kiến', ''].map((h, i) => <th key={i} className="px-3 py-2.5 font-bold">{h}</th>)}
             </tr></thead>
             <tbody className="divide-y divide-ink-50">
@@ -163,11 +163,11 @@ export function TasksTab({ tasks, members, canEdit, currentUserId, projectName, 
                       {t.tags?.length > 0 && <div className="flex gap-1 mt-1">{t.tags.slice(0, 2).map(x => <TagPill key={x} tag={x}/>)}</div>}
                     </td>
                     <td className="px-3 py-2.5">
-                      <select disabled={!canEdit} value={t.status} onChange={e => onMove(t.id, e.target.value as TaskStatus)} className={cn('text-[11px] font-semibold rounded-full border px-2 py-1 bg-white', `badge-${t.status}`)}>
+                      <select disabled={!canEdit} value={t.status} onChange={e => onMove(t.id, e.target.value as TaskStatus)} className={cn('text-xs font-semibold rounded-full border px-2 py-1 bg-white', `badge-${t.status}`)}>
                         {COLS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                       </select>
                     </td>
-                    <td className="px-3 py-2.5"><span className={`badge ${PRI_CLS[t.priority]} text-[10px]`}>{PRI_LABELS[t.priority]}</span></td>
+                    <td className="px-3 py-2.5"><span className={`badge ${PRI_CLS[t.priority]} text-[11px]`}>{PRI_LABELS[t.priority]}</span></td>
                     <td className={cn('px-3 py-2.5 text-xs whitespace-nowrap', t.status !== 'done' && dl.overdue ? 'text-red-600 font-semibold' : t.status !== 'done' && dl.urgent ? 'text-gold-600 font-semibold' : 'text-ink-500')}>{t.deadline ? (t.status === 'done' ? fmtDate(t.deadline) : dl.label) : '—'}</td>
                     <td className="px-3 py-2.5">{m ? <span className="flex items-center gap-1.5 text-xs text-ink-600"><Initial name={m.full_name || m.email} url={m.avatar_url}/>{m.full_name || m.email}</span> : <span className="text-xs text-ink-300">—</span>}</td>
                     <td className="px-3 py-2.5 text-xs font-semibold text-gold-700 tabular whitespace-nowrap">{Number(t.cost_estimate) > 0 ? vnd(t.cost_estimate) : ''}</td>

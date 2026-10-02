@@ -36,9 +36,9 @@ export function VendorsTab({ vendors, paidByVendor, canEdit, projectName, onSave
           ['⏳', 'Còn phải trả', vnd(Math.max(0, total - paid)), 'ghi thanh toán để cập nhật'],
         ].map(([i, l, v, s]) => (
           <div key={l} className="card p-4">
-            <p className="text-[11px] text-ink-400 font-semibold uppercase tracking-wide flex items-center gap-1.5"><span className="text-lg">{i}</span>{l}</p>
-            <p className="font-display text-xl sm:text-2xl font-bold text-ink-900 tabular mt-1">{v}</p>
-            <p className="text-[11px] text-ink-400 truncate">{s}</p>
+            <p className="text-xs text-ink-400 font-semibold flex items-center gap-1.5"><span className="text-lg">{i}</span>{l}</p>
+            <p className="tracking-tight text-xl sm:text-2xl font-bold text-ink-900 tabular mt-1">{v}</p>
+            <p className="text-xs text-ink-400 truncate">{s}</p>
           </div>
         ))}
       </div>
@@ -86,16 +86,16 @@ export function VendorsTab({ vendors, paidByVendor, canEdit, projectName, onSave
                     <p className="font-semibold text-ink-900 leading-snug line-clamp-2">{v.name}</p>
                     <p className="text-xs text-ink-400">{v.category}{v.rating ? ` · ${'★'.repeat(v.rating)}` : ''}</p>
                   </div>
-                  <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', VENDOR_STATUS[v.status].cls)}>{VENDOR_STATUS[v.status].label}</span>
+                  <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', VENDOR_STATUS[v.status].cls)}>{VENDOR_STATUS[v.status].label}</span>
                 </div>
                 {(v.contact_name || v.phone || v.email || v.website) && (
                   <div className="text-xs text-ink-600 space-y-1">
                     {v.contact_name && <p>👤 {v.contact_name}</p>}
                     <div className="flex flex-wrap gap-1.5">
-                      {v.phone && <a href={`tel:${v.phone}`} className="tag border bg-white text-ink-600 border-ink-200 hover:border-jade-400 normal-case tracking-normal text-[11px]">📞 {v.phone}</a>}
-                      {v.phone && <a href={`https://zalo.me/${v.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="tag border bg-white text-blue-600 border-blue-200 normal-case tracking-normal text-[11px]">Zalo</a>}
-                      {v.email && <a href={`mailto:${v.email}`} className="tag border bg-white text-ink-600 border-ink-200 normal-case tracking-normal text-[11px]">✉️ Email</a>}
-                      {v.website && <a href={/^https?:/.test(v.website) ? v.website : `https://${v.website}`} target="_blank" rel="noreferrer" className="tag border bg-white text-ink-600 border-ink-200 normal-case tracking-normal text-[11px]">🌐 Web</a>}
+                      {v.phone && <a href={`tel:${v.phone}`} className="tag border bg-white text-ink-600 border-ink-200 hover:border-jade-400 normal-case tracking-normal text-xs">📞 {v.phone}</a>}
+                      {v.phone && <a href={`https://zalo.me/${v.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="tag border bg-white text-blue-600 border-blue-200 normal-case tracking-normal text-xs">Zalo</a>}
+                      {v.email && <a href={`mailto:${v.email}`} className="tag border bg-white text-ink-600 border-ink-200 normal-case tracking-normal text-xs">✉️ Email</a>}
+                      {v.website && <a href={/^https?:/.test(v.website) ? v.website : `https://${v.website}`} target="_blank" rel="noreferrer" className="tag border bg-white text-ink-600 border-ink-200 normal-case tracking-normal text-xs">🌐 Web</a>}
                     </div>
                   </div>
                 )}
@@ -103,7 +103,7 @@ export function VendorsTab({ vendors, paidByVendor, canEdit, projectName, onSave
                   <div>
                     <div className="flex justify-between text-xs mb-1"><span className="text-ink-500">Đã trả {vnd(p)}</span><span className="font-bold text-ink-900 tabular">{vnd(cost)}</span></div>
                     <div className="progress-track h-1.5"><div className="h-full rounded-full bg-jade-500 transition-all" style={{ width: `${pctPaid}%` }}/></div>
-                    <p className={cn('text-[11px] mt-1', rest ? 'text-gold-700' : 'text-jade-600 font-semibold')}>{rest ? `Còn ${vnd(rest)}` : '✓ Đã thanh toán đủ'}{due && <span className={cn('ml-1', due.overdue ? 'text-red-600 font-semibold' : '')}>· hạn {due.label.toLowerCase()}</span>}</p>
+                    <p className={cn('text-xs mt-1', rest ? 'text-gold-700' : 'text-jade-600 font-semibold')}>{rest ? `Còn ${vnd(rest)}` : '✓ Đã thanh toán đủ'}{due && <span className={cn('ml-1', due.overdue ? 'text-red-600 font-semibold' : '')}>· hạn {due.label.toLowerCase()}</span>}</p>
                   </div>
                 )}
                 {v.notes && <p className="text-xs text-ink-500 italic line-clamp-2">“{v.notes}”</p>}
@@ -158,7 +158,7 @@ function VendorModal({ vendor, onClose, onSave }: { vendor?: Vendor; onClose: ()
         <div><label className="label">Loại dịch vụ</label>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
             {EXPENSE_CATEGORIES.map(c => (
-              <button key={c} type="button" onClick={() => s('category', c)} className={cn('px-2 py-2 rounded-xl border text-[11px] font-medium leading-tight', f.category === c ? 'border-sakura-500 bg-sakura-50 text-sakura-800' : 'border-ink-100 bg-white text-ink-600')}>
+              <button key={c} type="button" onClick={() => s('category', c)} className={cn('px-2 py-2 rounded-xl border text-xs font-medium leading-tight', f.category === c ? 'border-sakura-500 bg-sakura-50 text-sakura-800' : 'border-ink-100 bg-white text-ink-600')}>
                 <span className="block text-base">{CATEGORY_ICONS[c]}</span>{c}
               </button>
             ))}
@@ -173,7 +173,7 @@ function VendorModal({ vendor, onClose, onSave }: { vendor?: Vendor; onClose: ()
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div><label className="label">Giá trị hợp đồng (VNĐ)</label><input className="input font-mono" type="number" min={0} value={f.total_cost} onChange={e => s('total_cost', e.target.value)} placeholder="0"/>
-            {Number(f.total_cost) > 0 && <p className="text-[11px] text-ink-400 mt-1">{vnd(Number(f.total_cost))}</p>}</div>
+            {Number(f.total_cost) > 0 && <p className="text-xs text-ink-400 mt-1">{vnd(Number(f.total_cost))}</p>}</div>
           <div><label className="label">Hạn thanh toán</label><input className="input" type="date" value={f.due_date} onChange={e => s('due_date', e.target.value)}/></div>
         </div>
         <div className="grid grid-cols-2 gap-3">

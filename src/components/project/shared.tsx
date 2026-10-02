@@ -37,7 +37,7 @@ export function TagPicker({ all, value, onChange }: { all: string[]; value: stri
   )
 }
 
-export function Initial({ name, url, size = 'w-6 h-6 text-[10px]' }: { name?: string | null; url?: string | null; size?: string }) {
+export function Initial({ name, url, size = 'w-6 h-6 text-[11px]' }: { name?: string | null; url?: string | null; size?: string }) {
   if (url) return <img src={url} alt={name ?? ''} title={name ?? ''} className={cn('rounded-full object-cover flex-shrink-0', size)}/>
   return (
     <span title={name ?? ''} className={cn('rounded-full flex items-center justify-center text-white font-bold flex-shrink-0', size)} style={{ background: 'linear-gradient(135deg,#ff6b96,#f59e0b)' }}>
@@ -100,7 +100,7 @@ export function TaskModal({ open, onClose, onSave, task, defaultStatus, members 
         <div className="grid grid-cols-2 gap-3">
           <div><label className="label">Chi phí dự kiến (VNĐ)</label><input className="input font-mono" type="number" min={0} value={form.cost_estimate} onChange={e => sf('cost_estimate', e.target.value)} placeholder="0"/></div>
           <div><label className="label">Chi phí thực tế (VNĐ)</label><input className="input font-mono" type="number" min={0} value={form.cost_actual} onChange={e => sf('cost_actual', e.target.value)} placeholder="0"/>
-            <p className="text-[10px] text-ink-400 mt-1">Để so sánh — tổng đã chi lấy từ mục Chi tiêu</p></div>
+            <p className="text-[11px] text-ink-400 mt-1">Để so sánh — tổng đã chi lấy từ mục Chi tiêu</p></div>
         </div>
         <div><label className="label">Nhãn</label><TagPicker all={TASK_TAGS} value={form.tags} onChange={v => sf('tags', v)}/></div>
       </form>
@@ -154,7 +154,7 @@ export function ExpenseModal({ open, onClose, onSave, tasks, vendors, expense, p
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
             {EXPENSE_CATEGORIES.map(c => (
               <button key={c} type="button" onClick={() => sf('category', c)}
-                className={cn('px-2 py-2 rounded-xl border text-[11px] font-medium leading-tight text-center transition', form.category === c ? 'border-gold-500 bg-gold-50 text-gold-800' : 'border-ink-100 bg-white text-ink-600 hover:border-ink-300')}>
+                className={cn('px-2 py-2 rounded-xl border text-xs font-medium leading-tight text-center transition', form.category === c ? 'border-gold-500 bg-gold-50 text-gold-800' : 'border-ink-100 bg-white text-ink-600 hover:border-ink-300')}>
                 <span className="block text-base">{CATEGORY_ICONS[c]}</span>{c}
               </button>
             ))}
@@ -204,7 +204,7 @@ export function EditProjectModal({ open, onClose, project, onSave }: { open: boo
         <div className="grid grid-cols-2 gap-3">
           <div><label className="label">Ngày tổ chức</label><input className="input" type="date" value={form.event_date} onChange={e => sf('event_date', e.target.value)}/></div>
           <div><label className="label">Ngân sách (VNĐ)</label><input className="input font-mono" type="number" min={0} value={form.budget_total} onChange={e => sf('budget_total', e.target.value)}/>
-            {Number(form.budget_total) > 0 && <p className="text-[11px] text-ink-400 mt-1 tabular">{vnd(Number(form.budget_total))}</p>}</div>
+            {Number(form.budget_total) > 0 && <p className="text-xs text-ink-400 mt-1 tabular">{vnd(Number(form.budget_total))}</p>}</div>
         </div>
         <div><label className="label">Địa điểm</label><input className="input" value={form.venue} onChange={e => sf('venue', e.target.value)}/></div>
         <div><label className="label">Nhãn dự án</label><TagPicker all={PROJECT_TAGS} value={form.tags} onChange={v => sf('tags', v)}/></div>

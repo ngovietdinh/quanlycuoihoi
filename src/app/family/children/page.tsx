@@ -163,9 +163,9 @@ export default function ChildrenPage() {
                     <input type="checkbox" disabled={!canEdit} checked={!!v.done_date} onChange={() => v.done_date ? vC.update(v.id, { done_date: null }, true) : setForm({ kind: 'vaccine', row: { ...v, done_date: today() } })} className="w-4 h-4 accent-jade-500 flex-shrink-0" aria-label="Đã tiêm"/>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-ink-900">{v.vaccine} {v.dose && <span className="text-ink-400 font-normal">· {v.dose}</span>}</p>
-                      <p className="text-[11px] text-ink-400">{v.program === 'epi' ? '🏛 TCMR miễn phí' : '💉 Dịch vụ'} · dự kiến {fmtDate(v.due_date)}{v.done_date && ` · đã tiêm ${fmtDate(v.done_date)}`}{v.place && ` · ${v.place}`}</p>
+                      <p className="text-xs text-ink-400">{v.program === 'epi' ? '🏛 TCMR miễn phí' : '💉 Dịch vụ'} · dự kiến {fmtDate(v.due_date)}{v.done_date && ` · đã tiêm ${fmtDate(v.done_date)}`}{v.place && ` · ${v.place}`}</p>
                     </div>
-                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', st[1])}>{st[0]}</span>
+                    <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', st[1])}>{st[0]}</span>
                     {canEdit && <RowActions onEdit={() => setForm({ kind: 'vaccine', row: v })} onDelete={() => ask('Xóa mũi tiêm?', v.vaccine, () => vC.remove(v.id))}/>}
                   </div>
                 )
@@ -186,13 +186,13 @@ export default function ChildrenPage() {
           <Panel title="Bảng số đo" pad={false}>
             {gr.rows.length === 0 ? <Empty icon="📏" title="Chưa có số đo" text="Ghi cân nặng, chiều cao mỗi lần khám hoặc mỗi tháng để theo dõi bé phát triển."/> : (
               <div className="overflow-x-auto"><table className="w-full text-sm min-w-[520px]">
-                <thead><tr className="text-[11px] text-ink-400 text-left uppercase bg-ink-50/60">{['Ngày', 'Tuổi', 'Cân nặng', 'Chiều cao', 'Vòng đầu', ''].map(h => <th key={h} className="px-4 py-2 font-semibold">{h}</th>)}</tr></thead>
+                <thead><tr className="text-xs text-ink-400 text-left bg-ink-50/60">{['Ngày', 'Tuổi', 'Cân nặng', 'Chiều cao', 'Vòng đầu', ''].map(h => <th key={h} className="px-4 py-2 font-semibold">{h}</th>)}</tr></thead>
                 <tbody className="divide-y divide-ink-50">
                   {[...gr.rows].reverse().map(r => { const m = ageMonths(child.dob, r.date); const w = r.weight_kg ? growthStatus('weight', child.gender, m, Number(r.weight_kg)) : null; const h = r.height_cm ? growthStatus('height', child.gender, m, Number(r.height_cm)) : null; return (
                     <tr key={r.id} className="group">
                       <td className="px-4 py-2">{fmtDate(r.date)}</td><td className="px-4 py-2 text-ink-500">{ageText(child.dob, new Date(r.date + 'T12:00:00'))}</td>
-                      <td className="px-4 py-2 tabular">{r.weight_kg ?? '—'} {w && m <= 60 && <span className={cn('text-[10px] ml-1', TONE[w.tone])}>{w.label}</span>}</td>
-                      <td className="px-4 py-2 tabular">{r.height_cm ?? '—'} {h && m <= 60 && <span className={cn('text-[10px] ml-1', TONE[h.tone])}>{h.label}</span>}</td>
+                      <td className="px-4 py-2 tabular">{r.weight_kg ?? '—'} {w && m <= 60 && <span className={cn('text-[11px] ml-1', TONE[w.tone])}>{w.label}</span>}</td>
+                      <td className="px-4 py-2 tabular">{r.height_cm ?? '—'} {h && m <= 60 && <span className={cn('text-[11px] ml-1', TONE[h.tone])}>{h.label}</span>}</td>
                       <td className="px-4 py-2 tabular">{r.head_cm ?? '—'}</td>
                       <td className="px-2 py-2">{canEdit && <RowActions onEdit={() => setForm({ kind: 'growth', row: r })} onDelete={() => ask('Xóa số đo?', fmtDate(r.date), () => gC.remove(r.id))}/>}</td>
                     </tr>
@@ -215,7 +215,7 @@ export default function ChildrenPage() {
                 {tx.rows.slice(0, 40).map(t => (
                   <div key={t.id} className="px-5 py-2.5 flex items-center gap-3 text-sm">
                     <span className="text-lg">{catIcon(t.category)}</span>
-                    <div className="min-w-0 flex-1"><p className="truncate text-ink-800">{t.note || t.category}</p><p className="text-[11px] text-ink-400">{fmtDate(t.date)} · {t.category}</p></div>
+                    <div className="min-w-0 flex-1"><p className="truncate text-ink-800">{t.note || t.category}</p><p className="text-xs text-ink-400">{fmtDate(t.date)} · {t.category}</p></div>
                     <b className="tabular text-ink-900">{vnd(t.amount)}</b>
                   </div>
                 ))}
@@ -227,7 +227,7 @@ export default function ChildrenPage() {
 
       {tab === 'diary' && (
         <Panel title="Nhật ký của bé" sub="Cột mốc đáng nhớ & sổ khám bệnh" pad={false} right={canEdit && <button onClick={() => setForm({ kind: 'event' })} className="btn btn-primary btn-xs">+ Ghi nhật ký</button>}>
-          {canEdit && <div className="px-5 py-3 border-b border-ink-100 flex flex-wrap gap-1.5">{MILESTONE_IDEAS.filter(m => !ev.rows.some(e => e.title === m)).map(m => <button key={m} onClick={() => setForm({ kind: 'event', preset: { title: m } })} className="tag border bg-white text-ink-600 border-ink-200 hover:border-sakura-400 normal-case tracking-normal text-[11px]">+ {m}</button>)}</div>}
+          {canEdit && <div className="px-5 py-3 border-b border-ink-100 flex flex-wrap gap-1.5">{MILESTONE_IDEAS.filter(m => !ev.rows.some(e => e.title === m)).map(m => <button key={m} onClick={() => setForm({ kind: 'event', preset: { title: m } })} className="tag border bg-white text-ink-600 border-ink-200 hover:border-sakura-400 normal-case tracking-normal text-xs">+ {m}</button>)}</div>}
           {ev.rows.length === 0 ? <Empty icon="📔" title="Chưa có nhật ký" text="Lưu lại lần đầu bé lẫy, mọc răng, tập đi… và các lần ốm, thuốc đã dùng để tiện theo dõi."/> : (
             <ol className="px-5 py-4 space-y-4 relative">
               {ev.rows.map(e => (
@@ -235,7 +235,7 @@ export default function ChildrenPage() {
                   <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0', e.kind === 'milestone' ? 'bg-gold-50' : 'bg-red-50')}>{e.kind === 'milestone' ? '⭐' : '🏥'}</span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-ink-900">{e.title}</p>
-                    <p className="text-[11px] text-ink-400">{fmtDate(e.date)} · {ageText(child.dob, new Date(e.date + 'T12:00:00'))}</p>
+                    <p className="text-xs text-ink-400">{fmtDate(e.date)} · {ageText(child.dob, new Date(e.date + 'T12:00:00'))}</p>
                     {e.note && <p className="text-xs text-ink-600 mt-1 whitespace-pre-line">{e.note}</p>}
                     {e.photo_url && <img src={e.photo_url} alt="" className="mt-2 rounded-xl max-h-48 object-cover"/>}
                   </div>

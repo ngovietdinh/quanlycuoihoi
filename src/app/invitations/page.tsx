@@ -103,15 +103,15 @@ function InvitationCard({ inv, onChanged }: { inv: InvitationListItem; onChanged
           <span style={{ fontFamily: `'${t.heading_font}', cursive` }} className="text-3xl leading-tight">{inv.content.groom.name} &amp; {inv.content.bride.name}</span>
           {inv.event_date && <span className="text-xs mt-1 opacity-90">{fmtDay(inv.event_date)}</span>}
         </div>
-        <span className={cn('absolute top-3 left-3 badge text-[10px]', inv.is_published ? 'badge-done' : 'badge-todo')}>
+        <span className={cn('absolute top-3 left-3 badge text-[11px]', inv.is_published ? 'badge-done' : 'badge-todo')}>
           {inv.is_published ? '● Đã phát hành' : '○ Bản nháp'}
         </span>
       </Link>
       <div className="p-4 flex-1 flex flex-col gap-3">
         <div className="grid grid-cols-3 text-center rounded-xl border border-ink-100 divide-x divide-ink-100">
-          <div className="py-2"><p className="text-[10px] text-ink-400">Lượt xem</p><p className="font-bold text-ink-800 text-sm tabular">{inv.view_count}</p></div>
-          <div className="py-2"><p className="text-[10px] text-ink-400">Phản hồi</p><p className="font-bold text-sakura-600 text-sm tabular">{inv.rsvp_count}</p></div>
-          <div className="py-2"><p className="text-[10px] text-ink-400">Lời chúc</p><p className="font-bold text-gold-600 text-sm tabular">{inv.wish_count}</p></div>
+          <div className="py-2"><p className="text-[11px] text-ink-400">Lượt xem</p><p className="font-bold text-ink-800 text-sm tabular">{inv.view_count}</p></div>
+          <div className="py-2"><p className="text-[11px] text-ink-400">Phản hồi</p><p className="font-bold text-sakura-600 text-sm tabular">{inv.rsvp_count}</p></div>
+          <div className="py-2"><p className="text-[11px] text-ink-400">Lời chúc</p><p className="font-bold text-gold-600 text-sm tabular">{inv.wish_count}</p></div>
         </div>
         <p className="text-xs text-ink-400 font-mono truncate">/i/{inv.slug}</p>
         <div className="flex gap-1.5 mt-auto">
@@ -159,7 +159,7 @@ function InvitationsContent() {
             <div className="grid grid-cols-3 gap-2">
               {[['👁', 'Lượt xem', totals.views], ['✉️', 'Phản hồi', totals.rsvps], ['💌', 'Lời chúc', totals.wishes]].map(([i, l, v]) => (
                 <div key={l as string} className="rounded-xl p-3 border border-white/15 text-center" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                  <p className="text-lg">{i}</p><p className="text-[10px] text-white/50">{l}</p><p className="text-sm font-bold text-white tabular">{v}</p>
+                  <p className="text-lg">{i}</p><p className="text-[11px] text-white/50">{l}</p><p className="text-sm font-bold text-white tabular">{v}</p>
                 </div>
               ))}
             </div>

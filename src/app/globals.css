@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @layer base {
   :root {
     --sakura:  #ff3d78;
@@ -24,11 +22,15 @@
   }
 
   body {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: var(--font-sans), system-ui, sans-serif;
     background: var(--parchment);
     color: var(--ink);
     line-height: 1.6;
   }
+
+  /* Tiêu đề: chia dòng cân đối, không để 1 chữ mồ côi; đoạn văn tránh chữ lẻ cuối dòng */
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
 
   /* Custom scrollbar */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -42,8 +44,8 @@
 
 @layer components {
   /* ── Typography ── */
-  .font-display { font-family: 'Cormorant Garamond', Georgia, serif; }
-  .font-mono    { font-family: 'JetBrains Mono', monospace; }
+  .font-display { font-family: var(--font-display), Georgia, serif; letter-spacing: -0.01em; }
+  .font-mono    { font-family: var(--font-mono), ui-monospace, monospace; }
   .text-gradient-sakura {
     background: linear-gradient(135deg, #ff6b96, #ff3d78 40%, #f59e0b);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -123,7 +125,7 @@
 
   /* Tag pill (for project/task labels) */
   .tag {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border;
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border;
   }
 
   /* ── Progress ── */
@@ -271,7 +273,7 @@
 .inv { font-family: var(--bf), Georgia, serif; background: var(--bg); color: var(--tx); line-height: 1.7; overflow-x: hidden; }
 .inv-h { font-family: var(--hf), 'Great Vibes', cursive; font-weight: 400; line-height: 1.15; }
 .inv-h.is-serif { font-weight: 600; letter-spacing: -0.01em; }
-.inv-eyebrow { font-size: .72rem; letter-spacing: .35em; text-transform: uppercase; opacity: .7; }
+.inv-eyebrow { font-size: .72rem; letter-spacing: .35em; text-transform:; opacity: .7; }
 .inv-muted { color: color-mix(in srgb, var(--tx) 65%, transparent); }
 .inv-p { color: var(--p); }
 .inv-section { padding: 5rem 1.5rem; position: relative; }

@@ -4,9 +4,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["'Cormorant Garamond'", 'Georgia', 'serif'],
-        body:    ["'DM Sans'", 'system-ui', 'sans-serif'],
-        mono:    ["'JetBrains Mono'", 'monospace'],
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        body:    ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        sans:    ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono:    ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       colors: {
         sakura: { 50:'#fff1f5',100:'#ffe4ed',200:'#ffc9db',300:'#ff9bb8',400:'#ff6b96',500:'#ff3d78',600:'#f01460',700:'#c8004e',800:'#a60040',900:'#8c013a' },

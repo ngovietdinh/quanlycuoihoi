@@ -28,7 +28,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-15 blur-3xl" style={{ background: '#f59e0b' }}/>
         <Link href="/" className="relative flex items-center gap-3 w-fit">
           <span className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-glow-sakura" style={{ background: 'linear-gradient(135deg,#ff6b96,#ff3d78)' }}>💍</span>
-          <span><span className="block font-display text-2xl font-bold leading-none">Hỷ Sự</span><span className="text-[11px] text-white/50 tracking-wider uppercase">Wedding planner</span></span>
+          <span><span className="block font-display text-2xl font-bold leading-tight">Hỷ Sự</span><span className="text-xs text-white/50r">Wedding planner</span></span>
         </Link>
 
         <div className="relative grid grid-cols-[1fr_auto] gap-8 items-center my-10">
@@ -81,7 +81,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex items-center justify-center p-5 sm:p-10">
           <div className="w-full max-w-md animate-fadeUp">{children}</div>
         </div>
-        <p className="text-center text-[11px] text-ink-400 pb-6 px-4 leading-relaxed">{copyright()}<br/>Tác giả: <span className="whitespace-nowrap font-semibold">{AUTHOR}</span></p>
+        <p className="text-center text-xs text-ink-400 pb-6 px-4 leading-relaxed">{copyright()}<br/>Tác giả: <span className="whitespace-nowrap font-semibold">{AUTHOR}</span></p>
       </main>
     </div>
   )

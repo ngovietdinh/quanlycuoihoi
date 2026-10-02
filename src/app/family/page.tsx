@@ -88,7 +88,7 @@ export default function FamilyOverview() {
                 {alerts.slice(0, 12).map((a, i) => (
                   <li key={i}><Link href={a.href} className="px-5 py-2.5 flex items-center gap-3 hover:bg-ink-50/50">
                     <span className="text-lg">{a.icon}</span><span className="flex-1 text-sm text-ink-800 min-w-0 sm:truncate">{a.text}</span>
-                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', { bad: 'bg-red-50 text-red-700 border-red-200', warn: 'bg-gold-50 text-gold-700 border-gold-200', info: 'bg-blue-50 text-blue-700 border-blue-200' }[a.tone])}>{a.tone === 'bad' ? '⛔ ' : a.tone === 'warn' ? '⚠️ ' : ''}{a.when}</span>
+                    <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', { bad: 'bg-red-50 text-red-700 border-red-200', warn: 'bg-gold-50 text-gold-700 border-gold-200', info: 'bg-blue-50 text-blue-700 border-blue-200' }[a.tone])}>{a.tone === 'bad' ? '⛔ ' : a.tone === 'warn' ? '⚠️ ' : ''}{a.when}</span>
                   </Link></li>
                 ))}
               </ul>
@@ -114,7 +114,7 @@ export default function FamilyOverview() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-ink-900 truncate">{mb.full_name || mb.email} {mb.user_id === userId && <span className="text-xs font-normal text-ink-400">(bạn)</span>}</p>
-                    <p className="text-[11px] text-ink-400 truncate">{mb.relation ?? '—'} · {mb.role === 'owner' ? 'Chủ gia đình' : mb.role === 'editor' ? 'Biên tập' : 'Chỉ xem'}</p>
+                    <p className="text-xs text-ink-400 truncate">{mb.relation ?? '—'} · {mb.role === 'owner' ? 'Chủ gia đình' : mb.role === 'editor' ? 'Biên tập' : 'Chỉ xem'}</p>
                   </div>
                   {isOwner && mb.role !== 'owner' && (
                     <>

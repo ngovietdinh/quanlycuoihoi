@@ -63,7 +63,7 @@ function AdminContent() {
         right={<button onClick={load} className="btn btn-secondary btn-sm">↻ Làm mới</button>}/>
       <div className="sticky top-[61px] z-20 border-b border-ink-100 px-4 sm:px-6 flex overflow-x-auto no-scrollbar" style={{ background: 'rgba(255,253,249,0.95)' }}>
         {TABS.map(([id, l, n]) => (
-          <button key={id} onClick={() => setTab(id)} className={cn(tab === id ? 'tab-active' : 'tab', 'whitespace-nowrap')}>{l}{n !== null && <span className="ml-1.5 text-[10px] bg-ink-100 rounded-full px-1.5">{n}</span>}</button>
+          <button key={id} onClick={() => setTab(id)} className={cn(tab === id ? 'tab-active' : 'tab', 'whitespace-nowrap')}>{l}{n !== null && <span className="ml-1.5 text-[11px] bg-ink-100 rounded-full px-1.5">{n}</span>}</button>
         ))}
       </div>
       <div className="p-4 sm:p-6 max-w-6xl mx-auto w-full space-y-4">
@@ -85,8 +85,8 @@ function AdminContent() {
                 <div key={l as string} className="stat-card sakura">
                   <p className="text-2xl mb-1">{i}</p>
                   <p className="text-xs text-ink-400 font-medium">{l}</p>
-                  <p className="font-display text-3xl font-bold text-ink-900 tabular">{v}</p>
-                  <p className="text-[11px] text-ink-400">{s}</p>
+                  <p className="tracking-tight text-3xl font-bold text-ink-900 tabular">{v}</p>
+                  <p className="text-xs text-ink-400">{s}</p>
                 </div>
               ))}
             </div>
@@ -109,7 +109,7 @@ function AdminContent() {
         {tab === 'users' && (
           <div className="card overflow-x-auto">
             <table className="w-full text-sm">
-              <thead><tr className="bg-ink-50/70 border-b border-ink-100 text-left text-xs text-ink-500 uppercase">
+              <thead><tr className="bg-ink-50/70 border-b border-ink-100 text-left text-xs text-ink-500">
                 {['Người dùng', 'Vai trò', 'Dự án', 'Thiệp', 'Hoạt động', 'Trạng thái', ''].map(h => <th key={h} className="px-4 py-2.5 font-bold">{h}</th>)}
               </tr></thead>
               <tbody className="divide-y divide-ink-50">
@@ -129,7 +129,7 @@ function AdminContent() {
                       <td className="px-4 py-3 tabular">{u.project_count}</td>
                       <td className="px-4 py-3 tabular">{u.invitation_count}</td>
                       <td className="px-4 py-3 text-xs text-ink-500">Tạo {fmtDate(u.created_at)}<br/>{u.last_seen_at ? `Truy cập ${fmtDate(u.last_seen_at)}` : 'Chưa truy cập'}</td>
-                      <td className="px-4 py-3"><span className={cn('badge text-[10px]', u.is_active ? 'badge-done' : 'badge-overdue')}>{u.is_active ? 'Hoạt động' : 'Đã khóa'}</span></td>
+                      <td className="px-4 py-3"><span className={cn('badge text-[11px]', u.is_active ? 'badge-done' : 'badge-overdue')}>{u.is_active ? 'Hoạt động' : 'Đã khóa'}</span></td>
                       <td className="px-4 py-3 text-right">
                         {!me && (u.is_active
                           ? <button onClick={() => ask({ title: 'Khóa tài khoản?', msg: `${u.email} sẽ không thể đăng nhập và thiệp của họ vẫn hiển thị.`, label: 'Khóa', run: () => setActive(u, false) })} className="btn btn-danger btn-xs">🔒 Khóa</button>
@@ -152,7 +152,7 @@ function AdminContent() {
                   <p className="font-semibold text-ink-900 text-sm">{i.title}</p>
                   <p className="text-xs text-ink-400">/i/{i.slug} · {ownerOf(i.user_id)?.email ?? 'N/A'} · {i.view_count} lượt xem · {i.rsvp_count} phản hồi</p>
                 </div>
-                <span className={cn('badge text-[10px]', i.is_published ? 'badge-done' : 'badge-todo')}>{i.is_published ? 'Công khai' : 'Nháp'}</span>
+                <span className={cn('badge text-[11px]', i.is_published ? 'badge-done' : 'badge-todo')}>{i.is_published ? 'Công khai' : 'Nháp'}</span>
                 <a href={`/i/${i.slug}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-xs">Xem ↗</a>
                 <button onClick={async () => { const r = await updateInvitation(i.id, { is_published: !i.is_published }); if (r.error) error('Lỗi', r.error); else { success(i.is_published ? 'Đã gỡ thiệp' : 'Đã phát hành'); load() } }} className="btn btn-secondary btn-xs">{i.is_published ? '⏸ Gỡ' : '🚀 Phát hành'}</button>
                 <button onClick={() => ask({ title: 'Xóa thiệp?', msg: `Xóa vĩnh viễn thiệp "${i.title}" cùng khách mời và phản hồi.`, label: 'Xóa thiệp', run: async () => { const r = await deleteInvitation(i.id); if (r.error) error('Lỗi', r.error); else { success('Đã xóa thiệp'); load() } } })} className="btn btn-danger btn-xs">Xóa</button>

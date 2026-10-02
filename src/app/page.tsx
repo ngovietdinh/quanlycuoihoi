@@ -62,11 +62,11 @@ export default async function Landing() {
               <iframe src="/i/demo?t=floral" title="Thiệp mẫu" className="w-full h-full bg-white" loading="lazy"/>
             </div>
             <div className="absolute -left-2 bottom-16 card px-4 py-3 animate-float hidden sm:block">
-              <p className="text-[10px] text-ink-400">Xác nhận tham dự</p>
+              <p className="text-[11px] text-ink-400">Xác nhận tham dự</p>
               <p className="font-bold text-jade-600">+ 128 khách sẽ đến 🎉</p>
             </div>
             <div className="absolute -right-2 top-16 card px-4 py-3 animate-float hidden sm:block" style={{ animationDelay: '1.5s' }}>
-              <p className="text-[10px] text-ink-400">Lời chúc mới</p>
+              <p className="text-[11px] text-ink-400">Lời chúc mới</p>
               <p className="font-semibold text-sm">“Trăm năm hạnh phúc!” 💕</p>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default async function Landing() {
                 </div>
                 <div className="p-3 sm:p-4 flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="font-semibold text-sm">{t.name} <span className="text-[10px] font-medium text-ink-400">· {TEMPLATE_CATEGORIES.find(c => c.id === t.category)?.label} · {LAYOUTS.find(l => l.id === t.theme.layout)?.label}</span></p>
+                    <p className="font-semibold text-sm">{t.name} <span className="text-[11px] font-medium text-ink-400">· {TEMPLATE_CATEGORIES.find(c => c.id === t.category)?.label} · {LAYOUTS.find(l => l.id === t.theme.layout)?.label}</span></p>
                     <p className="text-xs text-ink-400 line-clamp-1">{t.tagline}</p>
                   </div>
                   <span className="text-sakura-500 group-hover:translate-x-1 transition">↗</span>

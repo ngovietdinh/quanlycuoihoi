@@ -133,7 +133,7 @@ export default function PregnancyPage() {
             {!done && (
               <div className="mt-4 max-w-xl">
                 <div className="relative h-2.5 rounded-full bg-white/15 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-sakura-400 to-gold-400" style={{ width: `${Math.min(100, (g.totalDays / 280) * 100)}%` }}/></div>
-                <div className="flex justify-between text-[10px] text-white/45 mt-1"><span>Tuần 0</span><span>13</span><span>27</span><span>40</span></div>
+                <div className="flex justify-between text-[11px] text-white/45 mt-1"><span>Tuần 0</span><span>13</span><span>27</span><span>40</span></div>
               </div>
             )}
             <div className="flex flex-wrap gap-2 mt-4">
@@ -144,10 +144,10 @@ export default function PregnancyPage() {
           </div>
           {!done && fetal && (
             <div className="rounded-2xl border border-white/15 bg-white/10 p-5 text-center min-w-[200px]">
-              <p className="text-[10px] uppercase tracking-widest text-white/55">Bé bây giờ to bằng</p>
+              <p className="text-[11px]st text-white/55">Bé bây giờ to bằng</p>
               <p className="font-display text-2xl font-bold mt-1 first-letter:uppercase">{fetal[2]}</p>
               <p className="text-xs text-white/60 mt-1">{fetal[0] >= 1 ? `~${fetal[0]} cm` : `~${fetal[0] * 10} mm`}{fetal[1] ? ` · ~${fetal[1] >= 1000 ? `${(fetal[1] / 1000).toFixed(1)} kg` : `${fetal[1]} g`}` : ''}</p>
-              <p className="text-[10px] text-white/40 mt-2">Số đo ước tính trung bình</p>
+              <p className="text-[11px] text-white/40 mt-2">Số đo ước tính trung bình</p>
             </div>
           )}
         </div>
@@ -170,16 +170,16 @@ export default function PregnancyPage() {
               const hasVisit = visits.some(v => { const w = gestation(preg.due_date, new Date(v.date + 'T12:00:00')).weeks; return w >= m.from && w <= m.to })
               return (
                 <li key={m.title} className="pl-5 relative">
-                  <span className={cn('absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center text-[9px] text-white',
+                  <span className={cn('absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center text-[11px] text-white',
                     hasVisit ? 'bg-jade-500' : st === 'now' ? 'bg-sakura-500 animate-pulse' : st === 'past' ? 'bg-ink-300' : 'bg-gold-300')}>{hasVisit && '✓'}</span>
                   <p className={cn('text-sm font-semibold', st === 'now' ? 'text-sakura-700' : 'text-ink-900')}>
                     Tuần {m.from}–{m.to}: {m.title}
-                    {st === 'now' && <span className="ml-2 text-[10px] font-bold bg-sakura-50 text-sakura-700 border border-sakura-200 rounded-full px-1.5">ĐANG ĐẾN</span>}
-                    {hasVisit && <span className="ml-2 text-[10px] font-bold bg-jade-50 text-jade-700 border border-jade-200 rounded-full px-1.5">✓ Đã khám</span>}
-                    {st === 'past' && !hasVisit && <span className="ml-2 text-[10px] text-ink-400">(chưa ghi lần khám)</span>}
+                    {st === 'now' && <span className="ml-2 text-[11px] font-bold bg-sakura-50 text-sakura-700 border border-sakura-200 rounded-full px-1.5">Đang đến</span>}
+                    {hasVisit && <span className="ml-2 text-[11px] font-bold bg-jade-50 text-jade-700 border border-jade-200 rounded-full px-1.5">✓ Đã khám</span>}
+                    {st === 'past' && !hasVisit && <span className="ml-2 text-[11px] text-ink-400">(chưa ghi lần khám)</span>}
                   </p>
                   <p className="text-xs text-ink-500 mt-0.5">{m.detail}</p>
-                  {!done && st !== 'past' && <p className="text-[11px] text-ink-400 mt-0.5">Khoảng {fmtDate(new Date(new Date(preg.due_date + 'T12:00:00').getTime() - (280 - m.from * 7) * 864e5).toISOString().slice(0, 10))} – {fmtDate(new Date(new Date(preg.due_date + 'T12:00:00').getTime() - (280 - m.to * 7 - 6) * 864e5).toISOString().slice(0, 10))}</p>}
+                  {!done && st !== 'past' && <p className="text-xs text-ink-400 mt-0.5">Khoảng {fmtDate(new Date(new Date(preg.due_date + 'T12:00:00').getTime() - (280 - m.from * 7) * 864e5).toISOString().slice(0, 10))} – {fmtDate(new Date(new Date(preg.due_date + 'T12:00:00').getTime() - (280 - m.to * 7 - 6) * 864e5).toISOString().slice(0, 10))}</p>}
                 </li>
               )
             })}
@@ -193,10 +193,10 @@ export default function PregnancyPage() {
             <div className="divide-y divide-ink-50">
               {visits.map(v => { const w = gestation(preg.due_date, new Date(v.date + 'T12:00:00')); return (
                 <div key={v.id} className="px-5 py-3 flex gap-3 group">
-                  <div className="w-14 text-center flex-shrink-0"><p className="font-display text-xl font-bold text-sakura-600 leading-none">{w.weeks}</p><p className="text-[10px] text-ink-400">tuần {w.days ? `+${w.days}` : ''}</p></div>
+                  <div className="w-14 text-center flex-shrink-0"><p className="font-display text-xl font-bold text-sakura-600 leading-none">{w.weeks}</p><p className="text-[11px] text-ink-400">tuần {w.days ? `+${w.days}` : ''}</p></div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-ink-900">{v.type}{v.place && <span className="font-normal text-ink-500"> · {v.place}</span>}</p>
-                    <p className="text-[11px] text-ink-400">{fmtDate(v.date)}{v.mom_weight && ` · ⚖️ ${v.mom_weight} kg`}{v.blood_pressure && ` · 🩸 ${v.blood_pressure}`}{v.fetal_weight && ` · 👶 ${v.fetal_weight} g`}</p>
+                    <p className="text-xs text-ink-400">{fmtDate(v.date)}{v.mom_weight && ` · ⚖️ ${v.mom_weight} kg`}{v.blood_pressure && ` · 🩸 ${v.blood_pressure}`}{v.fetal_weight && ` · 👶 ${v.fetal_weight} g`}</p>
                     {v.notes && <p className="text-xs text-ink-600 mt-1 whitespace-pre-line">{v.notes}</p>}
                   </div>
                   {Number(v.cost) > 0 && <span className="text-sm font-bold text-ink-900 tabular flex-shrink-0">{vnd(v.cost)}</span>}
@@ -214,7 +214,7 @@ export default function PregnancyPage() {
             right={<>{cs.rows.length > 0 && <button onClick={() => downloadCsv('chi-phi-thai-san.csv', [['Khoản', 'Dự toán', 'Thực chi', 'Chênh lệch'], ...cs.rows.map(c => [c.item, c.estimate, c.actual, Number(c.actual) - Number(c.estimate)]), ['TỔNG', estTotal, actTotal, actTotal - estTotal]])} className="btn btn-secondary btn-xs">⬇ Excel</button>}
               {canEdit && <button onClick={() => setForm({ kind: 'cost' })} className="btn btn-primary btn-xs">+ Khoản</button>}</>}>
             <table className="w-full text-sm">
-              <thead><tr className="text-[11px] text-ink-400 text-left uppercase bg-ink-50/60">{['Khoản', 'Dự toán', 'Thực chi', ''].map(h => <th key={h} className="px-4 py-2 font-semibold">{h}</th>)}</tr></thead>
+              <thead><tr className="text-xs text-ink-400 text-left bg-ink-50/60">{['Khoản', 'Dự toán', 'Thực chi', ''].map(h => <th key={h} className="px-4 py-2 font-semibold">{h}</th>)}</tr></thead>
               <tbody className="divide-y divide-ink-50">
                 {cs.rows.map(c => (
                   <tr key={c.id} className="group">
@@ -240,7 +240,7 @@ export default function PregnancyPage() {
               {it.rows.filter(i => i.grp === grp).map(i => (
                 <div key={i.id} className={cn('px-5 py-2.5 flex items-center gap-3 group border-b border-ink-50', i.bought && 'opacity-60')}>
                   <input type="checkbox" disabled={!canEdit} checked={i.bought} onChange={() => iC.update(i.id, { bought: !i.bought }, true)} className="w-4 h-4 accent-jade-500 flex-shrink-0" aria-label="Đã mua"/>
-                  <span className={cn('flex-1 text-sm text-ink-800', i.bought && 'line-through')}>{i.name}{!i.essential && <span className="ml-1.5 text-[10px] text-ink-400 border border-ink-200 rounded-full px-1.5">tùy chọn</span>}</span>
+                  <span className={cn('flex-1 text-sm text-ink-800', i.bought && 'line-through')}>{i.name}{!i.essential && <span className="ml-1.5 text-[11px] text-ink-400 border border-ink-200 rounded-full px-1.5">tùy chọn</span>}</span>
                   <span className="text-xs text-ink-400 tabular">{i.qty > 1 && `${i.qty} × `}{Number(i.price) ? vnd(i.price) : ''}</span>
                   {canEdit && <RowActions onEdit={() => setForm({ kind: 'item', row: i })} onDelete={() => ask('Xóa món đồ?', i.name, () => iC.remove(i.id))}/>}
                 </div>
@@ -279,7 +279,7 @@ function MaternityCalc() {
           <p className="flex justify-between border-t border-jade-200 pt-1.5"><span className="font-semibold text-jade-800">Mẹ nhận khoảng</span><b className="text-jade-800 text-lg tabular">{vnd(r.total)}</b></p>
           <p className="flex justify-between text-xs"><span className="text-ink-500">Bố nghỉ {fatherDays} ngày (nếu đóng BHXH)</span><span className="tabular">{vnd(r.father)}</span></p>
         </div>
-        <p className="text-[11px] text-ink-400">Điều kiện thường gặp: đóng BHXH đủ 6 tháng trong 12 tháng trước khi sinh. Kiểm tra mức tham chiếu hiện hành và hỏi bộ phận nhân sự / cơ quan BHXH để có số chính xác.</p>
+        <p className="text-xs text-ink-400">Điều kiện thường gặp: đóng BHXH đủ 6 tháng trong 12 tháng trước khi sinh. Kiểm tra mức tham chiếu hiện hành và hỏi bộ phận nhân sự / cơ quan BHXH để có số chính xác.</p>
       </div>
     </Panel>
   )

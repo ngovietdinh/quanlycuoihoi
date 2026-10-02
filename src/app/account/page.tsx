@@ -50,8 +50,8 @@ function AccountContent() {
             <h2 className="font-display text-2xl font-bold text-white truncate">{profile?.full_name || 'Chưa đặt tên'}</h2>
             <p className="text-white/60 text-sm truncate">{user?.email}</p>
             <div className="flex gap-2 mt-2">
-              <span className={`badge text-[10px] ${isAdmin ? 'badge-high' : 'badge-todo'}`}>{isAdmin ? '🛡️ Quản trị viên' : '👤 Thành viên'}</span>
-              {profile?.created_at && <span className="badge text-[10px] bg-white/10 text-white/80 border-white/20">Tham gia {fmtDate(profile.created_at)}</span>}
+              <span className={`badge text-[11px] ${isAdmin ? 'badge-high' : 'badge-todo'}`}>{isAdmin ? '🛡️ Quản trị viên' : '👤 Thành viên'}</span>
+              {profile?.created_at && <span className="badge text-[11px] bg-white/10 text-white/80 border-white/20">Tham gia {fmtDate(profile.created_at)}</span>}
             </div>
           </div>
         </div>

@@ -133,8 +133,8 @@ export function FormModal({ open, title, subtitle, fields, initial, onClose, onS
                   type={f.type === 'money' ? 'number' : f.type ?? 'text'} min={f.min ?? (f.type === 'money' ? 0 : undefined)} step={f.step}
                   value={v[f.key] ?? ''} placeholder={f.placeholder} onChange={e => set(f.key, e.target.value)}/>
               )}
-            {f.type === 'money' && Number(v[f.key]) > 0 && <p className="text-[11px] text-jade-700 font-semibold mt-1 tabular">{vnd(Number(v[f.key]))}</p>}
-            {f.hint && <p className="text-[11px] text-ink-400 mt-1">{f.hint}</p>}
+            {f.type === 'money' && Number(v[f.key]) > 0 && <p className="text-xs text-jade-700 font-semibold mt-1 tabular">{vnd(Number(v[f.key]))}</p>}
+            {f.hint && <p className="text-xs text-ink-400 mt-1">{f.hint}</p>}
           </div>
         ))}
       </form>
@@ -147,9 +147,9 @@ export function Stat({ icon, label, value, sub, tone = 'ink' }: { icon: string; 
   const c = { ink: 'text-ink-900', good: 'text-jade-600', bad: 'text-red-600', warn: 'text-gold-700', brand: 'text-sakura-600' }[tone]
   return (
     <div className="card p-4 min-w-0">
-      <p className="text-[11px] text-ink-400 font-semibold uppercase tracking-wide flex items-center gap-1.5 truncate"><span className="text-base">{icon}</span>{label}</p>
-      <p className={cn('font-display text-xl sm:text-2xl font-bold tabular mt-1 truncate', c)}>{value}</p>
-      {sub && <p className="text-[11px] text-ink-400 truncate">{sub}</p>}
+      <p className="text-xs text-ink-500 font-semibold flex items-center gap-1.5 leading-snug"><span className="text-base">{icon}</span>{label}</p>
+      <p className={cn('text-lg sm:text-2xl tracking-tight font-bold tabular mt-1 truncate', c)}>{value}</p>
+      {sub && <p className="text-xs text-ink-400 truncate">{sub}</p>}
     </div>
   )
 }
@@ -158,7 +158,7 @@ export function Panel({ title, sub, right, children, className, pad = true }: { 
   return (
     <section className={cn('card overflow-hidden', className)}>
       <header className="px-5 py-3.5 border-b border-ink-100/70 flex items-center justify-between gap-3">
-        <div className="min-w-0"><h3 className="font-semibold text-ink-900">{title}</h3>{sub && <p className="text-[11px] text-ink-400">{sub}</p>}</div>
+        <div className="min-w-0"><h3 className="font-semibold text-ink-900">{title}</h3>{sub && <p className="text-xs text-ink-400">{sub}</p>}</div>
         {right && <div className="flex items-center gap-2 flex-shrink-0">{right}</div>}
       </header>
       <div className={pad ? 'p-5' : ''}>{children}</div>
@@ -183,7 +183,7 @@ export function Tabs<K extends string>({ value, onChange, items }: { value: K; o
       {items.map(([k, l, n]) => (
         <button key={k} onClick={() => onChange(k)} className={cn('flex-shrink-0 px-3.5 py-2 rounded-xl text-sm font-medium transition',
           value === k ? 'bg-white shadow-card text-sakura-700 font-semibold' : 'text-ink-500 hover:text-ink-900 hover:bg-white/60')}>
-          {l}{n !== undefined && n !== 0 && <span className="ml-1.5 text-[10px] font-bold bg-ink-100 text-ink-600 rounded-full px-1.5">{n}</span>}
+          {l}{n !== undefined && n !== 0 && <span className="ml-1.5 text-[11px] font-bold bg-ink-100 text-ink-600 rounded-full px-1.5">{n}</span>}
         </button>
       ))}
     </div>
@@ -191,7 +191,7 @@ export function Tabs<K extends string>({ value, onChange, items }: { value: K; o
 }
 
 export const RowActions = ({ onEdit, onDelete }: { onEdit?: () => void; onDelete?: () => void }) => (
-  <span className="flex gap-0.5 sm:opacity-0 group-hover:opacity-100 flex-shrink-0">
+  <span className="flex gap-0.5 sm:opacity-0 group-hover:opacity-100 focus-within:opacity-100 flex-shrink-0">
     {onEdit && <button onClick={onEdit} className="btn btn-ghost btn-xs btn-icon" title="Sửa">✎</button>}
     {onDelete && <button onClick={onDelete} className="btn btn-ghost btn-xs btn-icon hover:text-red-500" title="Xóa">✕</button>}
   </span>

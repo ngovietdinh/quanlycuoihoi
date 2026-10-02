@@ -119,8 +119,8 @@ function Editor() {
         style={{ background: 'rgba(255,253,249,0.94)', backdropFilter: 'blur(20px)' }}>
         <Link href="/invitations" className="btn btn-ghost btn-sm btn-icon" title="Quay lại">←</Link>
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-lg sm:text-xl font-semibold text-ink-900 truncate leading-tight">{draft.title || 'Thiệp cưới'}</h1>
-          <p className="text-[11px] flex items-center gap-2">
+          <h1 className="font-display text-lg sm:text-xl font-semibold text-ink-900 truncate leading-snug">{draft.title || 'Thiệp cưới'}</h1>
+          <p className="text-xs flex items-center gap-2">
             <span className={SAVE_UI[save][1]}>{SAVE_UI[save][0]}</span>
             <span className={cn('font-semibold', draft.is_published ? 'text-jade-600' : 'text-ink-400')}>{draft.is_published ? '· Đã phát hành' : '· Bản nháp'}</span>
           </p>
@@ -139,7 +139,7 @@ function Editor() {
           <nav className="md:w-28 flex-shrink-0 md:border-r border-b md:border-b-0 border-ink-100/60 bg-white/40 flex md:flex-col overflow-x-auto no-scrollbar md:py-3 md:sticky md:top-[61px] md:h-[calc(100vh-61px)]">
             {TABS.map(t => (
               <button key={t.id} onClick={() => selectTab(t.id)}
-                className={cn('flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2.5 md:mx-2 md:mb-1 rounded-xl text-[11px] font-medium transition',
+                className={cn('flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2.5 md:mx-2 md:mb-1 rounded-xl text-xs font-medium transition',
                   tab === t.id ? 'bg-sakura-50 text-sakura-700 font-semibold' : 'text-ink-500 hover:bg-ink-50')}>
                 <span className="text-lg leading-none">{t.icon}</span>{t.label}
               </button>

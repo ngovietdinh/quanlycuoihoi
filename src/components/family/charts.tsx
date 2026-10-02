@@ -85,7 +85,7 @@ export function BudgetBar({ spent, limit }: { spent: number; limit: number }) {
   return (
     <div>
       <div className="h-2 rounded-full bg-ink-100 overflow-hidden"><div className={cn('h-full rounded-full transition-all', st[2])} style={{ width: `${Math.min(100, p)}%` }}/></div>
-      <p className={cn('text-[11px] mt-1 font-medium', st[3])}>{st[0]} {st[1]} · {Math.round(p)}%</p>
+      <p className={cn('text-xs mt-1 font-medium', st[3])}>{st[0]} {st[1]} · {Math.round(p)}%</p>
     </div>
   )
 }
@@ -105,7 +105,7 @@ export function GrowthChart({ points, bands: ref, unit, height = 200 }: { points
   const yt = Array.from({ length: 5 }, (_, i) => y0 + ((y1 - y0) * i) / 4)
   return (
     <div className="relative">
-      <div className="flex flex-wrap gap-4 mb-2 text-[11px] text-ink-600">
+      <div className="flex flex-wrap gap-4 mb-2 text-xs text-ink-600">
         <span className="flex items-center gap-1.5"><span className="w-4 h-0.5 rounded" style={{ background: SERIES[0] }}/>Của bé</span>
         <span className="flex items-center gap-1.5"><span className="w-4 h-2.5 rounded-sm bg-ink-200"/>Vùng bình thường WHO (±2SD, gần đúng)</span>
         <span className="flex items-center gap-1.5"><span className="w-4 border-t border-dashed border-ink-400"/>Trung vị</span>

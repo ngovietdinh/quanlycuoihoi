@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import { AUTHOR } from '@/lib/brand'
+import { Be_Vietnam_Pro, Lora, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+
+// Cả ba font đều có bộ dấu tiếng Việt đầy đủ (subset 'vietnamese'), tự host qua next/font
+const sans = Be_Vietnam_Pro({ subsets: ['vietnamese', 'latin'], weight: ['300', '400', '500', '600', '700'], variable: '--font-sans', display: 'swap' })
+const serif = Lora({ subsets: ['vietnamese', 'latin'], weight: ['400', '500', '600', '700'], style: ['normal', 'italic'], variable: '--font-display', display: 'swap' })
+const mono = JetBrains_Mono({ subsets: ['vietnamese', 'latin'], weight: ['400', '500'], variable: '--font-mono', display: 'swap' })
 export const metadata: Metadata = {
   title: { default:'Hỷ Sự — Quản lý lễ cưới & thiệp cưới online', template:'%s | Hỷ Sự' },
   description:'Lập kế hoạch lễ cưới, quản lý ngân sách và tạo thiệp cưới online đẹp, hiện đại.',
@@ -9,6 +15,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#fdf8f0' }
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi"><body>{children}</body></html>
+    <html lang="vi" className={`${sans.variable} ${serif.variable} ${mono.variable}`}><body>{children}</body></html>
   )
 }

@@ -24,7 +24,7 @@ export function ProjectHero({ project, tasks, totalSpent, role, onEdit, members 
       <div className="relative grid lg:grid-cols-[1fr_auto] gap-6 items-center">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className={cn('badge text-[10px]', ROLE_INFO[role].cls)}>{ROLE_INFO[role].label}</span>
+            <span className={cn('badge text-[11px]', ROLE_INFO[role].cls)}>{ROLE_INFO[role].label}</span>
             {(project.tags ?? []).map(t => <span key={t} className="tag border border-white/20 bg-white/10 text-white/80">{t}</span>)}
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-bold leading-tight">{project.name}</h1>
@@ -37,7 +37,7 @@ export function ProjectHero({ project, tasks, totalSpent, role, onEdit, members 
           {project.description && <p className="text-sm text-white/55 mt-2 line-clamp-2 max-w-2xl">{project.description}</p>}
           {members.length > 1 && (
             <div className="flex items-center gap-2 mt-3">
-              <div className="flex -space-x-1.5">{members.slice(0, 5).map(m => <span key={m.user_id} className="ring-2 ring-ink-900 rounded-full"><Initial name={m.full_name || m.email} url={m.avatar_url} size="w-7 h-7 text-[11px]"/></span>)}</div>
+              <div className="flex -space-x-1.5">{members.slice(0, 5).map(m => <span key={m.user_id} className="ring-2 ring-ink-900 rounded-full"><Initial name={m.full_name || m.email} url={m.avatar_url} size="w-7 h-7 text-xs"/></span>)}</div>
               <span className="text-xs text-white/50">{members.length} người cùng chuẩn bị</span>
             </div>
           )}
@@ -45,8 +45,8 @@ export function ProjectHero({ project, tasks, totalSpent, role, onEdit, members 
         <div className="flex items-center gap-3 sm:gap-4">
           {days !== null && (
             <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-center min-w-[92px]">
-              <p className="font-display text-3xl font-bold tabular leading-none">{days < 0 ? '✓' : days}</p>
-              <p className="text-[10px] uppercase tracking-widest text-white/55 mt-1">{days < 0 ? 'Đã diễn ra' : days === 0 ? 'Hôm nay!' : 'ngày nữa'}</p>
+              <p className="tracking-tight text-3xl font-bold tabular leading-none">{days < 0 ? '✓' : days}</p>
+              <p className="text-[11px]st text-white/55 mt-1">{days < 0 ? 'Đã diễn ra' : days === 0 ? 'Hôm nay!' : 'ngày nữa'}</p>
             </div>
           )}
           <div className="rounded-2xl border border-white/15 bg-white/10 px-3 py-2 flex items-center gap-2.5">
@@ -54,14 +54,14 @@ export function ProjectHero({ project, tasks, totalSpent, role, onEdit, members 
               <circle cx="36" cy="36" r={R} fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="7"/>
               <circle cx="36" cy="36" r={R} fill="none" stroke="#ff6b96" strokeWidth="7" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - progress / 100)} style={{ transition: 'stroke-dashoffset .8s' }}/>
             </svg>
-            <div><p className="font-display text-2xl font-bold tabular leading-none">{progress}%</p><p className="text-[10px] text-white/55 mt-1">{done}/{tasks.length} việc</p></div>
+            <div><p className="tracking-tight text-2xl font-bold tabular leading-none">{progress}%</p><p className="text-[11px] text-white/55 mt-1">{done}/{tasks.length} việc</p></div>
           </div>
           {budget > 0 && (
             <div className="hidden sm:block rounded-2xl border border-white/15 bg-white/10 px-4 py-3 min-w-[150px]">
-              <p className="text-[10px] uppercase tracking-widest text-white/55">Ngân sách</p>
+              <p className="text-[11px]st text-white/55">Ngân sách</p>
               <p className="font-bold tabular text-sm mt-0.5">{vnd(totalSpent)}</p>
               <div className="h-1.5 rounded-full bg-white/15 mt-1.5 overflow-hidden"><div className={cn('h-full rounded-full', used > 100 ? 'bg-red-400' : 'bg-gold-400')} style={{ width: `${Math.min(100, used)}%` }}/></div>
-              <p className={cn('text-[10px] mt-1', used > 100 ? 'text-red-300 font-semibold' : 'text-white/55')}>{Math.round(used)}% / {vnd(budget)}</p>
+              <p className={cn('text-[11px] mt-1', used > 100 ? 'text-red-300 font-semibold' : 'text-white/55')}>{Math.round(used)}% / {vnd(budget)}</p>
             </div>
           )}
         </div>
@@ -106,7 +106,7 @@ export function OverviewTab({ project, tasks, vendors, schedule, invitations, to
         {/* Việc tiếp theo */}
         <div className="card overflow-hidden">
           <div className="px-5 py-3.5 border-b border-ink-100 flex items-center justify-between">
-            <div><h3 className="font-semibold text-ink-900">Việc tiếp theo</h3><p className="text-[11px] text-ink-400">{high} việc ưu tiên cao chưa xong</p></div>
+            <div><h3 className="font-semibold text-ink-900">Việc tiếp theo</h3><p className="text-xs text-ink-400">{high} việc ưu tiên cao chưa xong</p></div>
             <button onClick={() => goTo('tasks')} className="text-xs font-semibold text-sakura-600 hover:underline">Tất cả →</button>
           </div>
           {upcoming.length === 0 ? (
@@ -121,9 +121,9 @@ export function OverviewTab({ project, tasks, vendors, schedule, invitations, to
                     <input type="checkbox" disabled={!canEdit} checked={false} onChange={() => onToggleTask(t)} className="w-4 h-4 accent-jade-500 flex-shrink-0" aria-label="Hoàn thành"/>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-ink-900 truncate">{t.priority === 'high' && <span className="text-red-500 mr-1">●</span>}{t.title}</p>
-                      <p className="text-[11px] text-ink-400">{STATUS_LABELS[t.status]} · {PRI_LABELS[t.priority]}</p>
+                      <p className="text-xs text-ink-400">{STATUS_LABELS[t.status]} · {PRI_LABELS[t.priority]}</p>
                     </div>
-                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0',
+                    <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0',
                       !t.deadline ? 'bg-ink-50 text-ink-400 border-ink-200' : dl.overdue ? 'bg-red-50 text-red-600 border-red-200' : dl.urgent ? 'bg-gold-50 text-gold-700 border-gold-200' : 'bg-ink-50 text-ink-500 border-ink-200')}>
                       {t.deadline ? dl.label : 'Không hạn'}
                     </span>
@@ -146,8 +146,8 @@ export function OverviewTab({ project, tasks, vendors, schedule, invitations, to
           <div className="grid grid-cols-3 gap-2 text-center">
             {(['todo', 'in_progress', 'done'] as TaskStatus[]).map(s => (
               <button key={s} onClick={() => goTo('tasks')} className="rounded-xl bg-ink-50/70 py-2.5 hover:bg-ink-100/70">
-                <p className="font-display text-2xl font-bold text-ink-900 tabular">{tasks.filter(t => t.status === s).length}</p>
-                <p className="text-[11px] text-ink-500">{STATUS_LABELS[s]}</p>
+                <p className="tracking-tight text-2xl font-bold text-ink-900 tabular">{tasks.filter(t => t.status === s).length}</p>
+                <p className="text-xs text-ink-500">{STATUS_LABELS[s]}</p>
               </button>
             ))}
           </div>
@@ -165,7 +165,7 @@ export function OverviewTab({ project, tasks, vendors, schedule, invitations, to
                 <li key={s.id} className="flex items-center gap-3 text-sm">
                   <span className="w-14 font-bold tabular text-ink-900">{s.start_time?.slice(0, 5) ?? '—'}</span>
                   <span className="flex-1 truncate text-ink-700">{s.title}</span>
-                  {s.location && <span className="text-[11px] text-ink-400 truncate max-w-[30%]">📍 {s.location}</span>}
+                  {s.location && <span className="text-xs text-ink-400 truncate max-w-[30%]">📍 {s.location}</span>}
                 </li>
               ))}
             </ul>
@@ -200,14 +200,14 @@ export function OverviewTab({ project, tasks, vendors, schedule, invitations, to
           ) : (
             <>
               <div className="grid grid-cols-3 gap-2 text-center mb-3">
-                <div className="rounded-xl bg-jade-50 py-2"><p className="font-display text-2xl font-bold text-jade-700 tabular">{attending}</p><p className="text-[10px] text-jade-700">sẽ đến</p></div>
-                <div className="rounded-xl bg-gold-50 py-2"><p className="font-display text-2xl font-bold text-gold-700 tabular">{maybe}</p><p className="text-[10px] text-gold-700">chưa chắc</p></div>
-                <div className="rounded-xl bg-ink-50 py-2"><p className="font-display text-2xl font-bold text-ink-700 tabular">{rsvp.length}</p><p className="text-[10px] text-ink-500">phản hồi</p></div>
+                <div className="rounded-xl bg-jade-50 py-2"><p className="tracking-tight text-2xl font-bold text-jade-700 tabular">{attending}</p><p className="text-[11px] text-jade-700">sẽ đến</p></div>
+                <div className="rounded-xl bg-gold-50 py-2"><p className="tracking-tight text-2xl font-bold text-gold-700 tabular">{maybe}</p><p className="text-[11px] text-gold-700">chưa chắc</p></div>
+                <div className="rounded-xl bg-ink-50 py-2"><p className="tracking-tight text-2xl font-bold text-ink-700 tabular">{rsvp.length}</p><p className="text-[11px] text-ink-500">phản hồi</p></div>
               </div>
               {invitations.map(i => (
                 <Link key={i.id} href={`/invitations/${i.id}`} className="flex items-center justify-between text-sm py-1.5 hover:text-sakura-700">
                   <span className="truncate">💌 {i.title}</span>
-                  <span className="text-[11px] text-ink-400 flex-shrink-0">{i.is_published ? `👁 ${i.view_count}` : 'Bản nháp'}</span>
+                  <span className="text-xs text-ink-400 flex-shrink-0">{i.is_published ? `👁 ${i.view_count}` : 'Bản nháp'}</span>
                 </Link>
               ))}
             </>

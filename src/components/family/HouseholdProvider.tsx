@@ -74,7 +74,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
                 {households.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
               </select>
             ) : <p className="font-display text-lg font-semibold text-ink-900 truncate">{household.name}</p>}
-            <p className="text-[11px] text-ink-400 -mt-0.5">{members.length} thành viên · {role === 'owner' ? 'Chủ gia đình' : role === 'editor' ? 'Biên tập' : 'Chỉ xem'}</p>
+            <p className="text-xs text-ink-400 -mt-0.5">{members.length} thành viên · {role === 'owner' ? 'Chủ gia đình' : role === 'editor' ? 'Biên tập' : 'Chỉ xem'}</p>
           </div>
           <div className="hidden sm:flex -space-x-1.5">
             {members.slice(0, 5).map(m => (

@@ -166,10 +166,10 @@ function ProjectCard({ project, onDelete, shared }: { project: ProjectSummary; o
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="font-display font-semibold text-ink-900 text-base leading-tight line-clamp-2 group-hover:text-sakura-700 transition-colors">
+            <h3 className="font-display font-semibold text-ink-900 text-base leading-snug line-clamp-2 group-hover:text-sakura-700 transition-colors">
               {project.name}
             </h3>
-            {shared && <span className="inline-block mt-1 text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">👥 Được chia sẻ</span>}
+            {shared && <span className="inline-block mt-1 text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">👥 Được chia sẻ</span>}
             {project.venue && (
               <p className="text-xs text-ink-400 mt-1 flex items-center gap-1 truncate">
                 <span>📍</span> {project.venue}
@@ -177,7 +177,7 @@ function ProjectCard({ project, onDelete, shared }: { project: ProjectSummary; o
             )}
           </div>
           {days !== null && (
-            <span className={cn('flex-shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full border',
+            <span className={cn('flex-shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border',
               days < 0  ? 'bg-ink-100 text-ink-500 border-ink-200' :
               days === 0 ? 'bg-sakura-100 text-sakura-700 border-sakura-300 animate-pulse-glow' :
               days <= 14 ? 'bg-gold-50 text-gold-700 border-gold-200' :
@@ -214,7 +214,7 @@ function ProjectCard({ project, onDelete, shared }: { project: ProjectSummary; o
           <div className="progress-track h-2">
             <div className="progress-bar" style={{width:`${progress}%`,height:'100%'}}/>
           </div>
-          <div className="flex justify-between text-[10px] text-ink-400 mt-1">
+          <div className="flex justify-between text-[11px] text-ink-400 mt-1">
             <span>{project.completed_tasks} hoàn thành</span>
             <span>{project.total_tasks} đầu mục</span>
           </div>
@@ -224,15 +224,15 @@ function ProjectCard({ project, onDelete, shared }: { project: ProjectSummary; o
         <div className="rounded-xl overflow-hidden border border-ink-100">
           <div className="grid grid-cols-3 divide-x divide-ink-100">
             <div className="p-2.5 text-center bg-white">
-              <p className="text-[10px] text-ink-400 mb-0.5 font-medium">Ngân sách</p>
+              <p className="text-[11px] text-ink-400 mb-0.5 font-medium">Ngân sách</p>
               <p className="text-xs font-bold text-ink-800 tabular">{vnd(project.budget_total)}</p>
             </div>
             <div className="p-2.5 text-center bg-white">
-              <p className="text-[10px] text-ink-400 mb-0.5 font-medium">Đã chi</p>
+              <p className="text-[11px] text-ink-400 mb-0.5 font-medium">Đã chi</p>
               <p className="text-xs font-bold text-sakura-600 tabular">{vnd(project.total_spent)}</p>
             </div>
             <div className={cn('p-2.5 text-center', overBudget ? 'bg-red-50' : 'bg-white')}>
-              <p className="text-[10px] text-ink-400 mb-0.5 font-medium">Còn lại</p>
+              <p className="text-[11px] text-ink-400 mb-0.5 font-medium">Còn lại</p>
               <p className={cn('text-xs font-bold tabular', overBudget ? 'text-red-600' : 'text-jade-600')}>
                 {overBudget ? '-' : ''}{vnd(Math.abs(remaining))}
               </p>

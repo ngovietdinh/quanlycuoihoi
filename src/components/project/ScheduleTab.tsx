@@ -53,7 +53,7 @@ export function ScheduleTab({ items, eventDate, canEdit, projectName, onSave, on
           <header className="px-5 py-3.5 border-b border-ink-100 flex items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg,#fffdf9,#fff5ec)' }}>
             <div>
               <p className="font-semibold text-ink-900 first-letter:uppercase">{day ? fmtDateFull(day) : 'Chưa xác định ngày'}</p>
-              {day && <p className="text-[11px] text-ink-400">Âm lịch {lunarOf(day)} · {projectName}</p>}
+              {day && <p className="text-xs text-ink-400">Âm lịch {lunarOf(day)} · {projectName}</p>}
             </div>
             <span className="text-xs text-ink-400">{groups.get(day)!.filter(x => x.done).length}/{groups.get(day)!.length} xong</span>
           </header>
@@ -66,17 +66,17 @@ export function ScheduleTab({ items, eventDate, canEdit, projectName, onSave, on
                 <li key={it.id} className={cn('relative grid grid-cols-[4.2rem_1fr_auto] gap-4 py-2.5 group', it.done && 'opacity-60')}>
                   <div className="text-right">
                     <p className={cn('font-bold tabular text-sm', live ? 'text-sakura-600' : 'text-ink-900')}>{hm(it.start_time) || '—'}</p>
-                    {it.end_time && <p className="text-[11px] text-ink-400 tabular">→ {hm(it.end_time)}</p>}
+                    {it.end_time && <p className="text-xs text-ink-400 tabular">→ {hm(it.end_time)}</p>}
                   </div>
                   <div className="relative min-w-0 pl-4">
                     <span className={cn('absolute -left-[3.5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-white print:hidden', it.done ? 'bg-jade-500' : live ? 'bg-sakura-500 animate-pulse' : 'bg-gold-400')}/>
-                    <p className={cn('text-sm font-semibold text-ink-900', it.done && 'line-through')}>{it.title}{live && <span className="ml-2 text-[10px] font-bold text-sakura-600 bg-sakura-50 border border-sakura-200 rounded-full px-1.5 py-0.5">ĐANG DIỄN RA</span>}</p>
+                    <p className={cn('text-sm font-semibold text-ink-900', it.done && 'line-through')}>{it.title}{live && <span className="ml-2 text-[11px] font-bold text-sakura-600 bg-sakura-50 border border-sakura-200 rounded-full px-1.5 py-0.5">ĐANG DIỄN RA</span>}</p>
                     <p className="text-xs text-ink-500">{[it.location && `📍 ${it.location}`, it.owner && `👤 ${it.owner}`].filter(Boolean).join('  ·  ')}</p>
                     {it.notes && <p className="text-xs text-ink-400 italic mt-0.5">{it.notes}</p>}
                   </div>
                   {canEdit && (
                     <div className="flex items-start gap-0.5 print:hidden">
-                      <button onClick={() => onToggle(it)} title={it.done ? 'Bỏ đánh dấu' : 'Đã xong'} className={cn('w-6 h-6 rounded-md border-2 flex items-center justify-center text-[10px]', it.done ? 'bg-jade-500 border-jade-500 text-white' : 'border-ink-300 hover:border-jade-400')}>{it.done && '✓'}</button>
+                      <button onClick={() => onToggle(it)} title={it.done ? 'Bỏ đánh dấu' : 'Đã xong'} className={cn('w-6 h-6 rounded-md border-2 flex items-center justify-center text-[11px]', it.done ? 'bg-jade-500 border-jade-500 text-white' : 'border-ink-300 hover:border-jade-400')}>{it.done && '✓'}</button>
                       <span className="flex sm:opacity-0 group-hover:opacity-100">
                         <button onClick={() => setEditing(it)} className="btn btn-ghost btn-xs btn-icon" title="Sửa">✎</button>
                         <button onClick={() => onDelete(it.id)} className="btn btn-ghost btn-xs btn-icon hover:text-red-500" title="Xóa">✕</button>

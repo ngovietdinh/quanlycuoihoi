@@ -184,7 +184,7 @@ function ProjectContent() {
               className={cn('flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition',
                 tab === t.id ? 'bg-white shadow-card text-sakura-700 font-semibold' : 'text-ink-500 hover:text-ink-900 hover:bg-white/60')}>
               <span>{t.icon}</span>{t.label}
-              {t.badge !== undefined && <span className={cn('text-[10px] font-bold rounded-full px-1.5 min-w-[18px] text-center', String(t.badge).endsWith('!') ? 'bg-red-500 text-white' : 'bg-ink-100 text-ink-600')}>{t.badge}</span>}
+              {t.badge !== undefined && <span className={cn('text-[11px] font-bold rounded-full px-1.5 min-w-[18px] text-center', String(t.badge).endsWith('!') ? 'bg-red-500 text-white' : 'bg-ink-100 text-ink-600')}>{t.badge}</span>}
             </button>
           ))}
         </nav>

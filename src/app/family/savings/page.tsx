@@ -169,13 +169,13 @@ export default function SavingsPage() {
                   <div key={g.id} className={cn('card p-4 group', g.done && 'opacity-70')}>
                     <div className="flex items-start gap-3">
                       <span className="w-11 h-11 rounded-2xl bg-gold-50 flex items-center justify-center text-2xl flex-shrink-0">{g.icon || '🎯'}</span>
-                      <div className="min-w-0 flex-1"><p className="font-semibold text-ink-900 truncate">{g.name}{g.done && ' ✓'}</p><p className="text-[11px] text-ink-400">{g.deadline ? `Hạn ${fmtDate(g.deadline)}${m !== null ? ` · còn ${m} tháng` : ''}` : 'Không đặt hạn'}</p></div>
+                      <div className="min-w-0 flex-1"><p className="font-semibold text-ink-900 truncate">{g.name}{g.done && ' ✓'}</p><p className="text-xs text-ink-400">{g.deadline ? `Hạn ${fmtDate(g.deadline)}${m !== null ? ` · còn ${m} tháng` : ''}` : 'Không đặt hạn'}</p></div>
                       {canEdit && <RowActions onEdit={() => open('goal', g)} onDelete={() => ask('Xóa mục tiêu?', `${g.name} cùng lịch sử góp tiền`, () => C.goal.remove(g.id))}/>}
                     </div>
-                    <div className="mt-3 flex items-end justify-between"><p className="font-display text-xl font-bold text-ink-900 tabular">{vnd(s)}</p><p className="text-xs text-ink-400 tabular">/ {vnd(t)}</p></div>
+                    <div className="mt-3 flex items-end justify-between"><p className="tracking-tight text-xl font-bold text-ink-900 tabular">{vnd(s)}</p><p className="text-xs text-ink-400 tabular">/ {vnd(t)}</p></div>
                     <div className="h-2 rounded-full bg-ink-100 mt-1.5 overflow-hidden"><div className="h-full rounded-full bg-jade-500 transition-all" style={{ width: `${p}%` }}/></div>
-                    <p className="text-[11px] mt-1 text-ink-500">{s >= t ? '🎉 Đã đạt mục tiêu!' : `${Math.round(p)}% · còn ${vnd(t - s)}`}{perMonth ? ` · cần góp ~${vnd(perMonth)}/tháng` : ''}</p>
-                    {hist.length > 0 && <p className="text-[11px] text-ink-400 mt-1">Lần gần nhất: {fmtDate(hist[0].date)} {Number(hist[0].amount) > 0 ? '+' : ''}{vnd(hist[0].amount)}</p>}
+                    <p className="text-xs mt-1 text-ink-500">{s >= t ? '🎉 Đã đạt mục tiêu!' : `${Math.round(p)}% · còn ${vnd(t - s)}`}{perMonth ? ` · cần góp ~${vnd(perMonth)}/tháng` : ''}</p>
+                    {hist.length > 0 && <p className="text-xs text-ink-400 mt-1">Lần gần nhất: {fmtDate(hist[0].date)} {Number(hist[0].amount) > 0 ? '+' : ''}{vnd(hist[0].amount)}</p>}
                     {canEdit && !g.done && <button onClick={() => open('contrib', undefined, { goal_id: g.id })} className="btn btn-secondary btn-xs w-full mt-3">+ Góp / rút tiền</button>}
                   </div>
                 )
@@ -195,14 +195,14 @@ export default function SavingsPage() {
               const next = sched.find(r => !paidPeriods.has(r.period))
               const totalInterest = sched.reduce((s, r) => s + r.interest, 0)
               return (
-                <Panel key={l.id} title={<>{l.name}{l.closed && <span className="ml-2 text-[10px] text-jade-700 bg-jade-50 border border-jade-200 rounded-full px-1.5">Đã tất toán</span>}</>}
+                <Panel key={l.id} title={<>{l.name}{l.closed && <span className="ml-2 text-[11px] text-jade-700 bg-jade-50 border border-jade-200 rounded-full px-1.5">Đã tất toán</span>}</>}
                   sub={`${l.lender ?? ''} · ${vnd(l.principal)} · ${l.annual_rate}%/năm · ${l.term_months} tháng · ${l.method === 'declining' ? 'dư nợ giảm dần' : 'trả đều'}`}
                   right={canEdit && <RowActions onEdit={() => open('loan', l)} onDelete={() => ask('Xóa khoản vay?', l.name, () => C.loan.remove(l.id))}/>}>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                    <div><p className="text-[11px] text-ink-400">Dư nợ gốc</p><p className="font-bold text-red-600 tabular">{vnd(Math.max(0, bal))}</p></div>
-                    <div><p className="text-[11px] text-ink-400">Đã trả</p><p className="font-bold text-ink-900 tabular">{paidRows.length}/{l.term_months} kỳ</p></div>
-                    <div><p className="text-[11px] text-ink-400">Kỳ tới</p><p className="font-bold text-ink-900 tabular">{next ? `${vnd(next.payment)}` : '—'}</p>{next && <p className={cn('text-[11px]', daysUntil(next.date) < 0 ? 'text-red-600 font-semibold' : 'text-ink-400')}>{fmtDate(next.date)}{daysUntil(next.date) < 0 && ' (quá hạn)'}</p>}</div>
-                    <div><p className="text-[11px] text-ink-400">Tổng lãi dự kiến</p><p className="font-bold text-ink-900 tabular">{vnd(totalInterest)}</p></div>
+                    <div><p className="text-xs text-ink-400">Dư nợ gốc</p><p className="font-bold text-red-600 tabular">{vnd(Math.max(0, bal))}</p></div>
+                    <div><p className="text-xs text-ink-400">Đã trả</p><p className="font-bold text-ink-900 tabular">{paidRows.length}/{l.term_months} kỳ</p></div>
+                    <div><p className="text-xs text-ink-400">Kỳ tới</p><p className="font-bold text-ink-900 tabular">{next ? `${vnd(next.payment)}` : '—'}</p>{next && <p className={cn('text-xs', daysUntil(next.date) < 0 ? 'text-red-600 font-semibold' : 'text-ink-400')}>{fmtDate(next.date)}{daysUntil(next.date) < 0 && ' (quá hạn)'}</p>}</div>
+                    <div><p className="text-xs text-ink-400">Tổng lãi dự kiến</p><p className="font-bold text-ink-900 tabular">{vnd(totalInterest)}</p></div>
                   </div>
                   <div className="h-2 rounded-full bg-ink-100 mt-3 overflow-hidden"><div className="h-full rounded-full bg-jade-500" style={{ width: `${Math.min(100, ((Number(l.principal) - bal) / Number(l.principal)) * 100)}%` }}/></div>
                   <div className="flex flex-wrap gap-2 mt-3">
@@ -241,7 +241,7 @@ export default function SavingsPage() {
                   <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0', d.direction === 'lent' ? 'bg-jade-50' : 'bg-red-50')}>{d.direction === 'lent' ? '📤' : '📥'}</span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-ink-900">{d.direction === 'lent' ? `${d.person} nợ mình` : `Mình nợ ${d.person}`}</p>
-                    <p className="text-[11px] text-ink-400">{fmtDate(d.date)}{d.due_date && !d.settled && <span className={daysUntil(d.due_date) < 0 ? 'text-red-600 font-semibold' : ''}> · hẹn trả {fmtDate(d.due_date)}{daysUntil(d.due_date) < 0 && ' (quá hạn)'}</span>}{d.settled && d.settled_date && ` · đã trả ${fmtDate(d.settled_date)}`}{d.note && ` · ${d.note}`}</p>
+                    <p className="text-xs text-ink-400">{fmtDate(d.date)}{d.due_date && !d.settled && <span className={daysUntil(d.due_date) < 0 ? 'text-red-600 font-semibold' : ''}> · hẹn trả {fmtDate(d.due_date)}{daysUntil(d.due_date) < 0 && ' (quá hạn)'}</span>}{d.settled && d.settled_date && ` · đã trả ${fmtDate(d.settled_date)}`}{d.note && ` · ${d.note}`}</p>
                   </div>
                   <b className={cn('tabular text-sm', d.direction === 'lent' ? 'text-jade-700' : 'text-red-600')}>{vnd(d.amount)}</b>
                   {canEdit && !d.settled && <button onClick={() => C.debt.update(d.id, { settled: true, settled_date: today() })} className="btn btn-secondary btn-xs">✓ Đã trả</button>}
@@ -265,8 +265,8 @@ export default function SavingsPage() {
               <div className="divide-y divide-ink-50">
                 {list.map(g => (
                   <div key={g.id} className="px-5 py-2.5 flex items-center gap-3 group">
-                    <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full border flex-shrink-0', g.direction === 'received' ? 'bg-jade-50 text-jade-700 border-jade-200' : 'bg-gold-50 text-gold-700 border-gold-200')}>{g.direction === 'received' ? 'NHẬN' : 'ĐI'}</span>
-                    <div className="min-w-0 flex-1"><p className="text-sm font-medium text-ink-900 truncate">{g.person}{g.relation && <span className="text-ink-400 font-normal"> · {g.relation}</span>}</p><p className="text-[11px] text-ink-400">{g.event} · {fmtDate(g.date)}{g.gift && ` · 🎁 ${g.gift}`}</p></div>
+                    <span className={cn('text-[11px] font-bold px-2 py-0.5 rounded-full border flex-shrink-0', g.direction === 'received' ? 'bg-jade-50 text-jade-700 border-jade-200' : 'bg-gold-50 text-gold-700 border-gold-200')}>{g.direction === 'received' ? 'NHẬN' : 'ĐI'}</span>
+                    <div className="min-w-0 flex-1"><p className="text-sm font-medium text-ink-900 truncate">{g.person}{g.relation && <span className="text-ink-400 font-normal"> · {g.relation}</span>}</p><p className="text-xs text-ink-400">{g.event} · {fmtDate(g.date)}{g.gift && ` · 🎁 ${g.gift}`}</p></div>
                     <b className="tabular text-sm text-ink-900">{Number(g.amount) ? vnd(g.amount) : ''}</b>
                     {canEdit && <RowActions onEdit={() => open('gift', g)} onDelete={() => ask('Xóa?', g.person, () => C.gift.remove(g.id))}/>}
                   </div>
@@ -283,7 +283,7 @@ export default function SavingsPage() {
             <div className="divide-y divide-ink-50">
               {assets.rows.map(a => (
                 <div key={a.id} className="px-5 py-3 flex items-center gap-3 group">
-                  <div className="min-w-0 flex-1"><p className="text-sm font-medium text-ink-900">{a.name}</p><p className="text-[11px] text-ink-400">{a.type}{a.acquired_date && ` · từ ${fmtDate(a.acquired_date)}`}{a.note && ` · ${a.note}`}</p></div>
+                  <div className="min-w-0 flex-1"><p className="text-sm font-medium text-ink-900">{a.name}</p><p className="text-xs text-ink-400">{a.type}{a.acquired_date && ` · từ ${fmtDate(a.acquired_date)}`}{a.note && ` · ${a.note}`}</p></div>
                   <span className="text-xs text-ink-400 tabular">{totalAssets ? `${Math.round((Number(a.value) / totalAssets) * 100)}%` : ''}</span>
                   <b className="tabular text-sm text-ink-900">{vnd(a.value)}</b>
                   {canEdit && <RowActions onEdit={() => open('asset', a)} onDelete={() => ask('Xóa tài sản?', a.name, () => C.asset.remove(a.id))}/>}
@@ -303,8 +303,8 @@ export default function SavingsPage() {
                 const st = left === null ? null : left < 0 ? ['⛔ Đã hết hạn', 'bg-red-50 text-red-700 border-red-200'] : left <= 60 ? [`⚠️ Còn ${left} ngày`, 'bg-gold-50 text-gold-700 border-gold-200'] : [`HH ${fmtDate(d.expiry_date)}`, 'bg-ink-50 text-ink-500 border-ink-200']
                 return (
                   <div key={d.id} className="px-5 py-3 flex items-center gap-3 group">
-                    <div className="min-w-0 flex-1"><p className="text-sm font-medium text-ink-900">{d.name}</p><p className="text-[11px] text-ink-400">{d.type}{d.holder && ` · ${d.holder}`}{d.number && ` · số ${d.number}`}{d.note && ` · ${d.note}`}</p></div>
-                    {st && <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', st[1])}>{st[0]}</span>}
+                    <div className="min-w-0 flex-1"><p className="text-sm font-medium text-ink-900">{d.name}</p><p className="text-xs text-ink-400">{d.type}{d.holder && ` · ${d.holder}`}{d.number && ` · số ${d.number}`}{d.note && ` · ${d.note}`}</p></div>
+                    {st && <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', st[1])}>{st[0]}</span>}
                     {canEdit && <RowActions onEdit={() => open('doc', d)} onDelete={() => ask('Xóa giấy tờ?', d.name, () => C.doc.remove(d.id))}/>}
                   </div>
                 )

@@ -88,7 +88,7 @@ export default function RegisterPage() {
               <div className="flex-1 grid grid-cols-4 gap-1">
                 {[1, 2, 3, 4].map(k => <span key={k} className={cn('h-1.5 rounded-full transition-colors', score >= k ? SCORE_COLOR[score] : 'bg-ink-100')}/>)}
               </div>
-              <span className="text-[11px] font-semibold text-ink-500 w-20 text-right">{SCORE_LABEL[score]}</span>
+              <span className="text-xs font-semibold text-ink-500 w-20 text-right">{SCORE_LABEL[score]}</span>
             </div>
           )}
         </div>

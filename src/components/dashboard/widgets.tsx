@@ -50,8 +50,8 @@ export function Greeting({ name, next, onCreateProject }: { name: string; next: 
           <div className="flex gap-2 sm:gap-3">
             {parts.map(([v, l]) => (
               <div key={l} className="w-16 sm:w-20 rounded-2xl border border-white/15 bg-white/10 backdrop-blur py-3 text-center">
-                <p className="font-display text-2xl sm:text-3xl font-bold tabular">{now ? String(v).padStart(2, '0') : '--'}</p>
-                <p className="text-[10px] uppercase tracking-widest text-white/50">{l}</p>
+                <p className="tracking-tight text-2xl sm:text-3xl font-bold tabular">{now ? String(v).padStart(2, '0') : '--'}</p>
+                <p className="text-[11px]st text-white/50">{l}</p>
               </div>
             ))}
           </div>
@@ -77,7 +77,7 @@ export function QuickActions({ onCreateProject, firstProjectId }: { onCreateProj
         const inner = (
           <>
             <span className="w-11 h-11 rounded-2xl bg-white shadow-card flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-110 transition-transform">{it.icon}</span>
-            <span className="min-w-0"><span className="block font-semibold text-sm text-ink-900 truncate">{it.label}</span><span className="block text-[11px] text-ink-400 truncate">{it.desc}</span></span>
+            <span className="min-w-0"><span className="block font-semibold text-sm text-ink-900 truncate">{it.label}</span><span className="block text-xs text-ink-400 truncate">{it.desc}</span></span>
           </>
         )
         const cls = `group card p-3.5 flex items-center gap-3 bg-gradient-to-br ${it.color} hover:shadow-card-hover hover:-translate-y-0.5 transition-all text-left`
@@ -122,9 +122,9 @@ export function Kpis({ projects, data }: { projects: ProjectSummary[]; data: Das
           {t.ring ? <div className="relative"><Ring value={t.ring[0] as number} color={t.ring[1] as string}/><span className="absolute inset-0 flex items-center justify-center text-lg">{t.icon}</span></div>
             : <span className="w-14 h-14 rounded-2xl bg-ink-50 flex items-center justify-center text-2xl flex-shrink-0">{t.icon}</span>}
           <div className="min-w-0 w-full">
-            <p className="text-[11px] text-ink-400 font-medium truncate">{t.label}</p>
-            <p className="font-display text-2xl sm:text-3xl font-bold text-ink-900 tabular leading-tight">{t.value}</p>
-            <p className={cn('text-[11px] truncate', 'warn' in t && t.warn ? 'text-red-500 font-semibold' : 'text-ink-400')}>{t.sub}</p>
+            <p className="text-xs text-ink-400 font-medium truncate">{t.label}</p>
+            <p className="tracking-tight text-2xl sm:text-3xl font-bold text-ink-900 tabular leading-tight">{t.value}</p>
+            <p className={cn('text-xs truncate', 'warn' in t && t.warn ? 'text-red-500 font-semibold' : 'text-ink-400')}>{t.sub}</p>
           </div>
         </div>
       ))}
@@ -149,8 +149,8 @@ export function UpcomingTasks({ tasks, onDone, loading }: { tasks: TaskWithProje
   return (
     <section className="card overflow-hidden flex flex-col">
       <header className="px-5 pt-4 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 border-b border-ink-100/70">
-        <div><h3 className="font-semibold text-ink-900">Việc cần làm</h3><p className="text-[11px] text-ink-400">Tích chọn để đánh dấu hoàn thành</p></div>
-        <div className="flex bg-ink-100/70 rounded-xl p-0.5 text-[11px] font-medium">
+        <div><h3 className="font-semibold text-ink-900">Việc cần làm</h3><p className="text-xs text-ink-400">Tích chọn để đánh dấu hoàn thành</p></div>
+        <div className="flex bg-ink-100/70 rounded-xl p-0.5 text-xs font-medium">
           {([['soon', '14 ngày'], ['overdue', `Quá hạn${overdue.length ? ` (${overdue.length})` : ''}`], ['all', 'Tất cả']] as const).map(([k, l]) => (
             <button key={k} onClick={() => setFilter(k)} className={cn('px-2.5 py-1 rounded-lg whitespace-nowrap', filter === k ? 'bg-white shadow text-ink-900' : 'text-ink-500', k === 'overdue' && overdue.length && filter !== k && 'text-red-500')}>{l}</button>
           ))}
@@ -165,14 +165,14 @@ export function UpcomingTasks({ tasks, onDone, loading }: { tasks: TaskWithProje
             return (
               <div key={t.id} className="px-5 py-3 flex items-center gap-3 hover:bg-ink-50/50 group">
                 <button onClick={() => onDone(t)} aria-label="Đánh dấu hoàn thành"
-                  className="w-5 h-5 rounded-md border-2 border-ink-300 hover:border-jade-500 hover:bg-jade-50 flex-shrink-0 flex items-center justify-center text-[10px] text-jade-600 transition">
+                  className="w-5 h-5 rounded-md border-2 border-ink-300 hover:border-jade-500 hover:bg-jade-50 flex-shrink-0 flex items-center justify-center text-[11px] text-jade-600 transition">
                   <span className="opacity-0 group-hover:opacity-100">✓</span>
                 </button>
                 <Link href={`/projects/${t.project_id}`} className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-ink-900 truncate">{t.priority === 'high' && <span className="text-red-500 mr-1">●</span>}{t.title}</p>
-                  <p className="text-[11px] text-ink-400 truncate">{t.projects?.name}</p>
+                  <p className="text-xs text-ink-400 truncate">{t.projects?.name}</p>
                 </Link>
-                <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', cls)}>{label}</span>
+                <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0', cls)}>{label}</span>
               </div>
             )
           })}
@@ -187,7 +187,7 @@ export function ActivityFeed({ items, loading }: { items: ActivityItem[]; loadin
   return (
     <section className="card overflow-hidden flex flex-col">
       <header className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-ink-100/70">
-        <div><h3 className="font-semibold text-ink-900">Hoạt động mới</h3><p className="text-[11px] text-ink-400">Phản hồi & lời chúc từ thiệp online</p></div>
+        <div><h3 className="font-semibold text-ink-900">Hoạt động mới</h3><p className="text-xs text-ink-400">Phản hồi & lời chúc từ thiệp online</p></div>
         <Link href="/invitations" className="text-xs font-semibold text-sakura-600 hover:underline">Xem thiệp →</Link>
       </header>
       <div className="flex-1 divide-y divide-ink-50 max-h-[420px] overflow-y-auto">
@@ -211,7 +211,7 @@ export function ActivityFeed({ items, loading }: { items: ActivityItem[]; loadin
                     : <span className="text-ink-500">gửi lời chúc</span>}
                 </p>
                 {(a.kind === 'wish' ? a.data.message : a.data.message) && <p className="text-xs text-ink-500 italic truncate">“{a.data.message}”</p>}
-                <p className="text-[10px] text-ink-400 mt-0.5">{timeAgo(a.at)} · {a.invitation.title}</p>
+                <p className="text-[11px] text-ink-400 mt-0.5">{timeAgo(a.at)} · {a.invitation.title}</p>
               </div>
             </Link>
           ))}
@@ -234,8 +234,8 @@ export function SpendingBreakdown({ data, budget, projects = [] }: { data: Dashb
   return (
     <section className="card p-5">
       <div className="flex items-start justify-between gap-3 mb-4">
-        <div><h3 className="font-semibold text-ink-900">Chi tiêu theo danh mục</h3><p className="text-[11px] text-ink-400">Tổng hợp mọi dự án · tháng này {vnd(thisMonth)}</p></div>
-        <div className="text-right"><p className="font-display text-xl font-bold text-ink-900 tabular">{vnd(total)}</p><p className="text-[11px] text-ink-400">/ {vnd(budget)}</p></div>
+        <div><h3 className="font-semibold text-ink-900">Chi tiêu theo danh mục</h3><p className="text-xs text-ink-400">Tổng hợp mọi dự án · tháng này {vnd(thisMonth)}</p></div>
+        <div className="text-right"><p className="tracking-tight text-xl font-bold text-ink-900 tabular">{vnd(total)}</p><p className="text-xs text-ink-400">/ {vnd(budget)}</p></div>
       </div>
       {rows.length === 0 ? <p className="text-sm text-ink-400 text-center py-6">Chưa ghi nhận chi tiêu nào</p> : (
         <>
@@ -308,7 +308,7 @@ export function MonthCalendar({ projects, tasks }: { projects: ProjectSummary[];
         </div>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-xs">
-        {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(d => <div key={d} className="text-[10px] font-bold text-ink-400 py-1">{d}</div>)}
+        {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(d => <div key={d} className="text-[11px] font-bold text-ink-400 py-1">{d}</div>)}
         {Array.from({ length: offset }).map((_, i) => <div key={'e' + i}/>)}
         {Array.from({ length: days }, (_, i) => i + 1).map(d => {
           const k = key(d), m = marks.get(k), isToday = k === todayKey
@@ -319,13 +319,13 @@ export function MonthCalendar({ projects, tasks }: { projects: ProjectSummary[];
                 m?.events.length ? 'bg-sakura-500 text-white font-bold shadow-glow-sakura' : isToday ? 'bg-ink-900 text-white font-semibold' : 'hover:bg-ink-50 text-ink-700',
                 sel === k && 'ring-2 ring-sakura-300')}>
               <span className="leading-none">{d}</span>
-              <span className={cn('text-[8px] leading-none mt-0.5', m?.events.length || isToday ? 'text-white/70' : 'text-ink-300')}>{lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day}</span>
+              <span className={cn('text-[9px] leading-none mt-0.5', m?.events.length || isToday ? 'text-white/70' : 'text-ink-300')}>{lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day}</span>
               {m?.tasks.length ? <span className={cn('absolute bottom-1 w-1 h-1 rounded-full', m.events.length || isToday ? 'bg-white' : 'bg-gold-500')}/> : null}
             </button>
           )
         })}
       </div>
-      <div className="mt-3 flex items-center gap-4 text-[10px] text-ink-400">
+      <div className="mt-3 flex items-center gap-4 text-[11px] text-ink-400">
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-sakura-500"/>Ngày cưới</span>
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-gold-500"/>Hạn công việc</span>
         <span className="flex items-center gap-1"><span className="text-ink-300">1/8</span>Âm lịch</span>

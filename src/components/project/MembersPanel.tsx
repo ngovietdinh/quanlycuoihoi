@@ -61,7 +61,7 @@ export function MembersPanel({ projectId, members, canManage, reload, currentUse
       <div className="grid sm:grid-cols-3 gap-3">
         {(['owner', 'editor', 'viewer'] as ProjectRole[]).map(r => (
           <div key={r} className="card p-4">
-            <span className={cn('badge text-[10px]', ROLE_INFO[r].cls)}>{ROLE_INFO[r].label}</span>
+            <span className={cn('badge text-[11px]', ROLE_INFO[r].cls)}>{ROLE_INFO[r].label}</span>
             <p className="text-xs text-ink-500 mt-2">{ROLE_INFO[r].desc}</p>
           </div>
         ))}
@@ -95,7 +95,7 @@ export function MembersPanel({ projectId, members, canManage, reload, currentUse
               <select className="input !py-1.5 !w-auto text-xs" value={m.role} onChange={e => change(m, e.target.value as MemberRole)}>
                 <option value="editor">Biên tập</option><option value="viewer">Chỉ xem</option>
               </select>
-            ) : <span className={cn('badge text-[10px]', ROLE_INFO[m.role].cls)}>{ROLE_INFO[m.role].label}</span>}
+            ) : <span className={cn('badge text-[11px]', ROLE_INFO[m.role].cls)}>{ROLE_INFO[m.role].label}</span>}
             {m.role !== 'owner' && (canManage || m.user_id === currentUserId) && (
               <button onClick={() => remove(m)} className="btn btn-ghost btn-xs hover:text-red-500">{m.user_id === currentUserId ? 'Rời' : '✕'}</button>
             )}

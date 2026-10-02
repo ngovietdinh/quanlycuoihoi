@@ -38,14 +38,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <p className="font-display font-bold text-ink-900 text-base leading-tight">Hỷ Sự</p>
-              <p className="text-[10px] text-ink-400 font-medium tracking-wider uppercase">Wedding Manager</p>
+              <p className="text-[11px] text-ink-400 font-mediumr">Wedding Manager</p>
             </div>
           </div>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5">
-          <p className="text-[10px] font-bold text-ink-400 uppercase tracking-widest px-3 mb-3">Menu chính</p>
+          <p className="text-[11px] font-bold text-ink-400st px-3 mb-3">Menu chính</p>
           {NAV.map(n => {
             const active = isActive(n.href)
             return (
@@ -69,7 +69,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 </div>}
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-ink-800 truncate">{displayName}</p>
-              <p className="text-[10px] text-ink-400 flex items-center gap-1">
+              <p className="text-[11px] text-ink-400 flex items-center gap-1">
                 {isAdmin ? <><span className="text-sakura-600 font-bold">Quản trị viên</span></> : 'Thành viên'}
               </p>
             </div>
@@ -79,7 +79,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <span className="text-base">⏻</span>
             Đăng xuất
           </button>
-          <p className="px-3 pt-2 text-[10px] text-ink-400 leading-snug">{copyright()}<br/>Tác giả: <span className="font-semibold text-ink-500">{AUTHOR}</span></p>
+          <p className="px-3 pt-2 text-[11px] text-ink-400 leading-snug">{copyright()}<br/>Tác giả: <span className="font-semibold text-ink-500">{AUTHOR}</span></p>
         </div>
       </aside>
 
@@ -99,7 +99,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 className={cn('flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all duration-200',
                   active ? 'text-sakura-600' : 'text-ink-400')}>
                 <span className={cn('text-2xl transition-transform duration-200', active && 'scale-110')}>{n.emoji}</span>
-                <span className="text-[10px] font-semibold">{n.label}</span>
+                <span className="text-[11px] font-semibold">{n.label}</span>
                 {active && <span className="w-1.5 h-1.5 rounded-full bg-sakura-400"/>}
               </Link>
             )
@@ -115,7 +115,7 @@ export function TopBar({ title, subtitle, right }: { title:string; subtitle?:str
     <header className="sticky top-0 z-30 px-4 sm:px-6 py-4 border-b border-ink-100/60 flex items-center justify-between gap-4"
       style={{background:'rgba(255,253,249,0.92)',backdropFilter:'blur(20px)'}}>
       <div className="min-w-0">
-        <h1 className="font-display text-xl sm:text-2xl font-semibold text-ink-900 truncate leading-tight">{title}</h1>
+        <h1 className="font-display text-xl sm:text-2xl font-semibold text-ink-900 truncate leading-snug">{title}</h1>
         {subtitle && <p className="text-xs text-ink-500 mt-0.5 truncate">{subtitle}</p>}
       </div>
       {right && <div className="flex items-center gap-2 flex-shrink-0">{right}</div>}

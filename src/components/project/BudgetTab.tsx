@@ -43,9 +43,9 @@ export function BudgetTab({ project, tasks, expenses, vendors, canEdit, totalSpe
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {tiles.map(t => (
           <div key={t.label} className="card p-4">
-            <div className="flex items-center gap-2 text-[11px] text-ink-400 font-semibold uppercase tracking-wide"><span className="text-lg">{t.icon}</span>{t.label}</div>
-            <p className={cn('font-display text-xl sm:text-2xl font-bold tabular mt-1', t.cls)}>{t.value}</p>
-            {t.sub && <p className="text-[11px] text-ink-400 truncate">{t.sub}</p>}
+            <div className="flex items-center gap-2 text-xs text-ink-400 font-semibold"><span className="text-lg">{t.icon}</span>{t.label}</div>
+            <p className={cn('tracking-tight text-xl sm:text-2xl font-bold tabular mt-1', t.cls)}>{t.value}</p>
+            {t.sub && <p className="text-xs text-ink-400 truncate">{t.sub}</p>}
           </div>
         ))}
       </div>
@@ -60,7 +60,7 @@ export function BudgetTab({ project, tasks, expenses, vendors, canEdit, totalSpe
           <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.min(100, projPct)}%`, background: 'repeating-linear-gradient(45deg,#fcd34d,#fcd34d 6px,#fde68a 6px,#fde68a 12px)' }}/>
           <div className={cn('absolute inset-y-0 left-0 rounded-full', spentPct > 100 ? 'progress-bar-danger' : 'progress-bar')} style={{ width: `${Math.min(100, spentPct)}%` }}/>
         </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-ink-500">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-ink-500">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full progress-bar"/>Đã chi {Math.round(spentPct)}%</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-gold-300"/>Sắp trả nhà cung cấp</span>
           {projected > budget && budget > 0 && <span className="text-red-600 font-semibold">⚠ Dự kiến vượt {vnd(projected - budget)}</span>}
@@ -84,7 +84,7 @@ export function BudgetTab({ project, tasks, expenses, vendors, canEdit, totalSpe
               ))}
             </div>
           )}
-          {vendorPaid > 0 && <p className="text-[11px] text-ink-400 mt-4">Trong đó {vnd(vendorPaid)} đã trả cho nhà cung cấp</p>}
+          {vendorPaid > 0 && <p className="text-xs text-ink-400 mt-4">Trong đó {vnd(vendorPaid)} đã trả cho nhà cung cấp</p>}
         </div>
 
         {/* Lịch sử chi tiêu */}
@@ -119,7 +119,7 @@ export function BudgetTab({ project, tasks, expenses, vendors, canEdit, totalSpe
                   <span className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-lg bg-gold-50">{CATEGORY_ICONS[e.category] ?? '💸'}</span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-ink-900 truncate">{e.note || e.category}</p>
-                    <p className="text-[11px] text-ink-400 truncate">{fmtDate(e.spent_at)} · {e.category}{vendorName(e.vendor_id) && ` · 🤝 ${vendorName(e.vendor_id)}`}</p>
+                    <p className="text-xs text-ink-400 truncate">{fmtDate(e.spent_at)} · {e.category}{vendorName(e.vendor_id) && ` · 🤝 ${vendorName(e.vendor_id)}`}</p>
                   </div>
                   <span className="text-sm font-bold text-sakura-600 tabular flex-shrink-0">{vnd(e.amount)}</span>
                   {canEdit && (
@@ -145,14 +145,14 @@ export function BudgetTab({ project, tasks, expenses, vendors, canEdit, totalSpe
         {showPlan && (
           <div className="overflow-x-auto border-t border-ink-100">
             <table className="w-full text-sm min-w-[560px]">
-              <thead><tr className="bg-ink-50/70 text-left text-[11px] text-ink-500 uppercase">{['Đầu mục', 'Dự kiến', 'Thực tế', 'Trạng thái'].map(h => <th key={h} className="px-4 py-2.5 font-bold">{h}</th>)}</tr></thead>
+              <thead><tr className="bg-ink-50/70 text-left text-xs text-ink-500">{['Đầu mục', 'Dự kiến', 'Thực tế', 'Trạng thái'].map(h => <th key={h} className="px-4 py-2.5 font-bold">{h}</th>)}</tr></thead>
               <tbody className="divide-y divide-ink-50">
                 {tasks.filter(t => Number(t.cost_estimate) || Number(t.cost_actual)).map(t => (
                   <tr key={t.id}>
                     <td className="px-4 py-2.5"><p className="font-medium text-ink-900">{t.title}</p>{t.tags?.length > 0 && <div className="flex gap-1 mt-1">{t.tags.slice(0, 2).map(x => <TagPill key={x} tag={x}/>)}</div>}</td>
                     <td className="px-4 py-2.5 font-bold text-gold-700 tabular">{vnd(t.cost_estimate)}</td>
                     <td className={cn('px-4 py-2.5 tabular', Number(t.cost_actual) > Number(t.cost_estimate) && Number(t.cost_estimate) > 0 ? 'text-red-600 font-semibold' : 'text-ink-600')}>{Number(t.cost_actual) ? vnd(t.cost_actual) : '—'}</td>
-                    <td className="px-4 py-2.5"><span className={`badge badge-${t.status} text-[10px]`}>{STATUS_LABELS[t.status]}</span></td>
+                    <td className="px-4 py-2.5"><span className={`badge badge-${t.status} text-[11px]`}>{STATUS_LABELS[t.status]}</span></td>
                   </tr>
                 ))}
               </tbody>
