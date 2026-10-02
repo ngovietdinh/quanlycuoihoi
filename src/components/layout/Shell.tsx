@@ -9,6 +9,7 @@ import { useProfile, clearProfileCache } from '@/hooks/useProfile'
 const BASE_NAV = [
   { href:'/dashboard',   emoji:'⊞',  label:'Tổng quan' },
   { href:'/invitations', emoji:'💌', label:'Thiệp cưới' },
+  { href:'/family',      emoji:'🏡', label:'Gia đình' },
   { href:'/account',     emoji:'👤', label:'Tài khoản' },
 ]
 const ADMIN_NAV = { href:'/admin', emoji:'🛡️', label:'Quản trị' }

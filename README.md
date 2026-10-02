@@ -47,6 +47,16 @@
 - **Lịch trình ngày cưới**: kịch bản theo giờ, mẫu lễ cưới truyền thống, đánh dấu đang diễn ra, in ra giấy
 - **Thành viên**: mời theo email với quyền Biên tập / Chỉ xem; cập nhật realtime giữa các thành viên
 
+### 🏡 Quản lý gia đình (`/family`)
+Dùng chung cho cả nhà: tạo **gia đình**, mời vợ/chồng, bố mẹ… theo email với quyền **Biên tập** / **Chỉ xem**; dữ liệu riêng tư (kể cả admin cũng không xem được), cập nhật realtime.
+- **Tổng quan**: thu/chi tháng, danh sách *Cần chú ý* tự tổng hợp (hóa đơn đến hạn, vượt ngân sách, mũi tiêm quá hạn, giấy tờ sắp hết hạn, khoản vay/nợ đến hạn)
+- **Thu chi**: nhiều ví (tiền mặt, ngân hàng, ví điện tử…), chuyển ví, thu nhập theo từng thành viên; **ngân sách tháng** theo danh mục kèm cảnh báo; **khoản định kỳ** (tháng/quý/năm) có nhắc hạn và nút "Đã trả"; báo cáo 12 tháng, chi theo danh mục / thành viên / con, xuất Excel
+- **Thai sản**: theo dõi thai kỳ theo tuần (kích thước thai nhi), các mốc khám quan trọng, nhật ký khám & cân nặng mẹ, **dự toán chi phí sinh**, **tính chế độ thai sản BHXH** (Luật BHXH 2024, tham khảo), danh sách đồ sơ sinh
+- **Con cái**: hồ sơ từng bé, **lịch tiêm chủng tự động** (TCMR + dịch vụ), **biểu đồ tăng trưởng** so với chuẩn WHO, chi phí nuôi con & học phí, nhật ký cột mốc / khám bệnh
+- **Tiết kiệm & tài sản**: mục tiêu tiết kiệm (góp/rút), **khoản vay & trả góp** có lịch trả nợ (dư nợ giảm dần / niên kim), cho vay – đi vay, **sổ hiếu hỉ**, tài sản, giấy tờ quan trọng có hạn; giá trị ròng của gia đình
+
+> Các số liệu y tế, tiêm chủng, BHXH chỉ mang tính tham khảo — luôn theo chỉ định của bác sĩ và cơ quan BHXH.
+
 ## Cài đặt
 
 ```bash
@@ -60,6 +70,7 @@ Chạy lần lượt trong SQL Editor (mỗi file chạy lại nhiều lần v�
 1. `supabase/schema.sql` — chỉ với dự án Supabase mới
 2. `supabase/migrations/002_invitations_roles.sql` — tài khoản, phân quyền, thiệp cưới
 3. `supabase/migrations/003_vendors_schedule.sql` — nhà cung cấp, lịch trình ngày cưới
+4. `supabase/migrations/004_family.sql` — quản lý gia đình (thu chi, thai sản, con cái, tiết kiệm, tài sản)
 
 Migration 002 tạo bucket Storage `invitation-media` và bật realtime cho `rsvps`, `wishes`.
 
@@ -79,6 +90,8 @@ src/app/invitations       Danh sách & trình thiết kế thiệp
 src/app/preview           Khung xem trước (iframe) của trình thiết kế
 src/app/account           Tài khoản cá nhân
 src/app/admin             Trang quản trị
+src/app/family            Quản lý gia đình (thu chi, thai sản, con cái, tiết kiệm)
+src/lib/family            Danh mục, lịch tiêm, chuẩn WHO, BHXH, lịch trả nợ
 src/components/invitation InvitationView + các phần của thiệp + trình thiết kế
 src/lib/invitation        Mẫu thiệp, ngân hàng, âm lịch, lịch/bản đồ
 supabase/migrations       Migration phân quyền & thiệp cưới

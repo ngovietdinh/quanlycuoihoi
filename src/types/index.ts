@@ -84,3 +84,27 @@ export interface GuestGreeting { name:string; salutation:string|null; invited_co
 export type VendorStatus = 'considering' | 'booked' | 'cancelled'
 export interface Vendor { id:string; project_id:string; name:string; category:string; contact_name:string|null; phone:string|null; email:string|null; website:string|null; status:VendorStatus; total_cost:number; due_date:string|null; rating:number|null; notes:string|null; created_at:string; updated_at:string }
 export interface ScheduleItem { id:string; project_id:string; day:string|null; start_time:string|null; end_time:string|null; title:string; location:string|null; owner:string|null; notes:string|null; done:boolean; position:number; created_at:string }
+
+// ── Gia đình ──────────────────────────────────────────────────
+export interface Household { id:string; name:string; owner_id:string; owner_relation:string|null; created_at:string }
+export interface HouseholdMember { user_id:string; full_name:string|null; email:string|null; avatar_url:string|null; role:'owner'|'editor'|'viewer'; relation:string|null }
+export interface Wallet { id:string; household_id:string; name:string; type:'cash'|'bank'|'credit'|'ewallet'|'saving'; owner_user:string|null; opening_balance:number; color:string|null; archived:boolean }
+export interface Txn { id:string; household_id:string; kind:'income'|'expense'|'transfer'; amount:number; category:string; wallet_id:string|null; to_wallet_id:string|null; member_id:string|null; child_id:string|null; bill_id:string|null; date:string; note:string|null; created_by:string|null; created_at:string }
+export interface Bill { id:string; household_id:string; name:string; kind:'income'|'expense'; amount:number; category:string; wallet_id:string|null; child_id:string|null; frequency:'monthly'|'quarterly'|'yearly'; day_of_month:number; start_month:string|null; remind_days:number; active:boolean; note:string|null }
+export interface FinBudget { id:string; household_id:string; category:string; amount:number }
+export interface Pregnancy { id:string; household_id:string; mother_name:string|null; lmp:string|null; due_date:string; status:'active'|'born'|'ended'; baby_name:string|null; hospital:string|null; doctor:string|null; notes:string|null }
+export interface PregVisit { id:string; household_id:string; pregnancy_id:string; date:string; type:string; place:string|null; mom_weight:number|null; blood_pressure:string|null; fetal_weight:number|null; notes:string|null; cost:number }
+export interface PregCost { id:string; household_id:string; pregnancy_id:string; item:string; estimate:number; actual:number; position:number }
+export interface BabyItem { id:string; household_id:string; pregnancy_id:string|null; grp:string; name:string; qty:number; price:number; bought:boolean; essential:boolean; position:number }
+export interface Child { id:string; household_id:string; name:string; nickname:string|null; dob:string; gender:'male'|'female'; blood_type:string|null; allergies:string|null; avatar_url:string|null; notes:string|null }
+export interface Vaccination { id:string; household_id:string; child_id:string; vaccine:string; dose:string|null; program:'epi'|'service'; due_date:string; done_date:string|null; place:string|null; note:string|null }
+export interface GrowthRecord { id:string; household_id:string; child_id:string; date:string; weight_kg:number|null; height_cm:number|null; head_cm:number|null; note:string|null }
+export interface ChildEvent { id:string; household_id:string; child_id:string; kind:'milestone'|'medical'; date:string; title:string; note:string|null; photo_url:string|null }
+export interface SavingsGoal { id:string; household_id:string; name:string; icon:string|null; target:number; deadline:string|null; done:boolean }
+export interface GoalContribution { id:string; household_id:string; goal_id:string; amount:number; date:string; note:string|null }
+export interface Loan { id:string; household_id:string; name:string; lender:string|null; principal:number; annual_rate:number; term_months:number; start_date:string; method:'declining'|'annuity'; closed:boolean; note:string|null }
+export interface LoanPayment { id:string; household_id:string; loan_id:string; period:number|null; date:string; principal:number; interest:number; note:string|null }
+export interface Debt { id:string; household_id:string; person:string; direction:'lent'|'borrowed'; amount:number; date:string; due_date:string|null; settled:boolean; settled_date:string|null; note:string|null }
+export interface Gift { id:string; household_id:string; person:string; relation:string|null; event:string; direction:'received'|'given'; amount:number; gift:string|null; date:string; note:string|null }
+export interface Asset { id:string; household_id:string; name:string; type:string; value:number; acquired_date:string|null; note:string|null }
+export interface FamilyDoc { id:string; household_id:string; name:string; type:string; number:string|null; holder:string|null; issued_date:string|null; expiry_date:string|null; note:string|null }
