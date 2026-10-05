@@ -71,6 +71,7 @@ Chạy lần lượt trong SQL Editor (mỗi file chạy lại nhiều lần v�
 2. `supabase/migrations/002_invitations_roles.sql` — tài khoản, phân quyền, thiệp cưới
 3. `supabase/migrations/003_vendors_schedule.sql` — nhà cung cấp, lịch trình ngày cưới
 4. `supabase/migrations/004_family.sql` — quản lý gia đình (thu chi, thai sản, con cái, tiết kiệm, tài sản)
+5. `supabase/migrations/005_fix_signup.sql` — sửa lỗi 500 khi đăng ký trên DB có sẵn (trigger tạo hồ sơ)
 
 Migration 002 tạo bucket Storage `invitation-media` và bật realtime cho `rsvps`, `wishes`.
 
