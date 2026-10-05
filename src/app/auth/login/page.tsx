@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { sb } from '@/lib/supabase/client'
 import { AuthShell, AuthInput, Icon, GOOGLE_ENABLED } from '@/components/auth/AuthShell'
 import { viAuthError } from '@/lib/authErrors'
+import { OtpCode } from '@/components/auth/OtpCode'
 import { cn } from '@/lib/utils'
 
 type Mode = 'password' | 'magic' | 'forgot'
@@ -20,17 +21,21 @@ export default function LoginPage() {
   const [err, setErr] = useState('')
   const [info, setInfo] = useState('')
   const [unconfirmed, setUnconfirmed] = useState(false)
+  const [otpFor, setOtpFor] = useState<string | null>(null)
   const [next, setNext] = useState('/dashboard')
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search)
-    if (q.get('error')) setErr(viAuthError(q.get('error')))
+    // Lỗi từ liên kết email có thể nằm trong query (?error=) hoặc trong hash (#error_description=)
+    const h = new URLSearchParams(window.location.hash.slice(1))
+    const e = q.get('error') || (h.get('error_code') === 'otp_expired' ? 'otp_expired' : h.get('error_description'))
+    if (e) setErr(viAuthError(e))
     setNext(safeNext(q.get('next')))
     try { const e = localStorage.getItem(REMEMBER_KEY); if (e) setEmail(e) } catch {}
   }, [])
 
   const callback = (to: string) => `${window.location.origin}/auth/callback?next=${encodeURIComponent(to)}`
-  const reset = () => { setErr(''); setInfo(''); setUnconfirmed(false) }
+  const reset = () => { setErr(''); setInfo(''); setUnconfirmed(false); setOtpFor(null) }
 
   async function submit(e: FormEvent) {
     e.preventDefault(); reset(); setLoading(true)
@@ -39,12 +44,14 @@ export default function LoginPage() {
     if (mode === 'forgot') {
       const { error } = await sb().auth.resetPasswordForEmail(email, { redirectTo: callback('/account?reset=1') })
       setLoading(false)
-      return error ? setErr(viAuthError(error.message)) : setInfo('Đã gửi email đặt lại mật khẩu. Hãy kiểm tra hộp thư (cả mục Spam).')
+      return error ? setErr(viAuthError(error.message)) : setInfo('Đã gửi email đặt lại mật khẩu. Hãy kiểm tra hộp thư (cả mục Spam, Quảng cáo).')
     }
     if (mode === 'magic') {
       const { error } = await sb().auth.signInWithOtp({ email, options: { emailRedirectTo: callback(next), shouldCreateUser: false } })
       setLoading(false)
-      return error ? setErr(viAuthError(error.message)) : setInfo(`Đã gửi liên kết đăng nhập tới ${email}. Mở email trên thiết bị này và bấm vào liên kết.`)
+      if (error) return setErr(viAuthError(error.message))
+      setOtpFor(email.trim())
+      return setInfo(`Đã gửi email tới ${email}. Bấm liên kết trong email, hoặc nhập mã số bên dưới.`)
     }
     const { error } = await sb().auth.signInWithPassword({ email, password: pw })
     if (error) {
@@ -122,6 +129,8 @@ export default function LoginPage() {
             : mode === 'password' ? 'Đăng nhập' : mode === 'magic' ? 'Gửi liên kết đăng nhập' : 'Gửi liên kết đặt lại'}
         </button>
       </form>
+
+      {mode === 'magic' && otpFor && <OtpCode email={otpFor} type="email" next={next}/>}
 
       {mode === 'forgot' && (
         <button onClick={() => { setMode('password'); reset() }} className="mt-5 text-sm font-semibold text-sakura-600 hover:underline">← Quay lại đăng nhập</button>

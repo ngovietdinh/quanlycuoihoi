@@ -2,6 +2,12 @@
 export function viAuthError(msg?: string | null): string {
   if (!msg) return 'Đã có lỗi xảy ra, vui lòng thử lại'
   const m = msg.toLowerCase()
+  if (m === 'pkce_other_device') return 'Liên kết cần được mở trên đúng trình duyệt bạn đã dùng để đăng ký/yêu cầu. Nếu đây là email xác nhận đăng ký thì tài khoản đã được kích hoạt — hãy đăng nhập bằng mật khẩu. Hoặc dùng mã 6 số trong email.'
+  if (m === 'otp_expired' || m.includes('link is invalid or has expired') || m.includes('token has expired or is invalid')) return 'Liên kết/mã đã hết hạn hoặc đã được dùng. Hãy yêu cầu gửi lại email mới.'
+  if (m.includes('email address not authorized')) return 'Máy chủ email mặc định của Supabase chỉ gửi được tới email thành viên dự án. Quản trị viên cần cấu hình SMTP riêng (Supabase → Authentication → Emails → SMTP Settings).'
+  if (m.includes('email rate limit') || m.includes('over_email_send_rate_limit')) return 'Đã vượt giới hạn gửi email của Supabase (gói miễn phí chỉ vài email mỗi giờ). Vui lòng thử lại sau, hoặc quản trị viên cấu hình SMTP riêng để gửi không giới hạn.'
+  if (m.includes('signups not allowed for otp') || m.includes('otp_disabled')) return 'Email này chưa có tài khoản. Hãy đăng ký trước, sau đó mới đăng nhập bằng liên kết email.'
+  if (m.includes('error sending') && m.includes('email')) return 'Supabase không gửi được email. Quản trị viên hãy kiểm tra cấu hình SMTP (Authentication → Emails).'
   if (m.includes('invalid login credentials')) return 'Email hoặc mật khẩu không đúng'
   if (m.includes('email not confirmed')) return 'Email chưa được xác nhận. Hãy mở hộp thư và bấm vào liên kết xác nhận.'
   if (m.includes('user already registered') || m.includes('already been registered')) return 'Email này đã được đăng ký. Hãy đăng nhập hoặc dùng "Quên mật khẩu".'

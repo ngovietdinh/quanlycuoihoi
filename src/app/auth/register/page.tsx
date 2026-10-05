@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { sb } from '@/lib/supabase/client'
 import { AuthShell, AuthInput, Icon, GOOGLE_ENABLED } from '@/components/auth/AuthShell'
 import { viAuthError, passwordScore, SCORE_LABEL, SCORE_COLOR } from '@/lib/authErrors'
+import { OtpCode } from '@/components/auth/OtpCode'
 import { cn } from '@/lib/utils'
 
 export default function RegisterPage() {
@@ -51,9 +52,11 @@ export default function RegisterPage() {
         <p className="text-sm text-ink-500 mb-6">Chúng tôi đã gửi liên kết xác nhận tới <b className="text-ink-800">{sentTo}</b>. Bấm vào liên kết trong email để kích hoạt tài khoản.</p>
         <ol className="text-left text-sm text-ink-600 space-y-2 bg-white border border-ink-100 rounded-2xl p-4 mb-6">
           <li>1. Mở email từ <b>Supabase / FamilyPlan</b> (có thể nằm trong mục Spam, Quảng cáo).</li>
-          <li>2. Bấm <b>Confirm your mail</b> / <b>Xác nhận</b>.</li>
+          <li>2. Bấm nút <b>Xác nhận email</b> (hoặc <b>Confirm your mail</b>), hoặc nhập mã số ở ô bên dưới.</li>
           <li>3. Bạn sẽ được chuyển thẳng vào trang tổng quan.</li>
         </ol>
+        <OtpCode email={sentTo} type="signup"/>
+        <div className="h-4"/>
         {err && <p className="text-sm text-red-600 mb-3">⚠️ {err}</p>}
         <div className="flex flex-col gap-2">
           <button onClick={resend} disabled={resent} className="btn btn-secondary h-11 rounded-2xl">{resent ? '✓ Đã gửi lại' : 'Chưa nhận được? Gửi lại email'}</button>

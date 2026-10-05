@@ -1,16 +1,20 @@
+'use client'
+import { useId } from 'react'
 import { APP_NAME, APP_TAGLINE } from '@/lib/brand'
 import { cn } from '@/lib/utils'
 
 /** Biểu tượng FamilyPlan: mái nhà ôm trái tim — từ ngày cưới tới cả tổ ấm */
 export function LogoMark({ size = 40, className }: { size?: number; className?: string }) {
+  // Mỗi logo một id gradient riêng: logo nằm trong khối bị ẩn (display:none) sẽ làm gradient trùng id không hiển thị
+  const gid = `fp-g${useId().replace(/:/g, '')}`
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className={cn('flex-shrink-0', className)} aria-hidden>
       <defs>
-        <linearGradient id="fp-g" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#ff6b96"/><stop offset=".55" stopColor="#ff3d78"/><stop offset="1" stopColor="#f59e0b"/>
         </linearGradient>
       </defs>
-      <rect width="48" height="48" rx="14" fill="url(#fp-g)"/>
+      <rect width="48" height="48" rx="14" fill={`url(#${gid})`}/>
       <path d="M12 23.5 24 13l12 10.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M15.5 21v12.5a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V21" fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="2.5" strokeLinecap="round"/>
       <path d="M24 32.2s-5.2-3.1-5.2-6.6a2.9 2.9 0 0 1 5.2-1.8 2.9 2.9 0 0 1 5.2 1.8c0 3.5-5.2 6.6-5.2 6.6Z" fill="#fff"/>

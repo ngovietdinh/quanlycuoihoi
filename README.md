@@ -79,8 +79,13 @@ Migration 002 tạo bucket Storage `invitation-media` và bật realtime cho `rs
 UPDATE profiles SET role = 'admin' WHERE email = 'ban@example.com';
 ```
 
-**Xác thực email / quên mật khẩu**: trong Supabase → Authentication → URL Configuration, thêm
-`https://<domain-của-bạn>/auth/callback` vào *Redirect URLs*.
+### Email đăng ký / liên kết đăng nhập (Supabase → Authentication)
+1. **URL Configuration**: *Site URL* = địa chỉ web thật (vd. `https://familyplan.vercel.app`, **không** để `http://localhost:3000`);
+   *Redirect URLs* thêm `https://<domain>/auth/callback` (mỗi domain một dòng: Vercel, Cloudflare, tên miền riêng).
+2. **Emails → Templates**: dán nội dung các file trong `supabase/email-templates/` vào *Confirm signup*, *Magic Link*, *Reset Password*.
+   Mẫu này dùng liên kết `token_hash` (mở được trên mọi thiết bị) và kèm mã số để nhập trực tiếp trong ứng dụng.
+3. **Emails → SMTP Settings**: máy chủ email mặc định của Supabase chỉ gửi ~2 email/giờ và chỉ tới email thành viên dự án.
+   Để người dùng thật nhận được email, bật *Custom SMTP* (Resend, Brevo, Gmail App Password…).
 
 ### Triển khai lên Cloudflare Workers (tùy chọn, thay cho Vercel)
 Dự án đã cấu hình sẵn `@opennextjs/cloudflare` (`wrangler.jsonc`, `open-next.config.ts`).
