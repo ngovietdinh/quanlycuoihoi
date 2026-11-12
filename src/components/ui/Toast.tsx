@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, useCallback, useRef } from 'react'
+import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react'
 type TType = 'success'|'error'|'warning'|'info'
 interface T { id:string; type:TType; title:string; msg?:string }
 interface TCtx { success:(t:string,m?:string)=>void; error:(t:string,m?:string)=>void; warning:(t:string,m?:string)=>void; info:(t:string,m?:string)=>void }
@@ -20,8 +20,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setItems(s => [...s.slice(-4), {id,type,title,msg}])
     setTimeout(() => remove(id), 4000)
   },[remove])
+  const value = useMemo<TCtx>(() => ({ success:(t,m)=>add('success',t,m), error:(t,m)=>add('error',t,m), warning:(t,m)=>add('warning',t,m), info:(t,m)=>add('info',t,m) }), [add])
   return (
-    <Ctx.Provider value={{ success:(t,m)=>add('success',t,m), error:(t,m)=>add('error',t,m), warning:(t,m)=>add('warning',t,m), info:(t,m)=>add('info',t,m) }}>
+    <Ctx.Provider value={value}>
       {children}
       <div className="fixed bottom-20 sm:bottom-5 right-4 z-[100] flex flex-col gap-2 pointer-events-none w-80">
         {items.map(t => (

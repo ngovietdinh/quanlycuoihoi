@@ -38,6 +38,18 @@ export const PRI_LABELS: Record<string, string> = {
   low: 'Thấp', medium: 'Trung bình', high: 'Cao',
 }
 export const EXPENSE_CATEGORIES = [
-  'Trang phục', 'Tiệc & đồ ăn', 'Hoa & trang trí', 'Chụp ảnh / quay phim',
-  'Thiệp mời', 'Mâm quả lễ vật', 'Di chuyển', 'Khác',
+  'Tiệc & đồ ăn', 'Trang phục', 'Trang điểm', 'Chụp ảnh / quay phim', 'Hoa & trang trí',
+  'MC & âm nhạc', 'Nhẫn cưới', 'Mâm quả lễ vật', 'Thiệp mời', 'Di chuyển', 'Khác',
 ]
+export const CATEGORY_ICONS: Record<string, string> = {
+  'Tiệc & đồ ăn': '🍽️', 'Trang phục': '👗', 'Trang điểm': '💄', 'Chụp ảnh / quay phim': '📸', 'Hoa & trang trí': '💐',
+  'MC & âm nhạc': '🎤', 'Nhẫn cưới': '💍', 'Mâm quả lễ vật': '🎁', 'Thiệp mời': '💌', 'Di chuyển': '🚗', 'Khác': '📦',
+}
+
+/** Tải file CSV (có BOM để Excel đọc đúng tiếng Việt) */
+export function downloadCsv(name: string, rows: (string | number | null | undefined)[][]) {
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n')
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }))
+  a.download = name; a.click(); URL.revokeObjectURL(a.href)
+}
